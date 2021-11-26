@@ -68,7 +68,7 @@ fts <- merge(fts, deflators, by = c("donor_country", "year"), all.x = T)
 fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country == "Total DAC", -"donor_country"], by = "year", all.x = T)$deflator
 fts[, amountUSD_defl := amountUSD/deflator]
 
-fwrite(fts, "fts_flows_recipients.csv")
+fwrite(fts[,-c("versionId", "onBoundary", "parentFlowId", "keywords", "sourceObjects_UsageYear.id", "destinationObjects_UsageYear.id")], "fts_flows_recipients.csv")
 
 agg <- fts[, .(total_2019USD = sum(amountUSD_defl, na.rm = T)), by = .(year, recipient, status)]
 agg <- dcast(agg, year + recipient ~ status, value.var = "total_2019USD")
