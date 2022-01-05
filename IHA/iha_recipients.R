@@ -5,7 +5,7 @@ setwd(dirname(getActiveDocumentContext()$path))
 lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_get_flows.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_split_rows.R"), source)
 
 years <- 2016:2022
-update <- 2021:2022
+update <- 2022:2022
 
 fts_files <- list.files(pattern = "fts_")
 fts_list <- list()
@@ -68,9 +68,9 @@ fts <- merge(fts, deflators, by = c("donor_country", "year"), all.x = T)
 fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country == "Total DAC", -"donor_country"], by = "year", all.x = T)$deflator
 fts[, amountUSD_defl := amountUSD/deflator]
 
-fwrite(fts[,-c("versionId", "onBoundary", "parentFlowId", "keywords", "sourceObjects_UsageYear.id", "destinationObjects_UsageYear.id")], "fts_flows_recipients.csv")
+fwrite(fts[boundary %in% c("incoming", "internal") & status %in% c("paid", "commitment") & destinationObjects_Location.name != sourceObjects_Location.name,-c("versionId", "onBoundary", "parentFlowId", "keywords", "sourceObjects_UsageYear.id", "destinationObjects_UsageYear.id")], "fts_flows_recipients.csv")
 
-agg <- fts[, .(total_2019USD = sum(amountUSD_defl, na.rm = T)), by = .(year, recipient, status)]
+agg <- fts[boundary %in% c("incoming", "internal") & status %in% c("paid", "commitment") & destinationObjects_Location.name != sourceObjects_Location.name, .(total_2019USD = sum(amountUSD_defl, na.rm = T)), by = .(year, recipient, status)]
 agg <- dcast(agg, year + recipient ~ status, value.var = "total_2019USD")
 
 fwrite(agg, "fts_aggregate_recipients.csv")
