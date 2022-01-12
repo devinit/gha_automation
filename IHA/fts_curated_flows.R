@@ -32,8 +32,16 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022){
   fts <- rbindlist(fts_list, use.names = T, fill = T)
   rm(fts_list)
   
+  #Remove flows which are outgoing on boundary
+  fts <- fts[boundary != "outgoing"]
+  
+  #Remove duplicates which have a shared boundary, and preserve 'incoming' over 'internal' on boundary type
+  shared <- rbind(fts[onBoundary == "shared" & boundary == "incoming", .SD[1], by = id], fts[onBoundary == "shared" & boundary == "internal" & !(id %in% fts[onBoundary == "shared" & boundary == "incoming", .SD[1], by = id]$id), .SD[1], by = id])
+  fts <- rbind(fts[onBoundary != "shared"], shared)
+  
   #Split rows into individual years by destination usage year where multiple are recorded 
   fts[, year := destinationObjects_UsageYear.name]
+  fts[, multiyear := grepl(";", destinationObjects_UsageYear.name)]
   fts <- fts_split_rows(fts, value.cols = "amountUSD", split.col = "year", split.pattern = "; ", remove.unsplit = T)
   
   #Set multi-country flows to 'multi-country' in recipient column
@@ -63,8 +71,8 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022){
   fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country == "Total DAC", -"donor_country"], by = "year", all.x = T)$deflator
   fts[, amountUSD_defl := amountUSD/deflator]
   
-  #Boundary choices, remove pledges, remove non-country allocable, remove internal country flows
-  fts_out <- fts[year %in% years & boundary %in% c("incoming", "internal") & status %in% c("paid", "commitment") & (destinationObjects_Location.name != sourceObjects_Location.name | destinationObjects_Location.name == ""), -c("versionId", "onBoundary", "parentFlowId", "keywords", "sourceObjects_UsageYear.id", "destinationObjects_UsageYear.id")]
+  #Remove pledges, remove non-country allocable, remove internal country flows
+  fts_out <- fts[year %in% years & status %in% c("paid", "commitment") & (destinationObjects_Location.name != sourceObjects_Location.name | destinationObjects_Location.name == ""), -c("versionId", "onBoundary", "parentFlowId", "keywords", "sourceObjects_UsageYear.id", "destinationObjects_UsageYear.id")]
   
   return(fts_out)
 }

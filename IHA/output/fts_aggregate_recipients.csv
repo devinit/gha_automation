@@ -1,14 +1,14 @@
 year,recipient,status,total_2019USD
 2016,Libya,commitment,43989994.5410217
-2017,"",paid,1013546294.75718
+2017,"",paid,1013571170.41537
 2018,"",paid,1015498994.64317
-2020,Niger,paid,283452413.90239
-2021,"",paid,797228609.331478
-2016,"",paid,2267288587.05478
-2017,Central African Republic,paid,159303441.535558
-2017,Iraq,paid,759939064.600492
-2017,Yemen,paid,1755717639.86594
-2018,Yemen,paid,4228047294.21972
+2020,Niger,paid,282382593.79308
+2021,"",paid,797612702.120761
+2016,"",paid,2267323449.66385
+2017,Central African Republic,paid,157315094.537738
+2017,Iraq,paid,759486022.90417
+2017,Yemen,paid,1753218307.5862
+2018,Yemen,paid,4225683719.78391
 2019,"",paid,1425140749.38433
 2019,Madagascar,paid,19866599.8675129
 2019,Yemen,paid,2864611103.81302
@@ -20,8 +20,8 @@ year,recipient,status,total_2019USD
 2016,Haiti,paid,95968793.8952213
 2017,Haiti,paid,41186404.1370539
 2017,Peru,commitment,14617392.3153374
-2018,Lebanon,paid,780294679.781465
-2016,"",commitment,1400323105.99421
+2018,Lebanon,paid,779644241.760089
+2016,"",commitment,1384637004.98941
 2016,Afghanistan,paid,356683474.796323
 2016,Cameroon,paid,167957955.504013
 2016,Chad,paid,256651736.168313
@@ -32,77 +32,77 @@ year,recipient,status,total_2019USD
 2016,Fiji,commitment,17559414.1175956
 2016,Haiti,commitment,149767601.016481
 2016,Indonesia,commitment,18698870.0348656
-2016,Iraq,paid,846204411.334501
-2016,Iraq,commitment,1200296203.42818
+2016,Iraq,paid,845729658.92818
+2016,Iraq,commitment,1103274739.50057
 2016,Jordan,paid,830480163.566842
 2016,Marshall Islands,commitment,2961909.61268144
-2016,Myanmar,commitment,170674394.460628
+2016,Myanmar,commitment,158729748.206887
 2016,Myanmar,paid,33727829.9420555
 2016,Niger,paid,101778490.408401
-2016,Nigeria,paid,178805280.149333
+2016,Nigeria,paid,178438414.119388
 2016,Pakistan,paid,207569117.76379
 2016,Papua New Guinea,paid,4444948.17645786
 2016,Papua New Guinea,commitment,13198836.2721459
 2016,Solomon Islands,commitment,1471523.45564488
-2016,Somalia,paid,405887457.782249
-2016,Somalia,commitment,304503347.242118
-2016,South Sudan,commitment,450572298.54918
-2016,South Sudan,paid,959338255.288661
+2016,Somalia,paid,405887457.000553
+2016,Somalia,commitment,295893678.396512
+2016,South Sudan,commitment,437124489.719955
+2016,South Sudan,paid,957890779.43648
 2016,Sri Lanka,paid,6147933.86895565
-2016,Syrian Arab Republic,commitment,1083244497.77789
-2016,Syrian Arab Republic,paid,1591822785.57378
+2016,Syrian Arab Republic,commitment,1080276564.11149
+2016,Syrian Arab Republic,paid,1590591720.81738
 2016,Vanuatu,commitment,3353307.46788861
-2017,"",commitment,849604940.975329
+2017,"",commitment,831987349.221121
 2017,Afghanistan,paid,249063301.240299
-2017,Afghanistan,commitment,157724714.564841
+2017,Afghanistan,commitment,154534404.713317
 2017,Antigua and Barbuda,commitment,4354788.09613326
 2017,Bangladesh,paid,365610476.489873
-2017,Bangladesh,commitment,183126380.915793
+2017,Bangladesh,commitment,180644262.663534
 2017,Colombia,commitment,24435514.1432693
 2017,Dominica,commitment,17479338.7081689
-2017,Ethiopia,commitment,488627349.822533
+2017,Ethiopia,commitment,488626206.968633
 2017,Fiji,paid,516919.222151417
 2017,Indonesia,paid,718413.453848345
 2017,"Iran, Islamic Republic of",commitment,24459161.2163886
-2017,Iraq,commitment,849550894.20238
+2017,Iraq,commitment,755647372.1019
 2017,Jamaica,paid,183202.978612223
-2017,Jordan,paid,645324397.277219
-2017,Multi-recipient,paid,817871296.549614
+2017,Jordan,paid,645323023.261644
+2017,Multi-recipient,paid,817668506.901221
 2017,Kenya,paid,181054053.613914
-2017,Lebanon,paid,846763051.249039
+2017,Lebanon,paid,846080442.589807
 2017,Myanmar,paid,80010172.9706374
-2017,Myanmar,commitment,123173330.043518
+2017,Myanmar,commitment,95526365.230706
 2017,Nepal,commitment,14128896.0551501
-2017,Nigeria,paid,588291656.536723
+2017,Nigeria,paid,587914474.978091
 2017,Nigeria,commitment,353814759.792414
 2017,Pakistan,paid,101612445.176389
-2017,Pakistan,commitment,43028059.5818453
+2017,Pakistan,commitment,39269410.4538991
 2017,Philippines,commitment,22690194.4277803
 2017,Philippines,paid,8896677.30514148
 2017,Sierra Leone,paid,9611981.4893044
-2017,Somalia,commitment,620414580.420187
-2017,Somalia,paid,834151458.104122
-2017,South Sudan,commitment,511500309.130139
-2017,South Sudan,paid,998780024.907368
+2017,Somalia,commitment,548156349.063694
+2017,Somalia,paid,833188238.655523
+2017,South Sudan,commitment,494506870.098557
+2017,South Sudan,paid,997337323.609081
 2017,Sri Lanka,paid,8887225.68031323
-2017,Syrian Arab Republic,paid,1704902831.51606
-2017,Uganda,paid,257471675.733258
-2017,Uganda,commitment,100084563.139977
+2017,Syrian Arab Republic,paid,1691168145.36708
+2017,Uganda,paid,257471675.219827
+2017,Uganda,commitment,98066998.4917179
 2017,Vanuatu,commitment,640158.958488652
 2017,Yemen,commitment,712146493.68941
 2017,occupied Palestinian territory,paid,241920404.019219
-2018,"",commitment,834665839.018115
+2018,"",commitment,778685378.396281
 2018,Afghanistan,paid,254910556.978185
 2018,Bangladesh,paid,595873343.840508
-2018,Bangladesh,commitment,186294846.650883
-2018,Indonesia,commitment,32684498.1307009
-2018,Indonesia,paid,27596448.7155821
-2018,Iraq,paid,576436633.933194
-2018,Jordan,paid,504058979.494619
-2018,Jordan,commitment,176690428.05332
+2018,Bangladesh,commitment,183704833.666527
+2018,Indonesia,commitment,32595147.0293522
+2018,Indonesia,paid,27588387.3935556
+2018,Iraq,paid,574655165.7249
+2018,Jordan,paid,504057696.047949
+2018,Jordan,commitment,175280770.444376
 2018,Lao People's Democratic Republic,paid,4584456.75000334
 2018,Myanmar,paid,81653798.0509022
-2018,Myanmar,commitment,131865941.830249
+2018,Myanmar,commitment,103393232.625936
 2018,Nepal,paid,646994.645547617
 2018,Pakistan,paid,51711974.4395808
 2018,Papua New Guinea,paid,13389343.1989757
@@ -110,74 +110,74 @@ year,recipient,status,total_2019USD
 2018,Philippines,paid,9064491.42643665
 2018,Philippines,commitment,34398043.1525767
 2018,Samoa,paid,355834.101746746
-2018,Somalia,commitment,718209227.689898
-2018,Somalia,paid,523458166.46263
-2018,South Sudan,paid,780373027.056412
-2018,South Sudan,commitment,587243851.427482
-2018,Syrian Arab Republic,paid,1470042254.39966
-2018,Syrian Arab Republic,commitment,928088648.304659
+2018,Somalia,commitment,642769031.251038
+2018,Somalia,paid,522544725.675615
+2018,South Sudan,paid,768046874.910152
+2018,South Sudan,commitment,570973010.538163
+2018,Syrian Arab Republic,paid,1456530742.82167
+2018,Syrian Arab Republic,commitment,921756521.457783
 2018,Thailand,paid,367520.729808752
 2018,Tonga,paid,4694170.16035051
 2018,Tonga,commitment,8568434.53141961
 2018,Vanuatu,commitment,2368414.12583767
-2018,occupied Palestinian territory,paid,202680995.552562
-2019,"",commitment,891377336
+2018,occupied Palestinian territory,paid,202624954.286695
+2019,"",commitment,790055268.535714
 2019,Afghanistan,paid,324910961
 2019,Bangladesh,paid,603133622
 2019,Ecuador,paid,26033070
 2019,Indonesia,paid,17105022
-2019,Iraq,paid,520974067
-2019,Jordan,commitment,96613249
-2019,Jordan,paid,571177422.763924
+2019,Iraq,paid,515672855
+2019,Jordan,paid,571176108.263924
+2019,Jordan,commitment,95144820.3333333
 2019,Lao People's Democratic Republic,paid,4561833
-2019,Lebanon,paid,907532965.575986
-2019,Lebanon,commitment,308559860.5
+2019,Lebanon,paid,907129724.909319
+2019,Lebanon,commitment,229298751.283333
 2019,"Micronesia, Federated States of",paid,6471453
 2019,Mozambique,paid,222136509.05532
 2019,Myanmar,paid,146419627
 2019,Nepal,paid,3682310
 2019,Pakistan,paid,71190410
 2019,Philippines,paid,6862170
-2019,Somalia,paid,565957262
-2019,Somalia,commitment,549568612
-2019,South Sudan,paid,929655783.2
+2019,Somalia,paid,565667718.583333
+2019,Somalia,commitment,456077363.583333
+2019,South Sudan,paid,917498051.3
 2019,Sri Lanka,paid,2342902
-2019,Syrian Arab Republic,commitment,927320674
-2019,Syrian Arab Republic,paid,1534588733.07076
+2019,Syrian Arab Republic,paid,1521605995.98743
+2019,Syrian Arab Republic,commitment,919301826
 2019,Vanuatu,paid,249168
-2019,Zimbabwe,paid,221496620.4
-2019,occupied Palestinian territory,paid,260747087.721846
-2020,"",commitment,1306129366.70631
+2019,Zimbabwe,paid,219351807.6
+2019,occupied Palestinian territory,paid,260688813.055179
+2020,"",commitment,1205900911.70145
 2020,Afghanistan,paid,417301719.204616
-2020,Bangladesh,commitment,236367686.120118
-2020,Bangladesh,paid,510338037.950148
-2020,Cambodia,commitment,28476905.5815639
+2020,Bangladesh,commitment,233180949.833448
+2020,Bangladesh,paid,510021503.10665
+2020,Cambodia,commitment,24609171.8376743
 2020,Fiji,paid,28178278.5969127
 2020,Global,paid,883594111.769426
-2020,Global,commitment,1195788604.70207
+2020,Global,commitment,1149230817.74834
 2020,Indonesia,paid,28805755.8664007
 2020,Indonesia,commitment,14102609.9421263
-2020,Iraq,paid,481671207.833818
-2020,Jordan,commitment,193322584.704209
+2020,Iraq,paid,477390609.522553
+2020,Jordan,commitment,191842814.635807
 2020,Jordan,paid,570789163.85174
 2020,Lao People's Democratic Republic,commitment,16995440.3657303
 2020,Lao People's Democratic Republic,paid,9525960.22885541
-2020,Lebanon,commitment,672363185.148869
+2020,Lebanon,commitment,564395733.276642
 2020,Marshall Islands,commitment,1040922.32949401
 2020,"Micronesia, Federated States of",commitment,20501765.513982
 2020,Mongolia,paid,11169689.6545881
 2020,Myanmar,paid,138287374.742223
-2020,Myanmar,commitment,181185775.428791
+2020,Myanmar,commitment,140480513.85614
 2020,Pakistan,paid,63358165.2064007
 2020,Papua New Guinea,paid,14109808.9547677
 2020,Philippines,commitment,46780505.3835759
 2020,Samoa,paid,9662511.95773424
-2020,Somalia,paid,389553123.437379
-2020,South Sudan,paid,961110264.802655
-2020,South Sudan,commitment,492034779.700226
+2020,Somalia,paid,388838091.730505
+2020,South Sudan,paid,949953036.972908
+2020,South Sudan,commitment,450733642.818972
 2020,Sri Lanka,commitment,12905025.2739706
-2020,Syrian Arab Republic,commitment,1293826039.62327
-2020,Syrian Arab Republic,paid,1347840833.67931
+2020,Syrian Arab Republic,commitment,1277796129.81922
+2020,Syrian Arab Republic,paid,1347306124.35372
 2020,Thailand,paid,16631394.0520207
 2020,Thailand,commitment,23849335.5185014
 2020,Timor-Leste,commitment,6800772.57158025
@@ -185,128 +185,128 @@ year,recipient,status,total_2019USD
 2020,Vanuatu,paid,9337158.33530607
 2020,Viet Nam,commitment,4642011.81994932
 2020,Viet Nam,paid,12957050.3520889
-2020,occupied Palestinian territory,paid,252033710.805101
-2021,"",commitment,1375704169.09915
+2020,occupied Palestinian territory,paid,251976977.472453
+2021,"",commitment,1259753875.55601
 2021,Afghanistan,paid,754376927.167677
-2021,Bangladesh,paid,489935922.641979
-2021,Bangladesh,commitment,158114976.426842
+2021,Bangladesh,paid,489633588.548826
+2021,Bangladesh,commitment,154952105.600274
 2021,Chad,paid,147371309.013307
-2021,Ethiopia,paid,834107875.216239
+2021,Ethiopia,paid,833415360.537406
 2021,Fiji,paid,2267059.80959282
 2021,Global,paid,265262118.2928
-2021,Iraq,paid,318502096.566288
-2021,Iraq,commitment,690698055.704619
+2021,Iraq,paid,318031886.893428
+2021,Iraq,commitment,355634612.956581
 2021,Jordan,paid,417873045.618564
 2021,Kenya,paid,67846238.7786802
 2021,Lao People's Democratic Republic,paid,2929828.73658372
 2021,Lebanon,paid,511276312.49381
-2021,Multi-recipient,paid,107625264.322499
+2021,Multi-recipient,paid,103134686.653175
 2021,Myanmar,paid,161801938.387775
 2021,New Zealand,paid,1848172.81918224
 2021,Pakistan,paid,45275974.8465137
 2021,Papua New Guinea,paid,1049612.7934358
-2021,Somalia,paid,407550571.089133
-2021,Syrian Arab Republic,paid,955502199.052442
+2021,Somalia,paid,406972695.859646
+2021,Syrian Arab Republic,paid,955044517.107092
 2021,Thailand,paid,11443057.0928436
 2021,Timor-Leste,paid,8843476.17409926
 2021,Yemen,paid,2397119806.98721
 2021,occupied Palestinian territory,paid,374531659.667218
-2022,"",commitment,322529737.905411
-2022,Myanmar,commitment,43329710.6768789
+2022,"",commitment,221459665.326049
+2022,Myanmar,commitment,19265490.4193773
 2016,Greece,paid,282439309.512391
 2016,Lebanon,paid,1172764476.75088
 2016,Mozambique,paid,15439588.8298544
 2016,"North Macedonia, Republic of",commitment,6718456.9232861
 2016,Ukraine,commitment,148928138.286925
-2017,Chad,commitment,109361294.336424
+2017,Chad,commitment,85999308.0819668
 2017,Ethiopia,paid,495184589.688387
-2017,Jordan,commitment,99113483.7242252
+2017,Jordan,commitment,99112519.4717757
 2017,Kenya,commitment,169359966.098885
 2017,Multi-recipient,commitment,105744822.318191
 2017,Libya,commitment,41575941.4865427
-2017,Libya,paid,111327166.660498
+2017,Libya,paid,110627078.596822
 2017,Mozambique,paid,22911909.9636828
 2017,Niger,commitment,88552620.818475
 2017,Serbia,paid,15209561.8007321
-2017,Syrian Arab Republic,commitment,793422060.819809
+2017,Syrian Arab Republic,commitment,790545289.570313
 2017,Ukraine,commitment,107368847.858498
-2018,Afghanistan,commitment,274198314.490381
-2018,Burkina Faso,commitment,39094882.5734296
-2018,Chad,commitment,156579336.216871
-2018,"Congo, The Democratic Republic of the",commitment,412586385.593927
+2018,Afghanistan,commitment,267453412.894624
+2018,Burkina Faso,commitment,32857769.5000476
+2018,Chad,commitment,120580665.507392
+2018,"Congo, The Democratic Republic of the",commitment,408703157.272181
 2018,Egypt,commitment,34267376.2113137
 2018,Ethiopia,paid,301088322.343732
 2018,Ethiopia,commitment,569458216.144746
-2018,Iraq,commitment,1057691311.90948
-2018,Libya,paid,71948302.3780786
-2018,Uganda,paid,172919798.53401
-2018,Uganda,commitment,141355274.923268
-2018,Ukraine,commitment,110545788.585505
-2018,Yemen,commitment,848225654.013812
-2019,Afghanistan,commitment,260482540.909091
-2019,Bangladesh,commitment,195794345
+2018,Iraq,commitment,659252881.642139
+2018,Libya,paid,71277788.1658277
+2018,Uganda,paid,172919798.051734
+2018,Uganda,commitment,132378228.174055
+2018,Ukraine,commitment,108777791.032575
+2018,Yemen,commitment,846428185.10737
+2019,Afghanistan,commitment,253477304.681818
+2019,Bangladesh,commitment,193126091
 2019,Burkina Faso,paid,55094436
-2019,Colombia,paid,172794839.6
-2019,Multi-recipient,commitment,298631417
-2019,Ethiopia,paid,484675498
+2019,Colombia,paid,170497818.9
+2019,Multi-recipient,commitment,295693497.833333
+2019,Ethiopia,paid,484649103
 2019,Libya,commitment,46290400
-2019,Mali,commitment,176283859.8
+2019,Mali,commitment,160052483.116667
 2019,Mozambique,commitment,160410917
 2019,Sri Lanka,commitment,3227767
-2019,Uganda,commitment,126399373.416667
-2019,Ukraine,commitment,127702902
-2019,"Venezuela, Bolivarian Republic of",commitment,106162556
+2019,Uganda,commitment,117138021.083333
+2019,Ukraine,commitment,117338971.5
+2019,"Venezuela, Bolivarian Republic of",commitment,103843071.833333
 2020,Azerbaijan,commitment,3050091.68714667
-2020,Burkina Faso,commitment,147502927.309046
-2020,Colombia,paid,287143602.793771
-2020,Greece,commitment,22208284.3602927
+2020,Burkina Faso,commitment,144948485.04884
+2020,Colombia,paid,286073546.670689
+2020,Greece,commitment,22096781.764054
 2020,"Iran, Islamic Republic of",commitment,49444298.475765
 2020,Libya,paid,136384494.795383
-2020,Libya,commitment,65464510.3323339
+2020,Libya,commitment,65464509.8453685
 2020,Mozambique,paid,97558012.6343189
 2020,Mozambique,commitment,52042769.7432742
-2020,Pakistan,commitment,96422175.9638657
+2020,Pakistan,commitment,92894000.0055298
 2020,"Tanzania, United Republic of",commitment,22716449.706151
 2020,Tunisia,commitment,14886087.3737522
-2020,Ukraine,commitment,157080356.106195
-2020,Ukraine,paid,63129303.2886199
-2020,Multi-recipient,commitment,155761876.969286
-2020,Yemen,commitment,529896346.425857
-2020,occupied Palestinian territory,commitment,144858131.273846
+2020,Ukraine,commitment,145559047.916643
+2020,Ukraine,paid,61945711.8728058
+2020,Multi-recipient,commitment,152714530.291833
+2020,Yemen,commitment,512813719.806334
+2020,occupied Palestinian territory,commitment,136354477.77555
 2021,Afghanistan,commitment,864240081.3982
+2021,Burkina Faso,commitment,148172096.291183
 2021,Burkina Faso,paid,170844881.464964
-2021,Burkina Faso,commitment,150527233.426162
-2021,Ethiopia,commitment,713326977.420974
+2021,Ethiopia,commitment,699985928.561363
 2021,"Iran, Islamic Republic of",paid,8237617.76007695
 2021,Jordan,commitment,123722420.734174
-2021,Lebanon,commitment,485271597.904914
+2021,Lebanon,commitment,380233763.341414
 2021,Mali,paid,145073241.588488
 2021,Mozambique,commitment,120213338.51046
 2021,Mozambique,paid,129114715.881011
-2021,South Sudan,paid,905633213.386377
-2021,Syrian Arab Republic,commitment,1145236462.84402
-2021,Uganda,commitment,144197213.682911
-2021,Ukraine,commitment,110409082.096862
-2021,Yemen,commitment,407524118.235147
+2021,South Sudan,paid,895538686.306416
+2021,Syrian Arab Republic,commitment,1131037500.95194
+2021,Uganda,commitment,135152995.642217
+2021,Ukraine,commitment,101747664.686409
+2021,Yemen,commitment,391858530.901628
 2020,"Bolivia, Plurinational State of",commitment,5797706.92895543
 2020,Brazil,commitment,25688743.1333803
-2020,Burundi,commitment,30117970.6376367
-2020,Chad,commitment,124596674.605848
-2020,Colombia,commitment,200314193.010251
+2020,Burundi,commitment,26621614.3341873
+2020,Chad,commitment,81665304.1750608
+2020,Colombia,commitment,197433182.446301
 2020,Costa Rica,commitment,4145327.48320942
 2020,Dominican Republic,commitment,8097126.19655822
 2020,Ecuador,commitment,50698335.232082
-2020,Haiti,commitment,74591122.1499586
-2020,Mali,commitment,176039235.742509
-2020,Niger,commitment,198445456.051725
+2020,Haiti,commitment,71955201.7926716
+2020,Mali,commitment,154108735.692248
+2020,Niger,commitment,167066450.751842
 2020,Paraguay,commitment,2476034.19074989
-2020,Peru,commitment,52430945.1359724
+2020,Peru,commitment,48937959.6201063
 2020,Sierra Leone,commitment,10618833.3108941
-2020,Sudan,commitment,381199677.701404
+2020,Sudan,commitment,312002927.444711
 2020,Togo,commitment,3620181.78475364
-2020,Uganda,commitment,194216446.469091
+2020,Uganda,commitment,182377854.849259
 2020,Uruguay,commitment,1600910.87790628
-2020,"Venezuela, Bolivarian Republic of",commitment,147570267.222701
+2020,"Venezuela, Bolivarian Republic of",commitment,145475960.284976
 2020,Yemen,paid,1710017049.43259
 2021,Nigeria,paid,364628829.478063
 2016,Ecuador,paid,28782453.9294575
@@ -317,107 +317,107 @@ year,recipient,status,total_2019USD
 2018,"Venezuela, Bolivarian Republic of",paid,2722124.54057728
 2018,Viet Nam,paid,1356745.22355401
 2020,China,commitment,2692857.65962876
-2016,Afghanistan,commitment,190674244.984803
+2016,Afghanistan,commitment,187378005.074357
 2016,Burkina Faso,commitment,34696940.51448
 2016,Burundi,commitment,35376496.8666684
 2016,Burundi,paid,52311353.0906257
-2016,Central African Republic,paid,151646853.818252
+2016,Central African Republic,paid,151646812.01978
 2016,Central African Republic,commitment,115662227.115474
 2016,Jordan,commitment,159522809.769927
 2016,Madagascar,commitment,50376044.8146546
 2016,Mali,commitment,146704653.144327
-2016,Niger,commitment,97307217.8769234
+2016,Niger,commitment,97307217.8769235
 2016,Nigeria,commitment,308488768.576832
 2016,Rwanda,commitment,30680189.2253732
 2016,"Tanzania, United Republic of",commitment,70719664.5774829
 2016,Uganda,paid,54410899.8346286
-2016,Uganda,commitment,103187104.968342
+2016,Uganda,commitment,101102549.729195
 2016,Yemen,paid,1270466233.74748
 2016,occupied Palestinian territory,paid,490483225.407402
 2016,occupied Palestinian territory,commitment,224938457.733983
 2017,Angola,paid,5326254.64390521
-2017,Burundi,paid,40954919.8395837
-2017,Burundi,commitment,24319172.181527
+2017,Burundi,paid,40818876.9467902
+2017,Burundi,commitment,20852937.315212
 2017,Cameroon,paid,101237425.632783
-2017,Central African Republic,commitment,125751779.757467
+2017,Central African Republic,commitment,125543821.814908
 2017,Chad,paid,201487438.060447
 2017,"Congo, The Democratic Republic of the",paid,322407059.077726
 2017,"Congo, The Democratic Republic of the",commitment,255220665.639407
 2017,Cuba,commitment,8414093.22775743
-2017,Lebanon,commitment,268069320.404438
-2017,Mali,commitment,135412687.084134
+2017,Lebanon,commitment,262105132.524729
+2017,Mali,commitment,135405438.806076
 2017,Mozambique,commitment,27856013.075624
-2017,Niger,paid,201299265.393867
+2017,Niger,paid,201032989.117987
 2017,Rwanda,commitment,4272933.91927732
 2017,"Tanzania, United Republic of",commitment,14522168.7497257
 2017,Togo,commitment,1423663.6716519
 2017,occupied Palestinian territory,commitment,100205721.845462
-2018,Burundi,commitment,46842765.5846445
+2018,Burundi,commitment,42474860.3898277
 2018,Cape Verde,paid,509695.991750895
-2018,Central African Republic,paid,192112819.895404
-2018,Central African Republic,commitment,129197654.607809
+2018,Central African Republic,paid,185042362.612409
+2018,Central African Republic,commitment,123595831.06351
 2018,"Congo, The Democratic Republic of the",paid,594238927.713884
 2018,Kenya,paid,22684388.224145
-2018,Lebanon,commitment,276872121.487842
+2018,Lebanon,commitment,201439892.714344
 2018,Libya,commitment,63557845.6428296
 2018,Malawi,paid,3852541.62737692
 2018,Mali,paid,109796077.24357
-2018,Mali,commitment,143104599.180734
-2018,Niger,commitment,119001771.432398
-2018,Nigeria,paid,368711953.292411
-2018,Nigeria,commitment,372238191.933491
+2018,Mali,commitment,136049720.459545
+2018,Niger,commitment,112069263.887449
+2018,Nigeria,paid,368139673.031248
+2018,Nigeria,commitment,369670391.880164
 2018,Rwanda,commitment,14306890.357424
 2018,Senegal,paid,3181548.09884111
 2018,Senegal,commitment,8510406.42093
-2018,occupied Palestinian territory,commitment,117966990.925401
-2019,Burkina Faso,commitment,73435823.7047599
-2019,Burundi,paid,68286028.713212
+2018,occupied Palestinian territory,commitment,117901742.340961
+2019,Burkina Faso,commitment,65163607.8047598
+2019,Burundi,paid,68154542.0465454
 2019,Cameroon,paid,115329404
-2019,Central African Republic,paid,187512023.46002
-2019,Central African Republic,commitment,171722731.9
-2019,Chad,commitment,119168894.633333
-2019,"Congo, The Democratic Republic of the",commitment,574772221.666667
+2019,Central African Republic,paid,180278707.626687
+2019,Central African Republic,commitment,153918053.433333
+2019,Chad,commitment,74800670.8428571
+2019,"Congo, The Democratic Republic of the",commitment,560322125.166667
 2019,"Congo, The Democratic Republic of the",paid,568524173.980894
-2019,Ethiopia,commitment,360933847
-2019,Iraq,commitment,1052566067.2
+2019,Ethiopia,commitment,355245565
+2019,Iraq,commitment,616041157.3
 2019,Madagascar,commitment,27170217.0272983
-2019,Niger,commitment,116930351.1
-2019,Nigeria,paid,375405055
-2019,Nigeria,commitment,361886622.8
+2019,Niger,commitment,103082836.9
+2019,Nigeria,paid,375194981
+2019,Nigeria,commitment,352239978.2
 2019,Rwanda,commitment,8732647
 2019,"Tanzania, United Republic of",commitment,30622900
-2019,Yemen,commitment,1079707084.4
-2019,occupied Palestinian territory,commitment,96813965
-2020,Afghanistan,commitment,283329014.40898
+2019,Yemen,commitment,1062597308.68333
+2019,occupied Palestinian territory,commitment,96744353.5743418
+2020,Afghanistan,commitment,277832804.446933
 2020,Burkina Faso,paid,161923402.754692
 2020,Cape Verde,commitment,265572.902211643
-2020,"Congo, The Democratic Republic of the",commitment,529721794.506506
+2020,"Congo, The Democratic Republic of the",commitment,513002292.255857
 2020,"Congo, The Democratic Republic of the",paid,555775474.180465
-2020,Ethiopia,commitment,539415540.477011
+2020,Ethiopia,commitment,519236948.600651
 2020,Haiti,paid,84640115.7901008
-2020,Nigeria,paid,399371742.88678
+2020,Nigeria,paid,399371533.297041
 2020,Rwanda,commitment,5663644.30024316
 2020,Sierra Leone,paid,22972305.8945699
-2020,Zimbabwe,commitment,58312108.6109727
-2021,Burundi,commitment,22677982.1856685
-2021,Colombia,paid,236547820.693125
-2021,"Congo, The Democratic Republic of the",commitment,433005618.231665
+2020,Zimbabwe,commitment,50219749.5221061
+2021,Burundi,commitment,22457291.748479
+2021,Colombia,paid,234320544.692932
+2021,"Congo, The Democratic Republic of the",commitment,415055003.498668
 2021,Haiti,commitment,114230798.942945
 2021,Madagascar,commitment,68579529.0897062
-2021,Mali,commitment,171816538.714187
-2021,Niger,commitment,214381605.649103
-2021,Nigeria,commitment,444359485.574873
+2021,Mali,commitment,158277600.506296
+2021,Niger,commitment,185844004.523775
+2021,Nigeria,commitment,408590320.507976
 2021,Rwanda,commitment,10676299.1600845
-2021,"Venezuela, Bolivarian Republic of",paid,78751464.2961261
-2021,occupied Palestinian territory,commitment,153354133.42257
-2022,"Congo, The Democratic Republic of the",commitment,85093110.4706234
-2022,Nigeria,commitment,95542075.3875767
-2022,Senegal,commitment,7697987.2899524
-2022,Syrian Arab Republic,commitment,195510280.657407
-2022,Yemen,commitment,74081618.5858176
-2022,occupied Palestinian territory,commitment,41321525.2446069
+2021,"Venezuela, Bolivarian Republic of",paid,77481532.26702
+2021,occupied Palestinian territory,commitment,145613242.929341
+2022,"Congo, The Democratic Republic of the",commitment,71086446.2440204
+2022,Nigeria,commitment,62923766.509418
+2022,Senegal,commitment,7693221.7038259
+2022,Syrian Arab Republic,commitment,187264325.400706
+2022,Yemen,commitment,60900965.890422
+2022,occupied Palestinian territory,commitment,33801067.3497106
 2020,Mexico,commitment,3672459.81586542
-2018,Colombia,paid,25316079.9632233
+2018,Colombia,paid,25196336.2172286
 2016,Georgia,commitment,1672579.72631666
 2019,Albania,commitment,3104298
 2019,"Korea, Democratic People's Republic of",commitment,7201020
@@ -428,7 +428,7 @@ year,recipient,status,total_2019USD
 2016,Benin,commitment,16260.5966498584
 2016,Burkina Faso,paid,41979295.773378
 2016,Cameroon,commitment,34896991.8231285
-2016,Chad,commitment,66105257.546601
+2016,Chad,commitment,51900394.9556274
 2016,Colombia,paid,8435718.15466199
 2016,Colombia,commitment,50516713.2830752
 2016,Cuba,commitment,5870723.93219377
@@ -449,7 +449,7 @@ year,recipient,status,total_2019USD
 2016,"Korea, Democratic People's Republic of",paid,24605548.5956787
 2016,Lao People's Democratic Republic,commitment,2248508.82834517
 2016,Lebanon,commitment,206574368.560399
-2016,Lesotho,paid,5944382.51988179
+2016,Lesotho,paid,5944382.51988178
 2016,Lesotho,commitment,22230877.478926
 2016,Libya,paid,68046656.9392754
 2016,Malawi,commitment,155380404.369692
@@ -459,12 +459,12 @@ year,recipient,status,total_2019USD
 2016,Mongolia,commitment,6858647.08560011
 2016,Mozambique,commitment,64074569.3533033
 2016,Nepal,commitment,15569986.6607613
-2016,Pakistan,commitment,73375440.4601903
+2016,Pakistan,commitment,69491990.3122428
 2016,Panama,paid,962532.660055266
 2016,Philippines,paid,7788442.87874435
 2016,Philippines,commitment,18677710.6857404
 2016,Rwanda,paid,31772295.9689573
-2016,Sudan,commitment,160815575.97036
+2016,Sudan,commitment,152941942.357686
 2016,Sudan,paid,518191040.667463
 2016,"Tanzania, United Republic of",paid,70747089.2124582
 2016,Timor-Leste,commitment,4087805.63270001
@@ -478,7 +478,7 @@ year,recipient,status,total_2019USD
 2017,Algeria,commitment,26232238.1741921
 2017,Burkina Faso,paid,31088614.1845494
 2017,Cameroon,commitment,48769193.942201
-2017,Colombia,paid,18923325.5851534
+2017,Colombia,paid,18801220.8441126
 2017,Costa Rica,paid,11729682.9526717
 2017,Cuba,paid,11830947.1367225
 2017,Djibouti,paid,14468758.2076848
@@ -490,10 +490,10 @@ year,recipient,status,total_2019USD
 2017,Eritrea,commitment,815652.409700368
 2017,Ghana,commitment,23280.0859560537
 2017,Guinea,commitment,1010923.13358048
-2017,Haiti,commitment,86341256.0257323
+2017,Haiti,commitment,84702436.1305758
 2017,India,commitment,1302724.20029588
 2017,Kazakhstan,paid,66031.9703504111
-2017,"Korea, Democratic People's Republic of",paid,35373926.7113239
+2017,"Korea, Democratic People's Republic of",paid,35371916.4477452
 2017,Madagascar,commitment,17721312.2308308
 2017,Madagascar,paid,42481733.736561
 2017,Malawi,commitment,50857168.7826709
@@ -510,46 +510,46 @@ year,recipient,status,total_2019USD
 2017,Sierra Leone,commitment,4157557.87375312
 2017,South Africa,commitment,261324.600241423
 2017,Sri Lanka,commitment,3275650.37719905
-2017,Sudan,commitment,116516074.158209
+2017,Sudan,commitment,108895472.635183
 2017,Sudan,paid,462125006.145146
 2017,"Tanzania, United Republic of",paid,77433270.9387352
-2017,Turkey,paid,389699224.488541
+2017,Turkey,paid,388710953.763675
 2017,Viet Nam,commitment,3266450.85479483
 2018,Algeria,commitment,22314598.2479375
 2018,Belarus,commitment,315465.575981863
 2018,Burkina Faso,paid,40357679.7161432
-2018,Burundi,paid,55658818.4129335
+2018,Burundi,paid,55530377.2242819
 2018,Cameroon,paid,92957803.8312308
 2018,Cameroon,commitment,84322343.8321714
 2018,Chad,paid,157754728.742596
-2018,Colombia,commitment,101885854.310939
+2018,Colombia,commitment,98973441.0112043
 2018,Djibouti,commitment,6378925.37894027
 2018,Eritrea,paid,9742012.53310861
 2018,Fiji,commitment,132999.169647296
 2018,Ghana,paid,1038982.70972915
 2018,Haiti,paid,34325980.6825084
 2018,India,commitment,2993344.6595125
-2018,Kenya,commitment,197928749.819356
+2018,Kenya,commitment,192617506.386037
 2018,"Korea, Democratic People's Republic of",paid,30469729.6138735
 2018,Mauritania,paid,42200012.0804454
-2018,Mauritania,commitment,47688088.1862948
-2018,Niger,paid,159822995.926857
-2018,Pakistan,commitment,58690052.9647365
-2018,Multi-recipient,paid,83047022.064744
+2018,Mauritania,commitment,36512346.3914777
+2018,Niger,paid,158603542.362682
+2018,Pakistan,commitment,55159012.9013268
+2018,Multi-recipient,paid,82254585.2656244
 2018,Sudan,paid,378303018.194038
-2018,Sudan,commitment,370266483.473745
+2018,Sudan,commitment,358822221.375458
 2018,"Tanzania, United Republic of",commitment,17546956.9769657
 2018,"Tanzania, United Republic of",paid,28753389.8650842
 2018,Tunisia,paid,498337.36820455
 2019,Algeria,commitment,23967575
 2019,Argentina,commitment,1488879
-2019,Multi-recipient,paid,94103086
+2019,Multi-recipient,paid,89294156
 2019,Bosnia and Herzegovina,paid,1295846
 2019,Brazil,paid,23765811
-2019,Burundi,commitment,21969997.4
+2019,Burundi,commitment,17213280.85
 2019,Cameroon,commitment,71047358
 2019,Chad,paid,238749108
-2019,Colombia,commitment,136586090.666667
+2019,Colombia,commitment,133724756.666667
 2019,Comoros,commitment,551067
 2019,Congo,paid,8865979
 2019,Cuba,commitment,1295847
@@ -565,17 +565,17 @@ year,recipient,status,total_2019USD
 2019,India,commitment,4209619
 2019,"Iran, Islamic Republic of",paid,9773900
 2019,Kenya,paid,33214984
-2019,Kenya,commitment,176973889
+2019,Kenya,commitment,171494437
 2019,"Korea, Democratic People's Republic of",paid,38399261
-2019,Libya,paid,85688033
+2019,Libya,paid,85004520.3333333
 2019,Malawi,commitment,35601275
 2019,Malawi,paid,27791059
 2019,Mali,paid,85626805.0053982
-2019,Mauritania,commitment,41146673.8333333
+2019,Mauritania,commitment,29616993.1666667
 2019,Mauritania,paid,22041723
-2019,Myanmar,commitment,117738937.285714
-2019,Niger,paid,167402501
-2019,Pakistan,commitment,51636872.3636364
+2019,Myanmar,commitment,87638774.9309524
+2019,Niger,paid,166144427
+2019,Pakistan,commitment,47994003.2727273
 2019,Peru,paid,18394580
 2019,Philippines,commitment,19468921
 2019,Rwanda,paid,23302627
@@ -583,20 +583,20 @@ year,recipient,status,total_2019USD
 2019,Senegal,paid,1949727
 2019,Serbia,commitment,243137
 2019,Sierra Leone,commitment,250582
-2019,South Sudan,commitment,449051080.01368
+2019,South Sudan,commitment,406403965.230347
 2019,Sudan,paid,424403593
-2019,Sudan,commitment,266456381.966667
+2019,Sudan,commitment,230255149.033333
 2019,Tajikistan,paid,1769557
 2019,"Tanzania, United Republic of",paid,16359896
 2019,Uganda,paid,108753577
-2019,Ukraine,paid,44078359
+2019,Ukraine,paid,42856291.6666667
 2019,"Venezuela, Bolivarian Republic of",paid,68075306
 2019,Viet Nam,commitment,3833484
-2019,Zimbabwe,commitment,67233620
+2019,Zimbabwe,commitment,58873051.9910085
 2020,Algeria,paid,8811893.54914157
 2020,Angola,paid,9379870.04215297
 2020,Argentina,paid,12476160.3067081
-2020,Multi-recipient,paid,260297602.071381
+2020,Multi-recipient,paid,255437065.682959
 2020,Armenia,paid,4070860.24421607
 2020,Azerbaijan,paid,4017634.37813109
 2020,Benin,commitment,5905507.2553428
@@ -605,10 +605,10 @@ year,recipient,status,total_2019USD
 2020,Brazil,paid,40292567.5896769
 2020,Burundi,paid,80733683.2351785
 2020,Cambodia,paid,13064055.5814229
-2020,Cameroon,commitment,74588708.239295
+2020,Cameroon,commitment,72763472.5802936
 2020,Cameroon,paid,144759167.779119
-2020,Central African Republic,commitment,180165371.836804
-2020,Central African Republic,paid,260551305.592263
+2020,Central African Republic,commitment,155212541.506758
+2020,Central African Republic,paid,253518302.666285
 2020,Chad,paid,212812957.705269
 2020,Chile,paid,8775707.27967688
 2020,Costa Rica,paid,6229435.26494921
@@ -619,7 +619,7 @@ year,recipient,status,total_2019USD
 2020,Egypt,paid,76599554.0800869
 2020,El Salvador,paid,6233914.05756962
 2020,Eritrea,paid,7685368.62956391
-2020,Ethiopia,paid,428488767.470282
+2020,Ethiopia,paid,428462474.136665
 2020,Guatemala,paid,12326386.9398122
 2020,Guyana,paid,2146377.84571917
 2020,Guyana,commitment,7831091.59373559
@@ -627,23 +627,23 @@ year,recipient,status,total_2019USD
 2020,Honduras,paid,14045057.1465679
 2020,India,paid,15041939.2710126
 2020,"Iran, Islamic Republic of",paid,53283544.6660904
-2020,Iraq,commitment,943524388.636779
+2020,Iraq,commitment,553230945.358449
 2020,Kazakhstan,paid,13798214.1627713
 2020,Kenya,paid,63178139.7123581
-2020,Kenya,commitment,118796182.991142
+2020,Kenya,commitment,113489247.625415
 2020,Lesotho,paid,8581239.46130204
 2020,Liberia,paid,2128466.32479691
 2020,Madagascar,paid,20877160.0687403
-2020,Mali,paid,144951775.721583
-2020,Mauritania,paid,36843005.2981393
-2020,Mauritania,commitment,51414566.2552634
+2020,Mali,paid,144946759.258433
+2020,Mauritania,paid,36839684.4091469
+2020,Mauritania,commitment,40245991.6959051
 2020,Mauritius,commitment,422614.396322768
 2020,Mexico,paid,5973702.74184885
 2020,Morocco,paid,5472688.62542165
 2020,Nepal,paid,16418820.8371975
 2020,Nicaragua,commitment,12001037.4404199
 2020,Nicaragua,paid,6548130.07993965
-2020,Nigeria,commitment,396782865.055769
+2020,Nigeria,commitment,386914142.615066
 2020,Panama,paid,6077485.45026146
 2020,Panama,commitment,15933867.8142704
 2020,Paraguay,paid,8447540.35428446
@@ -652,28 +652,28 @@ year,recipient,status,total_2019USD
 2020,Rwanda,paid,22842281.0139553
 2020,Senegal,paid,16542849.3919474
 2020,Serbia,paid,23383361.083525
-2020,Somalia,commitment,739663794.292888
+2020,Somalia,commitment,634590209.425299
 2020,Sudan,paid,664519916.34709
-2020,"Tanzania, United Republic of",paid,39242193.3866508
+2020,"Tanzania, United Republic of",paid,38946683.2762255
 2020,Trinidad and Tobago,paid,3270222.22852339
 2020,Trinidad and Tobago,commitment,5051691.79102811
 2020,Turkey,paid,234039065.451508
 2020,Uganda,paid,55042029.5142269
 2020,Uruguay,paid,1402670.15671823
-2020,"Venezuela, Bolivarian Republic of",paid,100777587.769196
-2020,Zambia,paid,24505444.324695
-2020,Zimbabwe,paid,206226603.313433
+2020,"Venezuela, Bolivarian Republic of",paid,99448006.5370777
+2020,Zambia,paid,24178611.9666221
+2020,Zimbabwe,paid,204137703.87579
 2021,Algeria,paid,7037063.93432641
 2021,Benin,paid,1379280.07336614
 2021,Burundi,paid,60735764.9093986
 2021,Cameroon,paid,114575292.952324
-2021,Central African Republic,paid,224057177.815182
-2021,Central African Republic,commitment,245644757.353568
+2021,Central African Republic,paid,222146483.115562
+2021,Central African Republic,commitment,222748313.000859
 2021,Congo,paid,1614822.46010672
-2021,"Congo, The Democratic Republic of the",paid,488141940.733442
+2021,"Congo, The Democratic Republic of the",paid,487452821.895091
 2021,Costa Rica,paid,1862391.33661354
 2021,Ecuador,paid,54204449.6088782
-2021,Egypt,paid,49986693.1760811
+2021,Egypt,paid,49986693.176081
 2021,El Salvador,paid,9742513.94627234
 2021,Eritrea,paid,6255107.83302463
 2021,Gambia,paid,1364685.13306113
@@ -683,7 +683,7 @@ year,recipient,status,total_2019USD
 2021,Honduras,paid,35348766.3201505
 2021,India,paid,158515937.42507
 2021,Indonesia,paid,27543487.8690171
-2021,Multi-recipient,commitment,233429616.347501
+2021,Multi-recipient,commitment,193998499.934269
 2021,Kazakhstan,paid,49512.7357082679
 2021,"Korea, Democratic People's Republic of",paid,1528772.3717911
 2021,Libya,paid,121870517.322931
@@ -692,47 +692,47 @@ year,recipient,status,total_2019USD
 2021,Malaysia,paid,5364990.86314648
 2021,Mauritania,paid,8509078.6839646
 2021,Mongolia,paid,11856505.9768152
-2021,Myanmar,commitment,162511420.158532
+2021,Myanmar,commitment,125718712.91651
 2021,Nepal,paid,14760137.2262266
 2021,Nicaragua,paid,2704280.9631655
-2021,Niger,paid,228241981.553991
+2021,Niger,paid,228145221.992955
 2021,"North Macedonia, Republic of",paid,354477.341881606
 2021,Palau,paid,28894.2934794868
 2021,Panama,paid,4888844.50059787
-2021,Peru,paid,47615759.9328391
+2021,Peru,paid,47615759.932839
 2021,Philippines,paid,2708022.86386248
 2021,Rwanda,paid,18203241.4512117
 2021,Saint Vincent and the Grenadines,paid,2566852.89139623
-2021,Senegal,paid,5107198.87948499
+2021,Senegal,paid,5155797.47993939
 2021,South Africa,paid,939511.669100275
 2021,Sri Lanka,paid,876082.534402392
-2021,Sudan,paid,507386597.786469
-2021,Sudan,commitment,403246408.356078
+2021,Sudan,commitment,348129085.410451
+2021,Sudan,paid,507750995.924508
 2021,Suriname,paid,14446.6873271845
 2021,Tajikistan,paid,2519861.43040601
-2021,"Tanzania, United Republic of",paid,3842617.13422883
+2021,"Tanzania, United Republic of",paid,3819842.18592873
 2021,Uganda,paid,46432727.5488695
-2021,Ukraine,paid,48690114.6254976
-2021,"Venezuela, Bolivarian Republic of",commitment,254414738.903326
-2021,Zimbabwe,paid,84548229.1351119
-2022,Burkina Faso,commitment,17176841.6569636
-2022,"Congo, The Democratic Republic of the",paid,1669295.11765253
+2021,Ukraine,paid,47613700.4961469
+2021,"Venezuela, Bolivarian Republic of",commitment,252030152.496919
+2021,Zimbabwe,paid,82553044.3074665
+2022,Burkina Faso,commitment,14885407.5627739
+2022,"Congo, The Democratic Republic of the",paid,1000365.43988562
 2022,Global,commitment,23308208.0272756
 2022,Lebanon,paid,1093586.04573442
-2022,Mali,commitment,29957213.930343
-2022,Somalia,commitment,81903480.9538836
+2022,Mali,commitment,16832065.7507628
+2022,Somalia,commitment,36782756.990763
 2017,Congo,paid,15402520.5712477
 2020,Angola,commitment,12400272.5777166
 2020,Djibouti,commitment,20047554.058295
 2020,Egypt,commitment,12148422.5105854
 2020,Ghana,paid,12626191.0515656
 2020,Liberia,commitment,10801535.8989064
-2020,Zambia,commitment,17315005.0768215
+2020,Zambia,commitment,17235777.497825
 2021,Lesotho,paid,2462343.69417861
 2016,"Iran, Islamic Republic of",commitment,24556235.4339694
 2016,"Iran, Islamic Republic of",paid,1712773.9953324
 2016,Turkey,commitment,190047003.074071
-2019,Zambia,paid,4264266.05690046
+2019,Zambia,paid,3926332.05690046
 2016,Croatia,commitment,51321.0293932486
 2016,Côte d'Ivoire,commitment,16125268.8033952
 2016,Greece,commitment,190105868.464883
@@ -756,33 +756,33 @@ year,recipient,status,total_2019USD
 2017,Tunisia,commitment,1808934.62674585
 2017,"Venezuela, Bolivarian Republic of",commitment,2678830.28607819
 2017,Zimbabwe,commitment,74895896.9276887
-2018,Multi-recipient,commitment,402953776.689635
+2018,Multi-recipient,commitment,402304535.82887
 2018,Guatemala,commitment,30345290.7135796
 2018,"Iran, Islamic Republic of",commitment,15965639.4221307
 2018,Lao People's Democratic Republic,commitment,4395203.04943294
 2018,Malawi,commitment,22751497.8323371
 2018,Peru,commitment,13315121.479786
 2018,Switzerland,commitment,58165.0557278173
-2018,Turkey,paid,271260453.582305
-2018,"Venezuela, Bolivarian Republic of",commitment,25690607.0365953
-2018,Zimbabwe,commitment,70611418.7159233
-2019,Congo,commitment,16569982
+2018,Turkey,paid,258293898.025415
+2018,"Venezuela, Bolivarian Republic of",commitment,25532524.4564694
+2018,Zimbabwe,commitment,70442796.9038123
+2019,Congo,commitment,13022370.8
 2019,Côte d'Ivoire,commitment,318384
 2019,Falkland Islands (Malvinas),commitment,245488
-2019,Global,commitment,74719586
-2019,Indonesia,commitment,13392223
+2019,Global,commitment,26206284
+2019,Indonesia,commitment,13298540
 2019,"Iran, Islamic Republic of",commitment,17379154
 2019,Nepal,commitment,6174801
 2019,Peru,commitment,25344938
 2019,Tunisia,commitment,1826567
-2019,Turkey,commitment,832596852
+2019,Turkey,commitment,826971852
 2020,Albania,commitment,928224.710584805
 2020,Armenia,commitment,7625019.59876088
 2020,Belarus,commitment,251094.474635958
 2020,Bhutan,paid,4759252.21520619
 2020,Bosnia and Herzegovina,commitment,11550455.0860984
 2020,Congo,paid,11624171.0238892
-2020,Congo,commitment,10364864.6921581
+2020,Congo,commitment,6928947.49804345
 2020,Croatia,paid,3148122.06083927
 2020,Gambia,paid,2023012.69652836
 2020,Georgia,commitment,234005.545293448
@@ -798,25 +798,25 @@ year,recipient,status,total_2019USD
 2020,South Africa,paid,8654323.8510093
 2020,South Africa,commitment,546272.09771587
 2020,São Tomé and Príncipe,paid,736980.875227891
-2020,Turkey,commitment,633732422.161818
+2020,Turkey,commitment,627835142.061599
 2021,Bosnia and Herzegovina,commitment,7745796.75234917
 2021,Cambodia,commitment,23324217.825509
-2021,Cameroon,commitment,97566740.5154464
-2021,Congo,commitment,12097738.2954181
+2021,Cameroon,commitment,95871388.5937031
+2021,Congo,commitment,8972952.35526296
 2021,Equatorial Guinea,commitment,325403.771487549
 2021,Ghana,commitment,3340514.39134629
 2021,Honduras,commitment,93930079.7544436
 2021,India,commitment,11137084.8361658
 2021,"Iran, Islamic Republic of",commitment,28324784.6328525
-2021,Kenya,commitment,95704304.7386423
-2021,Libya,commitment,41848192.4734177
+2021,Kenya,commitment,90877926.197117
+2021,Libya,commitment,41848192.0082991
 2021,Malawi,commitment,16485890.9097811
 2021,Nepal,commitment,20228063.5534548
 2021,Pakistan,commitment,54289832.0399481
-2021,Somalia,commitment,621743169.384672
-2021,South Sudan,commitment,409712745.174326
-2021,Turkey,commitment,459163206.66649
-2022,Iraq,commitment,90281646.1671785
+2021,Somalia,commitment,535476302.492557
+2021,South Sudan,commitment,378668855.689583
+2021,Turkey,commitment,453785578.377776
+2022,Iraq,commitment,49364867.6753397
 2016,South Africa,commitment,5692148.01024038
 2017,"Moldova, Republic of",commitment,35751.6751911166
 2022,"",paid,650601.745372957
@@ -832,21 +832,21 @@ year,recipient,status,total_2019USD
 2016,Mauritania,commitment,16477343.7003894
 2016,Senegal,paid,4420197.75104274
 2016,Senegal,commitment,7287314.88267455
-2017,Congo,commitment,5257104.44343105
+2017,Congo,commitment,1596740.75469788
 2017,Djibouti,commitment,6049189.03054125
 2017,Turkey,commitment,164954882.104056
 2018,Albania,commitment,3482.42122349373
 2018,Djibouti,paid,4833017.2688541
 2018,Dominica,commitment,47815.8421150293
 2018,Guatemala,paid,1722350.59426552
-2018,Haiti,commitment,45171678.0895
+2018,Haiti,commitment,43633892.4415505
 2018,"Korea, Democratic People's Republic of",commitment,6557795.92685012
 2018,Madagascar,commitment,33814163.4615761
 2019,"Bolivia, Plurinational State of",commitment,2353030
 2019,Brazil,commitment,21774909
 2019,Chile,commitment,562833
 2019,Djibouti,paid,17487995
-2019,Haiti,commitment,33545160
+2019,Haiti,commitment,30823551.75
 2019,Lao People's Democratic Republic,commitment,2781152
 2019,Paraguay,commitment,2399191
 2019,Senegal,commitment,3218634
@@ -857,30 +857,30 @@ year,recipient,status,total_2019USD
 2020,Madagascar,commitment,25062120.8943301
 2020,Senegal,commitment,4478721.207835
 2021,Algeria,commitment,23127133.8598113
-2021,Armenia,commitment,9911061.79421511
+2021,Armenia,commitment,9911061.7942151
 2021,Brazil,commitment,34858643.803921
-2021,Chad,commitment,157410454.33692
-2021,Colombia,commitment,230978542.049151
+2021,Chad,commitment,101387122.679246
+2021,Colombia,commitment,226918913.604029
 2021,Djibouti,commitment,6691787.17086586
 2021,Ecuador,commitment,27950017.0897297
 2021,Guinea,commitment,3810968.05717248
 2021,Lao People's Democratic Republic,commitment,18803357.291474
-2021,Mauritania,commitment,47092397.7692304
-2021,Peru,commitment,67417321.8160221
+2021,Mauritania,commitment,31294043.904508
+2021,Peru,commitment,63988956.6248671
 2021,Turkey,paid,134597870.624348
-2022,Central African Republic,commitment,71376698.3196726
+2022,Central African Republic,commitment,54973870.9435122
 2022,Niger,paid,4788122.98604027
 2022,Nigeria,paid,1402274.00355362
 2016,Algeria,commitment,26826104.5660015
 2016,Bosnia and Herzegovina,commitment,2510450.10699331
-2016,Cambodia,commitment,16767158.200666
+2016,Cambodia,commitment,12509958.0617553
 2016,Kenya,paid,98915800.7222684
 2016,"North Macedonia, Republic of",paid,40377592.2162034
 2016,Serbia,paid,16440888.675925
 2016,Slovenia,paid,1943716.91387556
 2016,Multi-recipient,commitment,73907.2502449691
 2017,Bosnia and Herzegovina,commitment,1670648.02357854
-2017,Cambodia,commitment,8987827.46701827
+2017,Cambodia,commitment,4867439.41515512
 2017,Chile,commitment,6323633.60631202
 2017,Eswatini,paid,4607781.28442558
 2017,Greece,paid,256765875.547184
@@ -891,23 +891,23 @@ year,recipient,status,total_2019USD
 2017,Serbia,commitment,7928767.67183813
 2017,United States,paid,11772.6400481669
 2018,Bosnia and Herzegovina,commitment,3703447.19886595
-2018,Cambodia,commitment,7065465.84008401
-2018,Congo,commitment,14957451.557976
+2018,Cambodia,commitment,3194592.34467118
+2018,Congo,commitment,11518745.1526699
 2018,Ecuador,commitment,13768838.1412395
 2018,El Salvador,commitment,2593952.84585102
 2018,Honduras,commitment,9236314.14685351
-2018,Italy,commitment,3575635.99684327
+2018,Italy,commitment,1818110.32691702
 2018,Mozambique,commitment,14952250.4152918
 2018,Turkey,commitment,882945954.916857
 2019,Bosnia and Herzegovina,commitment,6451593
-2019,Cambodia,commitment,6355898.42857143
+2019,Cambodia,commitment,2362433.28571429
 2019,Costa Rica,commitment,1813353
 2019,Ecuador,commitment,36228111
 2019,Egypt,commitment,7663637
 2019,El Salvador,commitment,226937
 2019,Eswatini,commitment,1141386
 2019,Honduras,commitment,1594018
-2019,Italy,commitment,3626374
+2019,Italy,commitment,1813187
 2019,Lesotho,commitment,3077850
 2019,Mexico,commitment,2019749
 2019,Nicaragua,commitment,1287109
@@ -927,68 +927,68 @@ year,recipient,status,total_2019USD
 2021,Egypt,commitment,36867522.3941672
 2021,El Salvador,commitment,20002127.2319305
 2021,Eswatini,commitment,1703596.45933828
-2021,Global,commitment,566252317.78411
+2021,Global,commitment,522976173.157571
 2021,Guatemala,commitment,100027951.555101
 2021,Kazakhstan,commitment,953000.195000748
 2021,Mauritius,commitment,256050.89510125
 2021,Nicaragua,commitment,21082804.4149966
 2021,Saint Vincent and the Grenadines,commitment,6111323.77314715
 2021,Sri Lanka,commitment,8464329.45627603
-2021,"Tanzania, United Republic of",commitment,23823993.015965
+2021,"Tanzania, United Republic of",commitment,23403054.4273735
 2021,Thailand,commitment,39090967.8053493
 2021,Togo,commitment,68923.7027488073
-2021,Zimbabwe,commitment,78318032.5435348
+2021,Zimbabwe,commitment,71106126.4776226
 2022,Afghanistan,commitment,32974965.0972443
 2022,Algeria,commitment,1925399.01372568
 2022,Armenia,commitment,22894.2473468777
 2022,Azerbaijan,commitment,155171.55041878
-2022,Multi-recipient,commitment,77155273.3634982
-2022,Bangladesh,commitment,11706878.421513
+2022,Multi-recipient,commitment,38834228.4565157
+2022,Bangladesh,commitment,10691343.8721463
 2022,Benin,commitment,33478.793412271
-2022,Burundi,commitment,4927793.18866295
-2022,Cameroon,commitment,4494863.81777729
-2022,Chad,commitment,101962851.641431
-2022,Colombia,commitment,15581325.1832792
+2022,Burundi,commitment,4713387.20164595
+2022,Cameroon,commitment,2847847.48364412
+2022,Chad,commitment,51772328.8625756
+2022,Colombia,commitment,11656524.6351819
 2022,Côte d'Ivoire,commitment,33478.793412271
 2022,Djibouti,commitment,39025.2134752987
 2022,Ecuador,commitment,2848322.32241234
-2022,Multi-recipient,paid,4578657.78546264
-2022,Ethiopia,commitment,41936787.499851
+2022,Multi-recipient,paid,1144664.44636566
+2022,Ethiopia,commitment,28975642.5358301
 2022,Ghana,commitment,33478.793412271
 2022,Haiti,commitment,6558799.37223868
 2022,"Iran, Islamic Republic of",commitment,76314.1578229257
 2022,Jordan,commitment,7190881.94060412
-2022,Kenya,commitment,21602073.5730849
-2022,Lebanon,commitment,137705003.086547
-2022,Libya,paid,0
+2022,Kenya,commitment,16913132.502092
+2022,Lebanon,commitment,58322366.0482502
 2022,Libya,commitment,4779857.64257655
+2022,Libya,paid,0
 2022,Madagascar,commitment,28698368.0307337
-2022,Mauritania,commitment,27797399.6413281
+2022,Mauritania,commitment,12420565.9350639
 2022,Mozambique,commitment,25341991.6341871
-2022,Niger,commitment,36562420.9157296
+2022,Niger,commitment,21498647.3612874
 2022,Peru,commitment,2407674.1125082
-2022,South Sudan,commitment,77200273.0817508
-2022,South Sudan,paid,16441412.3200245
+2022,South Sudan,commitment,58012175.189128
+2022,South Sudan,paid,6669681.34971749
 2022,Sri Lanka,commitment,1021159.24950415
-2022,Sudan,commitment,124706103.675014
-2022,"Tanzania, United Republic of",commitment,6421396.73336454
+2022,Sudan,commitment,74941377.0088826
+2022,"Tanzania, United Republic of",commitment,6012444.92417039
 2022,Thailand,commitment,10435.6487401949
 2022,Togo,commitment,33482.216339287
-2022,Turkey,commitment,17074881.0898059
-2022,Uganda,commitment,12952371.4458532
-2022,Ukraine,commitment,10888982.0140314
-2022,"Venezuela, Bolivarian Republic of",commitment,32995660.4934388
-2022,Zimbabwe,commitment,9914039.31802608
+2022,Turkey,commitment,11851083.5981796
+2022,Uganda,commitment,4165699.39740961
+2022,Ukraine,commitment,9531475.68714871
+2022,"Venezuela, Bolivarian Republic of",commitment,32616116.6049173
+2022,Zimbabwe,commitment,2907501.7533386
 2018,Eritrea,commitment,1908311.24699971
 2018,Zambia,commitment,1259649.5558017
-2019,Turkey,paid,650879376
-2019,Zambia,commitment,1845279
+2019,Turkey,paid,638645261.5
+2019,Zambia,commitment,1762770.5
 2020,Antigua and Barbuda,commitment,338111.35244493
 2020,Eritrea,commitment,4856904.04961929
 2020,Malawi,paid,14262694.1882024
 2021,Lithuania,commitment,103803.886590379
-2021,Sierra Leone,paid,1142261.97088603
 2021,Sierra Leone,commitment,4468016.52271457
+2021,Sierra Leone,paid,1142261.97088603
 2016,"Bolivia, Plurinational State of",commitment,6546786.71889195
 2016,El Salvador,paid,594708.560005166
 2016,El Salvador,commitment,4561625.70964123
@@ -1076,8 +1076,8 @@ year,recipient,status,total_2019USD
 2020,Uzbekistan,paid,5069978.63644032
 2020,Uzbekistan,commitment,8038255.38538664
 2020,Vanuatu,commitment,3904294.39019995
-2021,Angola,paid,7498081.67169533
 2021,Angola,commitment,352778.445169267
+2021,Angola,paid,7498081.67169533
 2021,Armenia,paid,3017700.04234361
 2021,Botswana,paid,306202.282981719
 2021,Comoros,paid,4636035.44428956
@@ -1085,8 +1085,8 @@ year,recipient,status,total_2019USD
 2021,Eswatini,paid,2146486.2629685
 2021,Fiji,commitment,1269706.56532404
 2021,Gambia,commitment,2116670.6710156
-2021,Guinea-Bissau,paid,1659157.47955944
 2021,Guinea-Bissau,commitment,470371.260225689
+2021,Guinea-Bissau,paid,1659157.47955944
 2021,Indonesia,commitment,4779663.53129944
 2021,Lesotho,commitment,5207173.45320354
 2021,Marshall Islands,commitment,15786863.6436003
@@ -1095,7 +1095,7 @@ year,recipient,status,total_2019USD
 2021,Morocco,commitment,178023.932234765
 2021,Namibia,commitment,470371.260225689
 2021,Philippines,commitment,16494849.3175451
-2021,Senegal,commitment,1367832.49642573
+2021,Senegal,commitment,1362918.90831054
 2021,Timor-Leste,commitment,4718854.67814731
 2021,Tunisia,paid,11479005.3304034
 2021,Vanuatu,commitment,862351.247319747
@@ -1171,7 +1171,7 @@ year,recipient,status,total_2019USD
 2019,Thailand,paid,1322741
 2021,Cambodia,paid,1184259.31843037
 2021,Switzerland,paid,1798959.60209055
-2022,Colombia,paid,13183370.2386586
+2022,Colombia,paid,12268723.9588838
 2016,Kazakhstan,commitment,933172.822984836
 2020,São Tomé and Príncipe,commitment,518981.882516444
 2016,Morocco,paid,4386.79680901263
@@ -1239,6 +1239,7 @@ year,recipient,status,total_2019USD
 2021,Maldives,paid,50314.1310504339
 2021,Mauritius,paid,587110.94434145
 2021,Namibia,paid,971972.009087876
+2021,Singapore,paid,115988.335760484
 2021,Togo,paid,1073096.94888539
 2021,Turkmenistan,paid,2106126.7468817
 2021,Uruguay,paid,1707282.43341525
@@ -1310,9 +1311,9 @@ year,recipient,status,total_2019USD
 2021,Croatia,commitment,3516.39095046333
 2021,Czech Republic,commitment,189046.347349257
 2021,Georgia,commitment,219996.827190306
-2021,Greece,commitment,483609.3811203
-2021,Hungary,commitment,0
+2021,Greece,commitment,378639.985964314
 2021,Hungary,paid,196549.764084618
+2021,Hungary,commitment,0
 2021,Italy,commitment,196767.254424773
 2021,Tajikistan,commitment,1114910.83799301
 2022,"Bolivia, Plurinational State of",commitment,137514.283607091
@@ -1323,8 +1324,8 @@ year,recipient,status,total_2019USD
 2022,Kenya,paid,158162.131052958
 2022,"Korea, Democratic People's Republic of",commitment,858780.664883632
 2022,"Korea, Democratic People's Republic of",paid,20974.6304945415
-2022,Kyrgyzstan,paid,0
 2022,Kyrgyzstan,commitment,96163.2603684909
+2022,Kyrgyzstan,paid,0
 2022,Lao People's Democratic Republic,commitment,70888.5799159967
 2022,Nicaragua,commitment,855473.067147579
 2022,Sri Lanka,paid,51964.5562771576
@@ -1481,10 +1482,10 @@ year,recipient,status,total_2019USD
 2021,Liberia,commitment,1595238.53528399
 2021,Papua New Guinea,commitment,2130252.68466765
 2021,Viet Nam,commitment,6134638.08329557
-2022,"Tanzania, United Republic of",paid,413450.358374107
-2022,Zimbabwe,paid,2597861.77079185
+2022,"Tanzania, United Republic of",paid,137816.786124702
+2022,Zimbabwe,paid,649465.442697963
 2022,Pakistan,commitment,69239.9672956615
-2022,Ethiopia,paid,1352549.43671665
+2022,Ethiopia,paid,676274.718358325
 2022,Philippines,paid,7792953.77701392
 2022,Philippines,commitment,3085043.88263703
 2022,Afghanistan,paid,51220.4974547176
