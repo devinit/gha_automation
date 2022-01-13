@@ -52,8 +52,8 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022){
   
   #Deflate by source location and destination year
   fts_orgs <- data.table(fromJSON("https://api.hpc.tools/v1/public/organization")$data)
-  fts_orgs[, `:=` (org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), donor_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name)), by = id]
-  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), donor_country, org_type)]
+  fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), donor_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name)), by = id]
+  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), donor_country, source_org_type)]
   
   #Manual government development agencies
   fts_orgs[sourceObjects_Organization.id %in% c("9946", "10399", "4058", "2987", "30", "6547"), org_type := "Government"]

@@ -1,137 +1,250 @@
-year,org_type,status,total_2019USD
-2016,Government,commitment,7853961742.81285
-2017,Government,paid,11589136811.4684
-2018,Government,paid,12673710198.534
-2020,Government,paid,13493009319.3715
-2021,Government,paid,12038534179.3087
-2016,Government,paid,11513365257.8632
-2019,Government,paid,12716420148.2691
-2017,Government,commitment,6700126429.5814
-2018,Government,commitment,8844456201.32895
-2019,Government,commitment,8971657218.01608
-2020,Government,commitment,11034987273.9146
-2021,Government,commitment,10704886002.3708
-2022,Government,commitment,1935412840.40408
-2022,Government,paid,52458568.8190087
-2016,,paid,473391086.787041
-2016,,commitment,79698958.3637326
-2016,Private organization/foundation,paid,486371726.777369
-2016,NGO,paid,107448647.769769
-2016,UN agency,paid,821453630.822595
-2016,Financial institution,paid,5699219.97140034
-2016,Private organization/foundation,commitment,113546333.74051
-2016,Inter-governmental,commitment,1527979027.61159
-2016,NGO,commitment,1569540.73783785
-2016,Red Cross/Red Crescent,paid,5784552.01510862
-2016,Red Cross/Red Crescent,commitment,174585.075647349
-2016,Inter-governmental,paid,1486005861.67938
-2016,UN agency,commitment,22570224.4614634
-2016,Pooled fund,commitment,111407622.267711
-2016,Pooled fund,paid,371400962.215932
-2016,Financial institution,commitment,1149982.49000471
-2016,Other,commitment,2680694.81328925
-2016,Other,paid,118979.375726977
-2017,,paid,414676376.231886
-2017,,commitment,7582314.08136054
-2017,UN agency,paid,322744837.409686
-2017,NGO,paid,73951233.2301545
-2017,Financial institution,paid,130123568.425821
-2017,Private organization/foundation,paid,367228824.403182
-2017,Private organization/foundation,commitment,20370782.9156359
-2017,NGO,commitment,66977185.5617087
-2017,Red Cross/Red Crescent,paid,3874264.71118435
-2017,UN agency,commitment,3347163.99017769
-2017,Inter-governmental,paid,1590069882.96015
-2017,Inter-governmental,commitment,1588372397.01122
-2017,Pooled fund,commitment,22667853.731811
-2017,Pooled fund,paid,418165761.475209
-2017,Financial institution,commitment,75917368.7697721
-2017,Other,paid,8123367.14014891
-2017,Other,commitment,2435461.37314439
-2018,,paid,76906228.2405739
-2018,,commitment,98098.286242559
-2018,Private organization/foundation,paid,232349466.708287
-2018,Private organization/foundation,commitment,47448667.6192664
-2018,NGO,paid,96930292.731172
-2018,Inter-governmental,paid,745122947.563131
-2018,Financial institution,paid,56299002.791681
-2018,UN agency,paid,170830161.652242
-2018,NGO,commitment,65297776.3669064
-2018,Red Cross/Red Crescent,commitment,236925.999950166
-2018,UN agency,commitment,12385948.4799572
-2018,Inter-governmental,commitment,2429340654.93163
-2018,Red Cross/Red Crescent,paid,2665637.48484627
-2018,Pooled fund,paid,477993949.886294
-2018,Pooled fund,commitment,14642732.9083846
-2018,Financial institution,commitment,37176264.3740966
-2018,Other,paid,11286506.0509966
-2018,Other,commitment,4549512.06893406
-2019,,paid,606694181
-2019,,commitment,4633075
-2019,Private organization/foundation,paid,293856458
-2019,Private organization/foundation,commitment,57909313
-2019,NGO,paid,174597315
-2019,NGO,commitment,63283447
-2019,UN agency,paid,174987468
-2019,Other,paid,13222841
-2019,Financial institution,paid,88795927
-2019,Red Cross/Red Crescent,commitment,1130071
-2019,UN agency,commitment,62595675
-2019,Inter-governmental,paid,1150008224.4
-2019,Inter-governmental,commitment,1912827105
-2019,Red Cross/Red Crescent,paid,7774855
-2019,Pooled fund,paid,530010749
-2019,Pooled fund,commitment,5771369
-2019,Financial institution,commitment,4654687
-2019,Other,commitment,7132004
-2020,,paid,55409705.9420205
-2020,,commitment,23453599.8384833
-2020,Private organization/foundation,commitment,259111408.830963
-2020,Private organization/foundation,paid,348749435.728791
-2020,NGO,paid,142247943.520579
-2020,UN agency,paid,228337264.280724
-2020,UN agency,commitment,74338021.6093838
-2020,Inter-governmental,paid,913518083.218305
-2020,Financial institution,commitment,129766938.338195
-2020,Financial institution,paid,107508132.566408
-2020,Other,paid,20649383.0293906
-2020,Other,commitment,10453731.0269741
-2020,Pooled fund,paid,744691239.072861
-2020,NGO,commitment,96711981.0737958
-2020,Inter-governmental,commitment,2252765686.8857
-2020,Red Cross/Red Crescent,commitment,456146.375579501
-2020,Red Cross/Red Crescent,paid,20519706.0793448
-2020,Pooled fund,commitment,97279079.6041438
-2021,,paid,80493033.796259
-2021,,commitment,4794963.87991894
-2021,Private organization/foundation,commitment,11862817.4393094
-2021,NGO,paid,116165897.705553
-2021,UN agency,paid,290067520.175372
-2021,NGO,commitment,40108265.0334052
-2021,UN agency,commitment,47922013.5426511
-2021,Private organization/foundation,paid,224289875.510828
-2021,Other,paid,3842542.30008918
-2021,Pooled fund,paid,568438945.618387
-2021,Financial institution,commitment,26319693.6305933
-2021,Inter-governmental,commitment,2315438125.96399
-2021,Inter-governmental,paid,486061306.346614
-2021,Financial institution,paid,136977520.579821
-2021,Red Cross/Red Crescent,commitment,2495826.62532253
-2021,Red Cross/Red Crescent,paid,9163895.82934273
-2021,Pooled fund,commitment,9023845.81595392
-2021,Other,commitment,5452960.70907865
-2022,,commitment,7412840.70963714
-2022,Private organization/foundation,paid,476751.967414563
-2022,NGO,commitment,3873954.36805089
-2022,NGO,paid,2163932.47934594
-2022,Red Cross/Red Crescent,commitment,2255364.30128691
-2022,UN agency,commitment,4483180.23432108
-2022,Inter-governmental,paid,2854057.82558881
-2022,Private organization/foundation,commitment,1467317.72572478
-2022,UN agency,paid,774428.41300993
-2022,Pooled fund,paid,9145503.21373057
-2022,Pooled fund,commitment,3085043.88263703
-2022,Financial institution,paid,2152659.86383594
-2022,Other,commitment,1462289.6068717
-2022,Other,paid,1919233.42043056
-2022,Inter-governmental,commitment,129613681.152936
+year,gha_channel,channel,subchannel,status,total_2019USD
+2019,Other multi,Financial institution,Bank,paid,1137980
+2016,Other multi,Financial institution,Bank,commitment,79197019.8728607
+2017,Other multi,Financial institution,Bank,commitment,150018539.396484
+2018,Other multi,Financial institution,Bank,commitment,139594297.147283
+2019,Other multi,Financial institution,Bank,commitment,173721837.966667
+2020,Other multi,Financial institution,Bank,commitment,229119408.736868
+2021,Other multi,Financial institution,Bank,commitment,133756216.621107
+2022,Other multi,Financial institution,Bank,commitment,15648762.2071511
+2016,Other multi,Financial institution,Bank,paid,20006605.1807004
+2018,Other multi,Financial institution,Bank,paid,73795359.1814952
+2020,Other multi,Financial institution,Bank,paid,18878591.8806419
+2016,Other multi,Financial institution,Uncategorized,commitment,189387.146663685
+2017,Other multi,Financial institution,Uncategorized,commitment,218534.306162677
+2018,Other multi,Financial institution,Uncategorized,commitment,40928.8175935489
+2021,Other multi,Financial institution,Bank,paid,15576.860031045
+2016,Public Sector,Government,National government,commitment,211636269.358013
+2016,Public Sector,Government,National government,paid,336579528.271716
+2017,Public Sector,Government,National government,commitment,277186795.244741
+2018,Public Sector,Government,National government,paid,566359484.830042
+2019,Public Sector,Government,National government,paid,231560210
+2020,Public Sector,Government,National government,paid,449482675.895189
+2021,Public Sector,Government,National government,paid,166626465.396539
+2017,Public Sector,Government,National government,paid,243910279.882276
+2018,Public Sector,Government,National government,commitment,122078743.471316
+2021,Public Sector,Government,National government,commitment,33317125.3766309
+2019,Public Sector,Government,Local Government,paid,53146904
+2020,Public Sector,Government,National government,commitment,295544610.805044
+2019,Public Sector,Government,National government,commitment,123868258.295373
+2016,Public Sector,Government,Uncategorized,commitment,4561270.90588493
+2017,Public Sector,Government,Uncategorized,commitment,52828952.455879
+2018,Public Sector,Government,Uncategorized,commitment,61968951.3561133
+2019,Public Sector,Government,Uncategorized,commitment,52692332
+2020,Public Sector,Government,Uncategorized,commitment,61735788.3465799
+2019,Public Sector,Government,Uncategorized,paid,253257
+2016,Public Sector,Government,Uncategorized,paid,136019.952899891
+2017,Public Sector,Government,Uncategorized,paid,608553.044709372
+2020,Public Sector,Government,Local Government,paid,49005663.1047127
+2020,Public Sector,Government,Uncategorized,paid,1408375.21536162
+2016,Public Sector,Government,Local Government,paid,37771866.1653539
+2017,Public Sector,Government,Local Government,paid,38996511.7719922
+2017,Public Sector,Government,Local Government,commitment,276463.531403555
+2018,Public Sector,Government,Local Government,paid,36077896.1561073
+2021,Public Sector,Government,Uncategorized,paid,3794028.55507216
+2021,Public Sector,Government,Local Government,paid,4938377.88827752
+2022,Public Sector,Government,National government,commitment,6611922.45458657
+2022,Public Sector,Government,National government,paid,20974.6304945415
+2016,Public Sector,Government,Local Government,commitment,39734.7039786853
+2021,Public Sector,Government,Uncategorized,commitment,485170.573655216
+2019,Public Sector,Inter-governmental,Uncategorized,paid,73479277
+2020,Public Sector,Inter-governmental,Uncategorized,paid,100521398.754456
+2016,Public Sector,Inter-governmental,Uncategorized,paid,13173131.8557777
+2016,Public Sector,Inter-governmental,Uncategorized,commitment,23588322.0275939
+2021,Public Sector,Inter-governmental,Uncategorized,paid,557464514.932179
+2018,Public Sector,Inter-governmental,Uncategorized,commitment,1693495.09707044
+2017,Public Sector,Inter-governmental,Uncategorized,commitment,37879423.8855239
+2019,Public Sector,Inter-governmental,Uncategorized,commitment,68737009
+2020,Public Sector,Inter-governmental,Uncategorized,commitment,8389918.73462179
+2021,Public Sector,Inter-governmental,Uncategorized,commitment,2371159.63108529
+2022,Public Sector,Inter-governmental,Uncategorized,commitment,1093839.08464992
+2017,Public Sector,Inter-governmental,Uncategorized,paid,11481493.1643745
+2018,Public Sector,Inter-governmental,Uncategorized,paid,231880059.244712
+2017,Multi-channel,Multi-channel,Multi-channel,commitment,4450312.85745614
+2016,Multi-channel,Multi-channel,Multi-channel,commitment,86423503.4472624
+2019,Multi-channel,Multi-channel,Multi-channel,paid,15157693
+2019,Multi-channel,Multi-channel,Multi-channel,commitment,19567144.8166667
+2020,Multi-channel,Multi-channel,Multi-channel,commitment,61893153.8103396
+2016,Multi-channel,Multi-channel,Multi-channel,paid,3102775.97526913
+2021,Multi-channel,Multi-channel,Multi-channel,commitment,47911974.9527763
+2022,Multi-channel,Multi-channel,Multi-channel,commitment,16158122.6423488
+2020,Multi-channel,Multi-channel,Multi-channel,paid,6374598.76274085
+2021,Multi-channel,Multi-channel,Multi-channel,paid,454667.402868269
+2016,NGOs and CSOs,NGO,International,commitment,2929079922.44607
+2016,NGOs and CSOs,NGO,International,paid,1582833262.64823
+2016,NGOs and CSOs,NGO,Affiliated,commitment,59924930.9442157
+2017,NGOs and CSOs,NGO,International,commitment,2512729021.39651
+2017,NGOs and CSOs,NGO,International,paid,1244998082.46245
+2017,NGOs and CSOs,NGO,Affiliated,paid,10814238.9677465
+2017,NGOs and CSOs,NGO,Affiliated,commitment,43686442.357724
+2018,NGOs and CSOs,NGO,International,paid,843352965.823914
+2018,NGOs and CSOs,NGO,International,commitment,2731949358.47913
+2018,NGOs and CSOs,NGO,National,paid,78325599.4426023
+2018,NGOs and CSOs,NGO,National,commitment,70300262.1413857
+2018,NGOs and CSOs,NGO,Affiliated,commitment,42265627.6076234
+2018,NGOs and CSOs,NGO,Affiliated,paid,11575267.1212613
+2019,NGOs and CSOs,NGO,International,paid,1051419151.80739
+2019,NGOs and CSOs,NGO,International,commitment,2600006636.5001
+2019,NGOs and CSOs,NGO,Affiliated,paid,22960893
+2019,NGOs and CSOs,NGO,Local,paid,10165578
+2019,NGOs and CSOs,NGO,National,paid,84091100
+2020,NGOs and CSOs,NGO,International,paid,1109834055.9524
+2020,NGOs and CSOs,NGO,International,commitment,4207937955.78503
+2020,NGOs and CSOs,NGO,National,paid,140258432.185331
+2020,NGOs and CSOs,NGO,Local,commitment,6730921.64448081
+2021,NGOs and CSOs,NGO,International,commitment,3893720368.59451
+2021,NGOs and CSOs,NGO,International,paid,933117353.233003
+2021,NGOs and CSOs,NGO,National,paid,94268864.45258
+2016,NGOs and CSOs,NGO,National,paid,36810962.5575088
+2016,NGOs and CSOs,NGO,National,commitment,61951712.8157064
+2016,NGOs and CSOs,NGO,Affiliated,paid,15453050.0653872
+2017,NGOs and CSOs,NGO,National,commitment,39814330.5837805
+2017,NGOs and CSOs,NGO,National,paid,126686664.705198
+2017,NGOs and CSOs,NGO,Uncategorized,paid,737431.760639723
+2017,NGOs and CSOs,NGO,Local,commitment,4773695.13557816
+2018,NGOs and CSOs,NGO,Local,commitment,2934950.42419027
+2019,NGOs and CSOs,NGO,National,commitment,32279704.3333333
+2019,NGOs and CSOs,NGO,Affiliated,commitment,52828875
+2020,NGOs and CSOs,NGO,Affiliated,paid,13441684.6731321
+2020,NGOs and CSOs,NGO,Local,paid,13616105.152964
+2020,NGOs and CSOs,NGO,Affiliated,commitment,67148954.1190016
+2021,NGOs and CSOs,NGO,Affiliated,commitment,29894347.3722813
+2021,NGOs and CSOs,NGO,Affiliated,paid,41645220.3021456
+2021,NGOs and CSOs,NGO,Uncategorized,commitment,5261070.38991809
+2021,NGOs and CSOs,NGO,National,commitment,36960494.9669095
+2022,NGOs and CSOs,NGO,International,commitment,335955873.400108
+2022,NGOs and CSOs,NGO,International,paid,22594555.2589977
+2022,NGOs and CSOs,NGO,Affiliated,paid,196500.551031173
+2020,NGOs and CSOs,NGO,National,commitment,33026579.6090616
+2021,NGOs and CSOs,NGO,Uncategorized,paid,893246.351912302
+2022,NGOs and CSOs,NGO,Affiliated,commitment,1414900.72990388
+2016,NGOs and CSOs,NGO,Local,commitment,1137015.15265177
+2019,NGOs and CSOs,NGO,Local,commitment,6404815
+2019,NGOs and CSOs,NGO,Uncategorized,commitment,1135028
+2021,NGOs and CSOs,NGO,Local,commitment,4415972.90728503
+2022,NGOs and CSOs,NGO,National,commitment,3496233.80486543
+2018,NGOs and CSOs,NGO,Local,paid,5724476.97507969
+2021,NGOs and CSOs,NGO,Local,paid,2889211.91434797
+2016,NGOs and CSOs,NGO,Local,paid,5327438.28221162
+2017,NGOs and CSOs,NGO,Local,paid,4149363.46795956
+2022,NGOs and CSOs,NGO,Local,commitment,184712.821505038
+2020,NGOs and CSOs,NGO,Uncategorized,paid,143167.840724122
+2016,NGOs and CSOs,NGO,Uncategorized,commitment,424754.311752696
+2020,Other,Other,Uncategorized,paid,249231.262554505
+2021,Other,Other,Uncategorized,commitment,775801307.079378
+2017,Other,Other,Uncategorized,commitment,388713.647822079
+2018,Other,Other,Uncategorized,commitment,1404882.55936873
+2020,Other,Other,Uncategorized,commitment,19690562.0920176
+2019,Other,Other,Uncategorized,commitment,1480662
+2022,Other,Other,Uncategorized,commitment,9172192.7696292
+2019,Other,Other,Uncategorized,paid,97609
+2021,Other,Other,Uncategorized,paid,97745262.2324487
+2017,UN Multi,Pooled fund,Global,paid,522050700.955744
+2018,UN Multi,Pooled fund,Global,paid,492670554.089759
+2021,UN Multi,Pooled fund,Global,paid,894230598.495201
+2016,UN Multi,Pooled fund,Global,paid,441047148.933508
+2018,UN Multi,Pooled fund,Country-based,paid,871354931.998977
+2019,UN Multi,Pooled fund,Global,paid,436455703.341977
+2020,UN Multi,Pooled fund,Global,paid,618440157.227766
+2016,UN Multi,Pooled fund,Country-based,paid,738711221.573326
+2017,UN Multi,Pooled fund,Country-based,paid,745340523.18195
+2017,UN Multi,Pooled fund,Country-based,commitment,79649980.5467115
+2019,UN Multi,Pooled fund,Country-based,paid,877537373.193922
+2019,UN Multi,Pooled fund,Country-based,commitment,73419433.3333333
+2020,UN Multi,Pooled fund,Country-based,paid,732871111.277726
+2021,UN Multi,Pooled fund,Global,commitment,8541216.32184375
+2021,UN Multi,Pooled fund,Country-based,paid,681459002.966783
+2022,UN Multi,Pooled fund,Country-based,commitment,71893927.2312245
+2021,UN Multi,Pooled fund,Regional,paid,27424531.3940726
+2021,UN Multi,Pooled fund,Country-based,commitment,214081054.939253
+2019,UN Multi,Pooled fund,Global,commitment,20000
+2022,UN Multi,Pooled fund,Regional,commitment,4777693.52830948
+2020,UN Multi,Pooled fund,Country-based,commitment,107452801.137415
+2018,UN Multi,Pooled fund,Country-based,commitment,66053227.2115838
+2021,UN Multi,Pooled fund,Regional,commitment,4699452.15472879
+2016,UN Multi,Pooled fund,Country-based,commitment,4101505.67872464
+2016,Other,Private organization/foundation,International organization/foundation/individual,paid,2508024.09381901
+2017,Other,Private organization/foundation,International organization/foundation/individual,commitment,150306697.501483
+2019,Other,Private organization/foundation,Local/National organization/foundation/individual,paid,5305042
+2019,Other,Private organization/foundation,International organization/foundation/individual,paid,41122288.7032788
+2020,Other,Private organization/foundation,International organization/foundation/individual,paid,50764948.2673891
+2020,Other,Private organization/foundation,Local/National organization/foundation/individual,paid,17927570.2601802
+2021,Other,Private organization/foundation,International organization/foundation/individual,paid,144516507.133499
+2016,Other,Private organization/foundation,International organization/foundation/individual,commitment,335017396.469277
+2017,Other,Private organization/foundation,Local/National organization/foundation/individual,paid,124474634.124569
+2017,Other,Private organization/foundation,Local/National organization/foundation/individual,commitment,9312154.36422766
+2018,Other,Private organization/foundation,International organization/foundation/individual,commitment,180310947.594532
+2019,Other,Private organization/foundation,International organization/foundation/individual,commitment,178067962.071729
+2019,Other,Private organization/foundation,Local/National organization/foundation/individual,commitment,16437652
+2020,Other,Private organization/foundation,International organization/foundation/individual,commitment,139963574.959104
+2020,Other,Private organization/foundation,Local/National organization/foundation/individual,commitment,16421850.5949917
+2021,Other,Private organization/foundation,International organization/foundation/individual,commitment,236642043.217583
+2022,Other,Private organization/foundation,International organization/foundation/individual,commitment,43562418.202671
+2021,Other,Private organization/foundation,Uncategorized,paid,12307117.9473956
+2017,Other,Private organization/foundation,International organization/foundation/individual,paid,5278047.85059389
+2021,Other,Private organization/foundation,Local/National organization/foundation/individual,commitment,4256908.35393454
+2016,Other,Private organization/foundation,Local/National organization/foundation/individual,commitment,49805170.9469531
+2018,Other,Private organization/foundation,Local/National organization/foundation/individual,commitment,3648787.68540023
+2022,Other,Private organization/foundation,Local/National organization/foundation/individual,commitment,337268.413528944
+2016,Other,Private organization/foundation,Local/National organization/foundation/individual,paid,27654509.8510356
+2018,Other,Private organization/foundation,Local/National organization/foundation/individual,paid,5477801.67911646
+2020,Other,Private organization/foundation,Uncategorized,commitment,11458056.9769345
+2018,Other,Private organization/foundation,International organization/foundation/individual,paid,43516333.5766239
+2021,Other,Private organization/foundation,Local/National organization/foundation/individual,paid,3810173.39119985
+2020,Other,Private organization/foundation,Uncategorized,paid,151698614.736252
+2021,Other,Private organization/foundation,Uncategorized,commitment,1384539.60545732
+2016,RCRC,Red Cross/Red Crescent,International Society,commitment,1280572359.06861
+2016,RCRC,Red Cross/Red Crescent,International Society,paid,130498911.57206
+2016,RCRC,Red Cross/Red Crescent,National Society,commitment,431540979.554491
+2017,RCRC,Red Cross/Red Crescent,International Society,commitment,1108476530.27744
+2017,RCRC,Red Cross/Red Crescent,International Society,paid,96267435.8574135
+2017,RCRC,Red Cross/Red Crescent,National Society,commitment,285971393.411129
+2018,RCRC,Red Cross/Red Crescent,International Society,paid,141844490.092664
+2018,RCRC,Red Cross/Red Crescent,International Society,commitment,928384648.514972
+2018,RCRC,Red Cross/Red Crescent,National Society,paid,1403086814.67745
+2019,RCRC,Red Cross/Red Crescent,International Society,paid,176985778
+2019,RCRC,Red Cross/Red Crescent,National Society,paid,215249784.90247
+2020,RCRC,Red Cross/Red Crescent,International Society,paid,239554807.879388
+2020,RCRC,Red Cross/Red Crescent,National Society,paid,190547577.368805
+2020,RCRC,Red Cross/Red Crescent,International Society,commitment,1393407529.16295
+2021,RCRC,Red Cross/Red Crescent,National Society,paid,151808126.460655
+2021,RCRC,Red Cross/Red Crescent,International Society,paid,236618908.284294
+2018,RCRC,Red Cross/Red Crescent,National Society,commitment,121747135.830166
+2019,RCRC,Red Cross/Red Crescent,National Society,commitment,146112382.741612
+2019,RCRC,Red Cross/Red Crescent,International Society,commitment,1485006791.47509
+2021,RCRC,Red Cross/Red Crescent,International Society,commitment,802940259.544989
+2016,RCRC,Red Cross/Red Crescent,National Society,paid,204426569.684341
+2017,RCRC,Red Cross/Red Crescent,National Society,paid,166171386.283764
+2020,RCRC,Red Cross/Red Crescent,National Society,commitment,191206658.177925
+2021,RCRC,Red Cross/Red Crescent,National Society,commitment,152129018.475593
+2022,RCRC,Red Cross/Red Crescent,International Society,commitment,24758899.4083924
+2022,RCRC,Red Cross/Red Crescent,National Society,commitment,9772109.75512432
+2022,RCRC,Red Cross/Red Crescent,National Society,paid,1351666.5877924
+2022,RCRC,Red Cross/Red Crescent,International Society,paid,3373188.43956993
+2021,UN Multi,UN agency,Uncategorized,paid,9838947484.54388
+2016,UN Multi,UN agency,Uncategorized,paid,11332382312.4934
+2017,UN Multi,UN agency,Uncategorized,paid,11412970451.3624
+2018,UN Multi,UN agency,Uncategorized,paid,9518143645.02165
+2019,UN Multi,UN agency,Uncategorized,paid,12353719574.0985
+2020,UN Multi,UN agency,Uncategorized,paid,12109665678.7066
+2016,UN Multi,UN agency,Uncategorized,commitment,3194537812.94463
+2017,UN Multi,UN agency,Uncategorized,commitment,2248900682.70373
+2018,UN Multi,UN agency,Uncategorized,commitment,4526912436.29899
+2019,UN Multi,UN agency,Uncategorized,commitment,2629740781.90037
+2020,UN Multi,UN agency,Uncategorized,commitment,5307523040.28453
+2021,UN Multi,UN agency,Uncategorized,commitment,4016860650.45099
+2022,UN Multi,UN agency,Uncategorized,commitment,674694493.661344
+2022,UN Multi,UN agency,Uncategorized,paid,26523254.5760913
+2020,Uncategorized,Uncategorized,Uncategorized,paid,43526280.9294712
+2016,Uncategorized,Uncategorized,Uncategorized,paid,375691750.379893
+2016,Uncategorized,Uncategorized,Uncategorized,commitment,800521744.521981
+2017,Uncategorized,Uncategorized,Uncategorized,commitment,1169039571.78531
+2018,Uncategorized,Uncategorized,Uncategorized,paid,151498311.346087
+2018,Uncategorized,Uncategorized,Uncategorized,commitment,1617835978.21444
+2019,Uncategorized,Uncategorized,Uncategorized,commitment,2315894400.25
+2019,Uncategorized,Uncategorized,Uncategorized,paid,42621661
+2021,Uncategorized,Uncategorized,Uncategorized,paid,22664648.776527
+2020,Uncategorized,Uncategorized,Uncategorized,commitment,632691855.218459
+2017,Uncategorized,Uncategorized,Uncategorized,paid,62196687.2086493
+2021,Uncategorized,Uncategorized,Uncategorized,commitment,1534641314.68242
+2022,Uncategorized,Uncategorized,Uncategorized,commitment,232803964.941178
