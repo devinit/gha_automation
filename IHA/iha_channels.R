@@ -7,9 +7,9 @@ setwd("..")
 source("IHA/fts_curated_flows.R")
 
 #Load in curated FTS (incoming and internal on year boundary, exclude non-destination allocable flows, exclude internal destination flows)
-fts_curated <- fts_curated_flows(years = 2016:2022, update_years = NA)
+fts_curated <- fts_curated_flows(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets")
 
 #Aggregate
-agg_channels <- fts_curated[, .(total_2019USD = sum(amountUSD_defl, na.rm = T)), by = .(year, gha_channel, channel, subchannel, status)]
+agg_channels <- fts_curated[, .(total_2019USD = sum(amountUSD_defl, na.rm = T)), by = .(year, gha_channel, channel, subchannel, status)][order(year, gha_channel, channel, subchannel, status)]
 
 fwrite(agg_channels, "IHA/output/fts_aggregate_channels.csv")
