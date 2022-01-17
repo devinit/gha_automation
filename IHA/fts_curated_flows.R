@@ -18,8 +18,6 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
   
   #Load FTS utility functions
-  setwd(dirname(getActiveDocumentContext()$path))
-  setwd("..")
   lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_get_flows.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_split_rows.R"), source)
   
   if(!dir.exists(dataset_path)){
