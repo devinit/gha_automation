@@ -79,6 +79,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   fts_orgs[sourceObjects_Organization.id %in% c("9946", "10399", "4058", "2987", "30", "6547"), org_type := "Government"]
   
   #Merge orgs types
+  fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
   fts <- merge(fts, fts_orgs, by = "sourceObjects_Organization.id", all.x = T, sort = F)
   fts[org_type != "Government" | is.na(donor_country), donor_country := "Total DAC"]
   
