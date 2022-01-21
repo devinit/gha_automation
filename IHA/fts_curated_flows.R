@@ -38,8 +38,8 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
         )
         break
       }
+      fts[, reportDetails := NULL]
       fts[is.null(fts) | fts == "NULL"] <- NA
-      fts[, `:=` (reportDetails = NULL, childFlowIds = NULL)]
       fwrite(fts, paste0(dataset_path, "/fts_", years[i], ".csv"))
     }
     message(paste0("Reading ", years[i]))
@@ -76,12 +76,12 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), donor_country, source_org_type)]
   
   #Manual government development agencies
-  fts_orgs[sourceObjects_Organization.id %in% c("9946", "10399", "4058", "2987", "30", "6547"), org_type := "Government"]
+  fts_orgs[sourceObjects_Organization.id %in% c("9946", "10399", "4058", "2987", "30", "6547"), source_org_type := "Government"]
   
   #Merge orgs types
   fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
   fts <- merge(fts, fts_orgs, by = "sourceObjects_Organization.id", all.x = T, sort = F)
-  fts[org_type != "Government" | is.na(donor_country), donor_country := "Total DAC"]
+  fts[source_org_type != "Government" | is.na(donor_country), donor_country := "Total DAC"]
   
   #Set NA channels to 'Uncategorized'
   fts[, channel := ifelse(is.na(destinationObjects_Organization.organizationTypes) | destinationObjects_Organization.organizationTypes == "", "Uncategorized", destinationObjects_Organization.organizationTypes)]
@@ -114,6 +114,16 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
     ), c("gha_channel", "channel"))
   fts <- merge(fts, gha_channels, by = "channel", all.x = T, sort = F)
   
+  #Add dummy reverse flows to cancel-out intra-plan flows
+  fts_intraplan <- fts[sourceObjects_Plan.id == destinationObjects_Plan.id]
+  source_cols <- grep("sourceObjects", names(fts_intraplan))
+  dest_cols <- grep("destinationObjects", names(fts_intraplan))
+  names(fts_intraplan)[source_cols] <- gsub("source", "destination", names(fts_intraplan)[source_cols])
+  names(fts_intraplan)[dest_cols] <- gsub("destination", "source", names(fts_intraplan)[dest_cols])
+  fts_intraplan[, `:=` (amountUSD = -amountUSD, dummy = T)]
+  
+  fts <- rbind(fts[sourceObjects_Plan.id != destinationObjects_Plan.id | is.na(sourceObjects_Plan.id), dummy := F], fts_intraplan)
+  
   #Deflate
   deflators <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/usd_deflators_2021WEO.csv", header = T, encoding = "UTF-8", showProgress = F)
   deflators <- suppressWarnings(melt.data.table(deflators, id.vars = c("name", "ISO3")))
@@ -123,8 +133,11 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country == "Total DAC", -"donor_country"], by = "year", all.x = T)$deflator
   fts[, amountUSD_defl := amountUSD/deflator]
   
-  #Remove pledges, remove non-country allocable, remove internal country flows
-  fts_out <- fts[year %in% years & status %in% c("paid", "commitment") & (destinationObjects_Location.name != sourceObjects_Location.name | destinationObjects_Location.name == ""), -c("versionId", "onBoundary", "parentFlowId", "keywords", "sourceObjects_UsageYear.id", "destinationObjects_UsageYear.id")]
+  #Remove partial multi-year flows outside of requested range and pledges 
+  fts_out <- fts[
+    year %in% years 
+    & status %in% c("paid", "commitment")
+    ]
   
   return(fts_out)
 }
