@@ -29,14 +29,19 @@ tabulate_dac_api <- function(api){
   
   return(dac_tab)
 }
+
+#Establish current DAC base year
+dac_base_year <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10200.20001.1.216.D/all?startTime=2000&endTime=2020"
+dac_base_year <- data.table(read_json(dac_base_year, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name
+
 ##DAC1 Bilateral HA and EU disb
 #All donors
 #All parts (Part I only available)
 #Disbursements to Humanitarian and EU (70, 2102)
 #Net disbursement flows (1140)
-#Current prices (A)
+#Constant prices (D)
 #2000-2020
-api_dac1 <- "https://stats.oecd.org/SDMX-JSON/data/TABLE1/..70+2102.1140.A/all?startTime=2000&endTime=2020"
+api_dac1 <- "https://stats.oecd.org/SDMX-JSON/data/TABLE1/..70+2102.1140.D/all?startTime=2000&endTime=2020"
 dac1 <- tabulate_dac_api(api_dac1)
 
 dac1 <- melt(dac1, id.vars = c("Donor", "Part", "Aid type", "Fund flows", "Amount type"))
@@ -49,9 +54,9 @@ dac1_ha <- dac1[`Aid type` == "hist: humanitarian aid grants"]
 #All donors
 #All parts (Part I only available)
 #Gross ODA (240)
-#Current prices (A)
+#Constant prices (D)
 #2000-2020
-api_dac2a_cmo <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/913+914+916+915+905+909+912+959+974+967+963+964+966..1.240.A/all?startTime=2000&endTime=2020"
+api_dac2a_cmo <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/913+914+916+915+905+909+912+959+974+967+963+964+966..1.240.D/all?startTime=2000&endTime=2020"
 dac2a_cmo <- tabulate_dac_api(api_dac2a_cmo)
 
 dac2a_cmo <- melt(dac2a_cmo, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
@@ -61,9 +66,9 @@ dac2a_cmo <- melt(dac2a_cmo, id.vars = c("Recipient", "Donor", "Part", "Aid type
 #Selected multi donors
 #Developing countries, total
 #All parts (Part I only available)
-#Current prices (A)
+#Constant prices (D)
 #2000-2020
-api_dac2a_moha <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10100.918+913+914+915+909+1013+976+932+940+923+959+807+974+967+963+964+966+928+905+1012+953+921+1020+1011+1016+104+951.1.216+240.A/all?startTime=2000&endTime=2020"
+api_dac2a_moha <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10100.918+913+914+915+909+1013+976+932+940+923+959+807+974+967+963+964+966+928+905+1012+953+921+1020+1011+1016+104+951.1.216+240.D/all?startTime=2000&endTime=2020"
 dac2a_moha <- tabulate_dac_api(api_dac2a_moha)
 
 dac2a_moha <- melt(dac2a_moha, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
@@ -91,9 +96,9 @@ dac2a_imha <- dac2a_cmo[, .(dac2a_imputed_multi_ha = sum(value*ha_share, na.rm =
 #Selected multi donors
 #Gross disbursements
 #Core contributions to
-#Current prices (A)
+#Constant prices (D)
 #2011-2020
-api_mums <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/.10100.1000.41301+47066+41122+41114+41116+41127+41121+41141+41119+41130+41140+41307+41143+44002+46002+46003+46004+46005+46024+46013+46012+47111+47134+47129+47130+47044+47128+47142+47135.10.112.A/all?startTime=2011&endTime=2020"
+api_mums <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/.10100.1000.41301+47066+41122+41114+41116+41127+41121+41141+41119+41130+41140+41307+41143+44002+46002+46003+46004+46005+46024+46013+46012+47111+47134+47129+47130+47044+47128+47142+47135.10.112.D/all?startTime=2011&endTime=2020"
 mums <- tabulate_dac_api(api_mums)
 
 mums <- melt(mums, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidToThru", "Flow type", "Amount type"))
@@ -134,25 +139,25 @@ mums_exc_dac2a[Channel == "United Nations Office of Co-ordination of Humanitaria
 
 mums_imha <- mums_exc_dac2a[, .(mums_imputed_multi_ha = sum(value*ha_share, na.rm = T)), by = .(variable, Donor)]
 
-##CERF
-cerf_years <- 2010:2020
-cerf_list <- list()
-for(i in 1:length(cerf_years)){
-  url <- paste0("https://cerf.un.org/contributionsByDonor/", cerf_years[i])
-  cerf_list[[i]] <- read_json(url, simplifyVector = T)$data
-}
-cerf <- rbindlist(cerf_list)
-
-#Standardise CERF names
-{cerf[donor == "Slovakia", donor := "Slovak Republic"]
-cerf[donor == "United States of America", donor := "United States"]
-cerf[donor == "Russian Federation", donor := "Russia"]
-cerf[donor == "Hyogo Prefecture (Japan)", donor := "Japan"]
-cerf[donor == "Belgian Government of Flanders", donor := "Belgium"]
-cerf[donor == "State of South Australia", donor := "Australia"]
-cerf[donor == "Catalan Agency for Development Cooperation", donor := "Spain"]}
-
-##TODO INCLUDE CERF
+# ##CERF
+# cerf_years <- 2010:2020
+# cerf_list <- list()
+# for(i in 1:length(cerf_years)){
+#   url <- paste0("https://cerf.un.org/contributionsByDonor/", cerf_years[i])
+#   cerf_list[[i]] <- read_json(url, simplifyVector = T)$data
+# }
+# cerf <- rbindlist(cerf_list)
+# 
+# #Standardise CERF names
+# {cerf[donor == "Slovakia", donor := "Slovak Republic"]
+# cerf[donor == "United States of America", donor := "United States"]
+# cerf[donor == "Russian Federation", donor := "Russia"]
+# cerf[donor == "Hyogo Prefecture (Japan)", donor := "Japan"]
+# cerf[donor == "Belgian Government of Flanders", donor := "Belgium"]
+# cerf[donor == "State of South Australia", donor := "Australia"]
+# cerf[donor == "Catalan Agency for Development Cooperation", donor := "Spain"]}
+# 
+# ##TODO INCLUDE CERF
 
 ####
 ##Total Imputed HA

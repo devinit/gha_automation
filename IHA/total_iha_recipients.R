@@ -30,14 +30,18 @@ tabulate_dac_api <- function(api){
   return(dac_tab)
 }
 
+#Establish current DAC base year
+dac_base_year <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10200.20001.1.216.D/all?startTime=2000&endTime=2020"
+dac_base_year <- data.table(read_json(dac_base_year, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name
+
 ##DAC2a HA
 #All recipients
 #Total DAC, Total Multilat, Total Non-DAC, Total Private (20001, 20002, 20006, 21600)
 #All parts (Part I only available)
 #HA (216)
-#Current prices (A)
+#Constant prices (D)
 #2000-2020
-api_dac2a_all <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/.20001+20002+20006+21600.1.216.A/all?startTime=2000&endTime=2020"
+api_dac2a_all <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/.20001+20002+20006+21600.1.216.D/all?startTime=2000&endTime=2020"
 dac2a_all <- tabulate_dac_api(api_dac2a_all)
 
 dac2a_all <- melt(dac2a_all, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
@@ -47,9 +51,9 @@ dac2a_all <- melt(dac2a_all, id.vars = c("Recipient", "Donor", "Part", "Aid type
 #UNHCR, UNRWA (967, 964)
 #All parts (Part I only available)
 #Gross ODA and HA (240, 216)
-#Current prices (A)
+#Constant prices (D)
 #2000-2020
-api_dac2a_un <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/.967+964.1.240+216.A/all?startTime=2000&endTime=2020"
+api_dac2a_un <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/.967+964.1.240+216.D/all?startTime=2000&endTime=2020"
 dac2a_un <- tabulate_dac_api(api_dac2a_un)
 
 dac2a_un <- melt(dac2a_un, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
@@ -86,7 +90,19 @@ cerf <- rbindlist(cerf_list)
   cerf[name == "United Republic of Tanzania", name := "Tanzania"]
   cerf[name == "Swaziland", name := "Eswatini"]}
 
-cerf_ha <- cerf[, .(variable = as.factor(year), Recipient = name, cerf_value = amount)]
+cerf_ha <- cerf[, .(variable = as.factor(year), Recipient = name, cerf_value = amount/1000000)]
+
+#Deflate using Total DAC Resource Deflator
+api_dacdefl <- paste0("https://stats.oecd.org/SDMX-JSON/data/DACDEFL/19./all?startTime=2010&endTime=", dac_base_year)
+dacdefl <- tabulate_dac_api(api_dacdefl)
+
+dacdefl <- dacdefl[dacdefl[, .I[which.max(`Deflator base year`)], by = Donor]$V1]
+dacdefl <- melt(dacdefl[, -"Deflator base year"], id.vars = "Donor")
+
+dacdefl[, value := value/value[variable == dac_base_year]]
+
+cerf_ha <- merge(cerf_ha, dacdefl[, .(deflator = value, variable)])
+cerf_ha <- cerf_ha[, .(cerf_value = cerf_value/deflator), by = .(Recipient, variable)]
 
 ###Add OCHA data 2011-onwards (MUMS)
 
@@ -97,9 +113,9 @@ cerf_ha <- cerf[, .(variable = as.factor(year), Recipient = name, cerf_value = a
 #Channel: OCHA (41127)
 #Gross disbursements
 #Contributions through (20)
-#Current prices (A)
+#Constant prices (D)
 #2011-2020
-api_mums_rec <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/20001..700.41127.20.112.A/all?startTime=2011&endTime=2020"
+api_mums_rec <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/20001..700.41127.20.112.D/all?startTime=2011&endTime=2020"
 mums_rec <- tabulate_dac_api(api_mums_rec)
 
 mums_rec <- melt(mums_rec, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidToThru", "Flow type", "Amount type"))
@@ -112,9 +128,9 @@ mums_rec[, value_share := value/value[Recipient == "Developing Countries, Total"
 #Channel: OCHA (41127)
 #Gross disbursements
 #Core contributions to (10)
-#Current prices (A)
+#Constant prices (D)
 #2011-2020
-api_mums_don <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/20001.10100.1000.41127.10.112.A/all?startTime=2011&endTime=2020"
+api_mums_don <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/20001.10100.1000.41127.10.112.D/all?startTime=2011&endTime=2020"
 mums_don <- tabulate_dac_api(api_mums_don)
 
 mums_don <- melt(mums_don, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidToThru", "Flow type", "Amount type"))
