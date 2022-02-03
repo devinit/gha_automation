@@ -1,9 +1,12 @@
-weo_deflators <- function(weo_ver = "Oct2021", base_year = 2020, currency = "USD"){
+get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021"){
   suppressPackageStartupMessages(lapply(c("data.table"), require, character.only=T))
   
+  ##WEO data
   weo_year <- year(as.Date(paste0("1", weo_ver), "%d%b%Y"))
   url <- paste0("https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/", weo_year, "/WEO", weo_ver ,"all.ashx")
   weo <- fread(url, na.strings=c("n/a", "--"), showProgress = F)
+  
+  country_codes <- unique(weo[, .(ISO, Country)])
   
   data_cols <- c("ISO", "WEO Subject Code", grep("^\\d{4}$", names(weo), value = T))
   
@@ -39,11 +42,12 @@ weo_deflators <- function(weo_ver = "Oct2021", base_year = 2020, currency = "USD
   weo_gdp_con[, `:=` (gdp_con = gdp_cg*gdp_cur[variable == base_year]), by= ISO]
   
   #GDP deflators from WEO
-  deflators <- weo_gdp_con[, .(gdp_defl = gdp_cur/gdp_con), by = .(ISO, variable)]
- 
-  ##Manual additions
+  weo_deflators <- weo_gdp_con[, .(gdp_defl = gdp_cur/gdp_con), by = .(ISO, variable)]
+  weo_deflators <- cbind(weo_deflators, source = "WEO", ver = weo_ver)
   
-  #DAC and EU
+  ##Other data sources
+  
+  #OECD data
   if(currency == "USD"){
     
     tabulate_dac_api <- function(api){
@@ -72,7 +76,7 @@ weo_deflators <- function(weo_ver = "Oct2021", base_year = 2020, currency = "USD
       return(dac_tab)
     }
     
-    api_dacdefl <- paste0("https://stats.oecd.org/SDMX-JSON/data/DACDEFL/19+918./all?startTime=", min(deflators$variable), "&endTime=", max(deflators$variable))
+    api_dacdefl <- paste0("https://stats.oecd.org/SDMX-JSON/data/DACDEFL/./all?startTime=", min(weo_deflators$variable), "&endTime=", max(weo_deflators$variable))
     dacdefl <- tabulate_dac_api(api_dacdefl)
     
     dacdefl <- dacdefl[dacdefl[, .I[which.max(`Deflator base year`)], by = Donor]$V1]
@@ -80,12 +84,27 @@ weo_deflators <- function(weo_ver = "Oct2021", base_year = 2020, currency = "USD
     
     dacdefl[, gdp_defl := value/value[variable == base_year], by = Donor]
     
+    dacdefl <- merge(dacdefl, country_codes, by.x = "Donor", by.y = "Country", all.x = T)
+    
     dacdefl[Donor == "Total DAC", ISO := "DAC"]
     dacdefl[Donor == "EU Institutions", ISO := "EUI"]
     
-    deflators <- rbind(deflators, dacdefl[, -c("Donor", "value")])
+    if(nrow(dacdefl[is.na(ISO)]) > 0) warning("Country name mismatch between WEO and OECD.")
     
-    if(!(base_year %in% dacdefl$variable)) warning("Cannot return DAC/EUI deflators for this base year.")
+    #Calculate Total DAC for missing data years
+    weo_gdp_con_dac <- weo_gdp_con[ISO %in% dacdefl$ISO & !(variable %in% dacdefl[ISO == "DAC" & !is.na(gdp_defl)]$variable)]
+    weo_totaldac_defl <- weo_gdp_con_dac[, .(ISO = "DAC", gdp_defl = sum(gdp_cur, na.rm = T)/sum(gdp_con, na.rm = T), source = "WEO", ver = weo_ver), by = .(variable)]
+    
+    weo_deflators <- rbind(weo_deflators, weo_totaldac_defl)
+    
+    #Replace WEO DAC data with OECD data
+    dacdefl <- dacdefl[!is.na(gdp_defl), .(ISO, variable, gdp_defl, source = "OECD", ver = format(Sys.Date(), "%b%Y"))]
+    deflators <- rbind(weo_deflators[!(ISO %in% dacdefl$ISO & variable %in% dacdefl$variable)], dacdefl)
+    
+    if(!(base_year %in% dacdefl$variable)) warning("Cannot return OECD deflators for this base year; using all WEO data.")
+  } else {
+    
+    deflators <- weo_deflators
   }
   
   #GBR copies
@@ -107,7 +126,6 @@ weo_deflators <- function(weo_ver = "Oct2021", base_year = 2020, currency = "USD
   }
   
   #Final out
-  deflators <- cbind(t(as.list(environment())), deflators)
-  deflators <- deflators[, .(ISO, year = variable , weo_ver, base_year, currency, gdp_defl)]
+  deflators <- deflators[, .(ISO, year = variable, base_year, currency, source, ver, gdp_defl)][order(ISO, year)]
   return(deflators)
 }
