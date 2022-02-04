@@ -1,4 +1,4 @@
-get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021"){
+get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021", approximate_missing = T){
   suppressPackageStartupMessages(lapply(c("data.table"), require, character.only=T))
   
   ##WEO data
@@ -48,64 +48,66 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021
   ##Other data sources
   
   #OECD data
-  if(currency == "USD"){
+  tabulate_dac_api <- function(api){
+    api_out <- read_json(api, simplifyVector = T)
     
-    tabulate_dac_api <- function(api){
-      api_out <- read_json(api, simplifyVector = T)
-      
-      series_names <- api_out$structure$dimensions$series$name
-      series_con <- api_out$structure$dimensions$series$values
-      series_con <- lapply(series_con, function(x) data.table(cbind(id = as.numeric(rownames(x))-1, name = x$name)))
-      
-      obs_names <- api_out$structure$dimensions$observation$values[[1]]$name
-      
-      row_ids <- strsplit(names(api_out$dataSets$series), ":")
-      row_names <- rbindlist(lapply(row_ids, function(x) sapply(1:length(x), function(i) series_con[[i]][id == x[[i]]][,2])))
-      names(row_names) <- series_names
-      
-      dac_tab <- rbindlist(lapply(api_out$dataSets$series, function(x) x$observations), fill = T)
-      dac_tab[dac_tab == "NULL"] <- 0
-      dac_tab <- sapply(dac_tab, function(x) sapply(x, function(y) as.numeric(y[[1]])))
-      if(is.null(dim(dac_tab)[1]))
-        dac_tab <- t(dac_tab)
-      dac_tab <- data.table(dac_tab)
-      names(dac_tab) <- obs_names
-      
-      dac_tab <- cbind(row_names, dac_tab)
-      
-      return(dac_tab)
-    }
+    series_names <- api_out$structure$dimensions$series$name
+    series_con <- api_out$structure$dimensions$series$values
+    series_con <- lapply(series_con, function(x) data.table(cbind(id = as.numeric(rownames(x))-1, name = x$name)))
     
-    api_dacdefl <- paste0("https://stats.oecd.org/SDMX-JSON/data/DACDEFL/./all?startTime=", min(weo_deflators$variable), "&endTime=", max(weo_deflators$variable))
-    dacdefl <- tabulate_dac_api(api_dacdefl)
+    obs_names <- api_out$structure$dimensions$observation$values[[1]]$name
     
-    dacdefl <- dacdefl[dacdefl[, .I[which.max(`Deflator base year`)], by = Donor]$V1]
-    dacdefl <- melt(dacdefl[, -"Deflator base year"], id.vars = "Donor")
+    row_ids <- strsplit(names(api_out$dataSets$series), ":")
+    row_names <- rbindlist(lapply(row_ids, function(x) sapply(1:length(x), function(i) series_con[[i]][id == x[[i]]][,2])))
+    names(row_names) <- series_names
     
-    dacdefl[, gdp_defl := value/value[variable == base_year], by = Donor]
+    dac_tab <- rbindlist(lapply(api_out$dataSets$series, function(x) x$observations), fill = T)
+    dac_tab[dac_tab == "NULL"] <- 0
+    dac_tab <- sapply(dac_tab, function(x) sapply(x, function(y) as.numeric(y[[1]])))
+    if(is.null(dim(dac_tab)[1]))
+      dac_tab <- t(dac_tab)
+    dac_tab <- data.table(dac_tab)
+    names(dac_tab) <- obs_names
     
-    dacdefl <- merge(dacdefl, country_codes, by.x = "Donor", by.y = "Country", all.x = T)
+    dac_tab <- cbind(row_names, dac_tab)
     
-    dacdefl[Donor == "Total DAC", ISO := "DAC"]
-    dacdefl[Donor == "EU Institutions", ISO := "EUI"]
-    
-    if(nrow(dacdefl[is.na(ISO)]) > 0) warning("Country name mismatch between WEO and OECD.")
-    
-    #Calculate Total DAC for missing data years
-    weo_gdp_con_dac <- weo_gdp_con[ISO %in% dacdefl$ISO & !(variable %in% dacdefl[ISO == "DAC" & !is.na(gdp_defl)]$variable)]
-    weo_totaldac_defl <- weo_gdp_con_dac[, .(ISO = "DAC", gdp_defl = sum(gdp_cur, na.rm = T)/sum(gdp_con, na.rm = T), source = "WEO", ver = weo_ver), by = .(variable)]
-    
-    weo_deflators <- rbind(weo_deflators, weo_totaldac_defl)
-    
-    #Replace WEO DAC data with OECD data
-    dacdefl <- dacdefl[!is.na(gdp_defl), .(ISO, variable, gdp_defl, source = "OECD", ver = format(Sys.Date(), "%b%Y"))]
-    deflators <- rbind(weo_deflators[!(ISO %in% dacdefl$ISO & variable %in% dacdefl$variable)], dacdefl)
-    
-    if(!(base_year %in% dacdefl$variable)) warning("Cannot return OECD deflators for this base year; using all WEO data.")
-  } else {
-    
-    deflators <- weo_deflators
+    return(dac_tab)
   }
+  
+  api_dacdefl <- paste0("https://stats.oecd.org/SDMX-JSON/data/DACDEFL/./all?startTime=", min(weo_deflators$variable), "&endTime=", max(weo_deflators$variable))
+  dacdefl <- tabulate_dac_api(api_dacdefl)
+  
+  dacdefl <- dacdefl[dacdefl[, .I[which.max(`Deflator base year`)], by = Donor]$V1]
+  dacdefl <- melt(dacdefl[, -"Deflator base year"], id.vars = "Donor", variable.factor = F)
+  
+  dacdefl[, gdp_defl := value/value[variable == base_year], by = Donor]
+  
+  dacdefl <- merge(dacdefl, country_codes, by.x = "Donor", by.y = "Country", all.x = T)
+  
+  dacdefl[Donor == "Total DAC", ISO := "DAC"]
+  dacdefl[Donor == "EU Institutions", ISO := "EUI"]
+  
+  if(nrow(dacdefl[is.na(ISO)]) > 0) warning("Country name mismatch between WEO and OECD.")
+  
+  if(currency != "USD"){
+    dacdefl <- dacdefl[ISO %in% c("DAC", "USA")]
+  }
+  
+  #Calculate Total DAC for missing data years
+  weo_gdp_con_dac <- weo_gdp_con[ISO %in% dacdefl$ISO & !(variable %in% dacdefl[ISO == "DAC" & !is.na(gdp_defl)]$variable)]
+  weo_totaldac_defl <- weo_gdp_con_dac[, .(ISO = "DAC", gdp_defl = sum(gdp_cur, na.rm = T)/sum(gdp_con, na.rm = T), source = "WEO", ver = weo_ver), by = .(variable)]
+  
+  weo_deflators <- rbind(weo_deflators, weo_totaldac_defl)
+  
+  #Replace WEO DAC data with OECD data
+  dacdefl <- dacdefl[!is.na(gdp_defl), .(ISO, variable, gdp_defl, source = "OECD", ver = format(Sys.Date(), "%b%Y"))]
+  deflators <- rbind(weo_deflators[!(paste0(ISO, variable) %in% paste0(dacdefl$ISO, dacdefl$variable))], dacdefl)
+  
+  if(!(base_year %in% dacdefl$variable)) warning("Cannot return OECD deflators for this base year; using all WEO data.")
+  
+  #
+  
+  deflators[, variable := as.numeric(variable)]
   
   #GBR copies
   GBR_copies <- c("AIA", "MSR", "SHN")
@@ -123,6 +125,34 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021
   if("DAC" %in% deflators$ISO){
     DAC_copies <- c("CUB", "PRK", "SYR")
     deflators <- rbind(deflators[!(ISO %in% DAC_copies)], rbindlist(lapply(DAC_copies, function(x) copy(deflators)[ISO == "DAC"][, ISO := x])))
+  }
+  
+  ##Approximate missing
+  if(approximate_missing){
+    missing <- deflators[, .SD[any(is.na(gdp_defl))], by = ISO]
+    missing_weo_gdp <- weo_gdp_con[ISO %in% missing$ISO]
+    missing_weo_gdp[, variable := as.numeric(variable)]
+    missing_weo_gr <- missing_weo_gdp[, .(gdp_avg_curg = (gdp_cur[!is.na(gdp_cur) & variable == max(variable[!is.na(gdp_cur)])]/gdp_cur[!is.na(gdp_cur) & variable == min(variable[!is.na(gdp_cur)])])^(1/(max(variable[!is.na(gdp_cur)])-min(variable[!is.na(gdp_cur)]))),
+                        gdp_avg_cong = (gdp_con[!is.na(gdp_con) & variable == max(variable[!is.na(gdp_con)])]/gdp_con[!is.na(gdp_con) & variable == min(variable[!is.na(gdp_con)])])^(1/(max(variable[!is.na(gdp_con)])-min(variable[!is.na(gdp_con)]))))
+                    , by = ISO]
+    missing_weo_gr <- missing_weo_gr[, .(defg = gdp_avg_curg/gdp_avg_cong), by = ISO]
+  
+    missing_defl <- merge(deflators[ISO %in% missing$ISO], missing_weo_gr, by = "ISO")
+    
+    missing_defl_f <- missing_defl[, .SD[is.na(gdp_defl) & variable > max(variable[!is.na(gdp_defl)])], by = ISO]
+    missing_defl_b <- missing_defl[, .SD[is.na(gdp_defl) & variable < min(variable[!is.na(gdp_defl)])], by = ISO]
+    
+    missing_defl_b[, defg := rev(cumprod(1/defg)), by = ISO]
+    missing_defl_f[, defg := cumprod(defg), by = ISO]
+    
+    missing_defl_b <- merge(missing_defl_b[, -"gdp_defl"], missing_defl[ISO %in% missing_defl_b$ISO, .SD[variable == min(variable[!is.na(gdp_defl)])], by = ISO][, .(ISO, gdp_defl)], by = "ISO")
+    missing_defl_f <- merge(missing_defl_f[, -"gdp_defl"], missing_defl[ISO %in% missing_defl_f$ISO, .SD[variable == max(variable[!is.na(gdp_defl)])], by = ISO][, .(ISO, gdp_defl)], by = "ISO")
+    
+    missing_defl <- rbind(missing_defl_b[, `:=` (gdp_defl = gdp_defl*defg, defg = NULL)], missing_defl_f[, `:=` (gdp_defl = gdp_defl*defg, defg = NULL)])
+    
+    missing_defl[, `:=` (source = paste0(source, "_est"))]
+    
+    deflators <- rbind(deflators[!(paste0(ISO, variable) %in% paste0(missing_defl$ISO, missing_defl$variable))], missing_defl)
   }
   
   #Final out
