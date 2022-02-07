@@ -1,48 +1,16 @@
-required.packages <- c("data.table","jsonlite","httr","XML")
-lapply(required.packages, require, character.only=T)
+suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
 
+#Load FTS utility functions
 setwd(dirname(getActiveDocumentContext()$path))
+setwd("..")
 
-source("https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_appeals_data.R")
-source("https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_api_appeals.R")
-source("https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_get_flows.R")
+source("IHA/fts_curated_flows.R")
 
-years <- 2018:2021
-update <- ""
-
-fts_files <- list.files(pattern = "fts_")
-fts_list <- list()
-for(i in 1:length(years)){
-  run <- T
-  if(!(paste0("fts_", years[i], ".csv") %in% fts_files) | years[i] %in% update){
-    message(paste0("Downloading ", years[i]))
-    while(run){
-      tryCatch({
-        fts <- fts_get_flows(year = years[i])
-        run <- F
-      },
-      error = function(e) e
-      )
-      break
-    }
-    fts[is.null(fts) | fts == "NULL"] <- NA
-    fts[, `:=` (reportDetails = NULL, childFlowIds = NULL)]
-    fwrite(fts, paste0("fts_", years[i], ".csv"))
-  }
-  fts_list[[i]] <- fread(paste0("fts_", years[i], ".csv"), encoding = "UTF-8")
-}
-
-fts <- rbindlist(fts_list, use.names = T, fill = T)
-rm(fts_list)
-
-fts_out <- fts
+#Load in curated FTS (incoming and internal on year boundary, exclude non-destination allocable flows, exclude internal destination flows)
+fts_curated <- fts_curated_flows(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = "Oct2021")
 
 #Create sector
-fts_out[, sector := destinationObjects_GlobalCluster.name]
-fts_out[grepl(";", destinationObjects_GlobalCluster.name), sector := "Multiple sectors specified"]
+fts_curated[, sector := destinationObjects_GlobalCluster.name]
+fts_curated[grepl(";", destinationObjects_GlobalCluster.name), sector := "Multiple sectors specified"]
 
-#Create year
-fts_out[, year := destinationObjects_UsageYear.name]
-fts_out[grepl(";", destinationObjects_UsageYear.name), year := "Multi-year"]
-
-fts_out[, sum(amountUSD), by = .(sector, year)]
+fts_curated[, .(total_2020USD = sum(amountUSD_defl, na.rm = T)), by = .(sector, year)][order(year, sector)]

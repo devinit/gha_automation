@@ -14,11 +14,11 @@
 #Flows with multiple destinations are rendered 'Multi-recipient'
 #Organisation types (channels) are as given by FTS's API, except in a few limited cases where government agencies are manually reclassified as such.
 
-fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, dataset_path = "IHA/datasets"){
+fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = "Oct2021"){
   suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
   
-  #Load FTS utility functions
-  lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_get_flows.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_split_rows.R"), source)
+  #Load FTS utility functions and deflators
+  lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_get_flows.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_split_rows.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/general/deflators.R"), source)
   
   if(!dir.exists(dataset_path)){
     dir.create(dataset_path)
@@ -72,8 +72,10 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   
   #Deflate by source location and destination year
   fts_orgs <- data.table(fromJSON("https://api.hpc.tools/v1/public/organization")$data)
-  fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), donor_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name)), by = id]
-  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), donor_country, source_org_type)]
+  fts_locs <- data.table(fromJSON("https://api.hpc.tools/v1/public/location")$data)
+  fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), donor_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name), donor_country_id = ifelse(is.null(locations[[1]]$id), NA, locations[[1]]$id)), by = id]
+  fts_orgs <- merge(fts_orgs, fts_locs[, .(id, iso3)], by.x = "donor_country_id", by.y = "id", all.x = T)
+  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), donor_country, donor_country_iso3 = iso3, source_org_type)]
   
   #Manual government development agencies
   fts_orgs[sourceObjects_Organization.id %in% c("9946", "10399", "4058", "2987", "30", "6547"), source_org_type := "Government"]
@@ -81,7 +83,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   #Merge orgs types
   fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
   fts <- merge(fts, fts_orgs, by = "sourceObjects_Organization.id", all.x = T, sort = F)
-  fts[source_org_type != "Government" | is.na(donor_country), donor_country := "Total DAC"]
+  fts[source_org_type != "Government" | is.na(source_org_type) | is.na(donor_country), `:=` (donor_country = "Total DAC", donor_country_iso3 = "DAC")]
   
   #Set NA channels to 'Uncategorized'
   fts[, channel := ifelse(is.na(destinationObjects_Organization.organizationTypes) | destinationObjects_Organization.organizationTypes == "", "Uncategorized", destinationObjects_Organization.organizationTypes)]
@@ -125,12 +127,11 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   fts <- rbind(fts[sourceObjects_Plan.id != destinationObjects_Plan.id | is.na(sourceObjects_Plan.id), dummy := F], fts_intraplan)
   
   #Deflate
-  deflators <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/usd_deflators_2021WEO.csv", header = T, encoding = "UTF-8", showProgress = F)
-  deflators <- suppressWarnings(melt.data.table(deflators, id.vars = c("name", "ISO3")))
-  deflators <- deflators[, .(donor_country = name, year = as.character(variable), deflator = value)]
+  deflators <- get_deflators(base_year = base_year, currency = "USD", weo_ver = weo_ver, approximate_missing = T)
+  deflators <- deflators[, .(donor_country_iso3 = ISO, year = as.character(year), deflator = gdp_defl)]
   
-  fts <- merge(fts, deflators, by = c("donor_country", "year"), all.x = T)
-  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country == "Total DAC", -"donor_country"], by = "year", all.x = T)$deflator
+  fts <- merge(fts, deflators, by = c("donor_country_iso3", "year"), all.x = T)
+  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country_iso3 == "DAC"], by = "year", all.x = T)$deflator
   fts[, amountUSD_defl := amountUSD/deflator]
   
   #Remove partial multi-year flows outside of requested range and pledges 
