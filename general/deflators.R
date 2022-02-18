@@ -6,25 +6,31 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021
   url <- paste0("https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/", weo_year, "/WEO", weo_ver ,"all.ashx")
   weo <- fread(url, na.strings=c("n/a", "--"), showProgress = F)
   
+  #Fix PSE ISO code
+  weo[ISO == "WBG", ISO := "PSE"]
+  
   country_codes <- unique(weo[, .(ISO, Country)])
   
   data_cols <- c("ISO", "WEO Subject Code", grep("^\\d{4}$", names(weo), value = T))
   
+  weo_est <- weo[, .(ISO, `WEO Subject Code`, `Estimates Start After`)]
+  
   weo <- melt(weo[, ..data_cols], id.vars = c("ISO", "WEO Subject Code"), variable.factor = F)
   weo[, value := as.numeric(gsub(",", "", value))]
   
-  #Fix PSE ISO code
-  weo[ISO == "WBG", ISO := "PSE"]
   
   #GDP in current prices
   if(currency == "USD"){
     weo_gdp_cur <- weo[`WEO Subject Code` == "NGDPD"]
+    weo_est <- weo_est[`WEO Subject Code` %in% c("NGDPD", "NGDP_RPCH"), .(est = min(`Estimates Start After`, na.rm = T)), by = ISO]
   }
   if(currency == "LCU"){
     weo_gdp_cur <- weo[`WEO Subject Code` == "NGDP"]
+    weo_est <- weo_est[`WEO Subject Code` %in% c("NGDP", "NGDP_RPCH"), .(est = min(`Estimates Start After`, na.rm = T)), by = ISO]
   }
   if(currency == "PPP"){
     weo_gdp_cur <- weo[`WEO Subject Code` == "PPPGDP"]
+    weo_est <- weo_est[`WEO Subject Code` %in% c("PPPGDP", "NGDP_RPCH"), .(est = min(`Estimates Start After`, na.rm = T)), by = ISO]
   }
   
   weo_gdp_cur <- weo_gdp_cur[, .(ISO, variable, gdp_cur = value)]
@@ -44,6 +50,11 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021
   #GDP deflators from WEO
   weo_deflators <- weo_gdp_con[, .(gdp_defl = gdp_cur/gdp_con), by = .(ISO, variable)]
   weo_deflators <- cbind(weo_deflators, source = "WEO", ver = weo_ver)
+  
+  #Source naming
+  weo_deflators <- merge(weo_deflators, weo_est, by = "ISO")
+  weo_deflators[variable > est & !is.na(gdp_defl), source := paste0(source, "est")]
+  weo_deflators[, est := NULL]
   
   ##Other data sources
   
@@ -150,7 +161,7 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021
     
     missing_defl <- rbind(missing_defl_b[, `:=` (gdp_defl = gdp_defl*defg, defg = NULL)], missing_defl_f[, `:=` (gdp_defl = gdp_defl*defg, defg = NULL)])
     
-    missing_defl[, `:=` (source = paste0(source, "_est"))]
+    missing_defl[, source := "DIest"]
     
     deflators <- rbind(deflators[!(paste0(ISO, variable) %in% paste0(missing_defl$ISO, missing_defl$variable))], missing_defl)
   }
