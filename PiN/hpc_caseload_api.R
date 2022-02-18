@@ -90,7 +90,7 @@ hpc_api_all <- function(plan_id, data_type = "caseLoad", by_sector = T, disaggre
   if(!is.null(top_out)) top_out <- cbind(sector_id = 0, sector = "Total", top_out)
   
   all_out <- NULL
-  if(!is.null(top_out) & !is.null(sectors_out)) all_out <- rbind(top_out, sectors_out, fill = T)
+  if(!is.null(top_out) | !is.null(sectors_out)) all_out <- rbind(top_out, sectors_out, fill = T)
   
   return(all_out)
 }
