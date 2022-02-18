@@ -17,48 +17,58 @@ hpc_api_all <- function(plan_id, data_type = "caseLoad", by_sector = T, disaggre
     
     #Check which index data is stored in
     index <- (1:length(attachments$type))[attachments$type == data_type]
-    if(identical(index, integer(0)) | length(index) != 1) return(NULL)
+    if(identical(index, integer(0))) return(NULL)
     
-    #Check if data is disaggregated
-    disag <- attachments$attachmentVersion$hasDisaggregatedData[[index]]
+    index_out <- list()
+      for(j in 1:length(index)){
+      
+        #Check if data is disaggregated
+        disag <- attachments$attachmentVersion$hasDisaggregatedData[[index[j]]]
+        
+        if(disag & disaggregations){
+          #Metrics by categories (columns of dataMatrix)
+          categories <- attachments$attachmentVersion$value$metrics$values$disaggregated$categories[[index[j]]]
+          metrics <- categories$metrics
+          if(length(categories) == 0) return(NULL)
+          categories_metrics <- rbindlist(lapply(1:length(metrics), function(i) data.table(category_type = categories[i,"name"], category_name = categories[i,"label"], setnames(as.data.table(metrics[[i]]), c("metric_label", "metric_id")))))
+          
+          #Total metrics
+          total_metrics <- data.table(category_type = "Total", category_name = "Total", setnames(unique(rbindlist(lapply(metrics, as.data.table))), c("metric_label", "metric_id")))
+          categories_metrics <- rbind(categories_metrics, total_metrics)
+          
+          #Locations
+          locations <- as.data.table(attachments$attachmentVersion$value$metrics$values$disaggregated$locations[[index[j]]])
+          names(locations) <- paste0("location_", names(locations))
+          
+          #dataMatrix
+          dataMatrix <- tail(data.table(attachments$attachmentVersion$value$metrics$values$disaggregated$dataMatrix[[index[j]]]), -1)
+          names(dataMatrix) <- apply(categories_metrics, 1, paste0, collapse = ";")
+          dataMatrix <- cbind(locations, dataMatrix)
+          
+          #dataMelt
+          data_melt <- melt(dataMatrix, id.vars = names(locations))
+          data_melt[, names(categories_metrics) := tstrsplit(variable, ";"), by = names(locations)]
+          data_melt[, variable := NULL]
+          
+        } else {
+          #Metrics
+          data_melt <- data.table(attachments$attachmentVersion$value$metrics$values$totals[[index[j]]])
+          names(data_melt)[names(data_melt) != "value"] <- paste0("metric_", names(data_melt)[names(data_melt) != "value"])
+          data_melt[, `:=` (category_id = "Total", category_label = "Total")]
+        }
+        
+        names(data_melt) <- gsub("_type", "_id", names(data_melt))
+        names(data_melt) <- gsub("_label|_en", "_name", names(data_melt))
+        suppressWarnings(data_melt[, value := as.numeric(value)])
+        
+        description <- attachments$attachmentVersion$value$description[[index[j]]]
+        source <- attachments$attachmentVersion$value$source[[index[j]]]
+        
+        index_out[[index[j]]] <- cbind(data_melt, description, source)
+      }
     
-    if(disag & disaggregations){
-      #Metrics by categories (columns of dataMatrix)
-      categories <- attachments$attachmentVersion$value$metrics$values$disaggregated$categories[[index]]
-      metrics <- categories$metrics
-      if(length(categories) == 0) return(NULL)
-      categories_metrics <- rbindlist(lapply(1:length(metrics), function(i) data.table(category_type = categories[i,"name"], category_name = categories[i,"label"], setnames(as.data.table(metrics[[i]]), c("metric_label", "metric_id")))))
-      
-      #Total metrics
-      total_metrics <- data.table(category_type = "Total", category_name = "Total", setnames(unique(rbindlist(lapply(metrics, as.data.table))), c("metric_label", "metric_id")))
-      categories_metrics <- rbind(categories_metrics, total_metrics)
-      
-      #Locations
-      locations <- as.data.table(attachments$attachmentVersion$value$metrics$values$disaggregated$locations[[index]])
-      names(locations) <- paste0("location_", names(locations))
-      
-      #dataMatrix
-      dataMatrix <- tail(data.table(attachments$attachmentVersion$value$metrics$values$disaggregated$dataMatrix[[index]]), -1)
-      names(dataMatrix) <- apply(categories_metrics, 1, paste0, collapse = ";")
-      dataMatrix <- cbind(locations, dataMatrix)
-      
-      #dataMelt
-      data_melt <- melt(dataMatrix, id.vars = names(locations))
-      data_melt[, names(categories_metrics) := tstrsplit(variable, ";"), by = names(locations)]
-      data_melt[, variable := NULL]
-      
-    } else {
-      #Metrics
-      data_melt <- data.table(attachments$attachmentVersion$value$metrics$values$totals[[index]])
-      names(data_melt)[names(data_melt) != "value"] <- paste0("metric_", names(data_melt)[names(data_melt) != "value"])
-      data_melt[, `:=` (category_id = "Total", category_label = "Total")]
-    }
-    
-    names(data_melt) <- gsub("_type", "_id", names(data_melt))
-    names(data_melt) <- gsub("_label|_en", "_name", names(data_melt))
-    suppressWarnings(data_melt[, value := as.numeric(value)])
-    
-    return(data_melt)
+    index_all <- rbindlist(index_out, fill = T)
+    return(index_all)
   }
   
   if(by_sector){
