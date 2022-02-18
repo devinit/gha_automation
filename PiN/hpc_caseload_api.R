@@ -1,7 +1,13 @@
-hpc_api_all <- function(api_out, data_type = "caseLoad", by_sector = T){
+hpc_api_all <- function(plan_id, data_type = "caseLoad", by_sector = T, disaggregations = T){
   
   required.packages <- c("data.table", "rstudioapi", "jsonlite")
   lapply(required.packages, require, character.only=T)
+  
+  dis <- "false"
+  if(disaggregations) dis <- "true"
+  
+  api <- paste0("https://api.hpc.tools/v2/public/plan/", plan_id, "?content=entities&disaggregation=", dis)
+  api_out <- fromJSON(api)
   
   top <- api_out$data$attachments
   sectors <- api_out$data$governingEntities$attachments
@@ -16,7 +22,7 @@ hpc_api_all <- function(api_out, data_type = "caseLoad", by_sector = T){
     #Check if data is disaggregated
     disag <- attachments$attachmentVersion$hasDisaggregatedData[[index]]
     
-    if(disag){
+    if(disag & disaggregations){
       #Metrics by categories (columns of dataMatrix)
       categories <- attachments$attachmentVersion$value$metrics$values$disaggregated$categories[[index]]
       metrics <- categories$metrics
