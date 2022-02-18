@@ -1,8 +1,8 @@
-required.packages <- c("data.table", "rstudioapi", "jsonlite")
-lapply(required.packages, require, character.only=T)
-setwd(dirname(dirname(getActiveDocumentContext()$path)))
-
 hpc_api_all <- function(api_out, data_type = "caseLoad", by_sector = T){
+  
+  required.packages <- c("data.table", "rstudioapi", "jsonlite")
+  lapply(required.packages, require, character.only=T)
+  
   top <- api_out$data$attachments
   sectors <- api_out$data$governingEntities$attachments
   
@@ -77,37 +77,3 @@ hpc_api_all <- function(api_out, data_type = "caseLoad", by_sector = T){
   
   return(all_out)
 }
-
-plans <- data.table(fromJSON("https://api.hpc.tools/v2/public/plan")$data)
-plans[, year := lapply(years, function(x) x$year), by = id]
-
-plans <- plans[year %in% c(2020, 2021)]
-
-plan_caseloads <- list()
-pb <- txtProgressBar(0, nrow(plans), style = 3)
-for(i in 1:nrow(plans)){
-  plan_id <- plans$id[[i]]
-  plan_name <- plans$planVersion.name[[i]]
-  location <- paste0(plans$locations[[i]][["name"]][plans$locations[[i]]$adminLevel == 0], collapse = "; ")
-  iso <- paste0(plans$locations[[i]][["iso3"]][plans$locations[[i]]$adminLevel == 0], collapse = "; ")
-  year <- paste0(plans$years[[i]][["year"]], collapse = "; ")
-  
-  metadata <- cbind(plan_id, plan_name, location, iso, year)
-  
-  api <- paste0("https://api.hpc.tools/v2/public/plan/", plan_id, "?content=entities&disaggregation=true")
-  api_out <- fromJSON(api)
-  
-  caseload_temp <- hpc_api_all(api_out, data_type = "caseLoad", by_sector = T)
-  
-  if(nrow(caseload_temp) != 0) plan_caseloads[[i]] <- cbind(metadata, caseload_temp)
-  setTxtProgressBar(pb, i)
-}
-plan_caseloads <- rbindlist(plan_caseloads, fill = T)
-
-sex_f <- c("women", "girl", "female", "fille", "femme", "féminin", "feminin", "niña", "nina", "mujere")
-sex_m <- c("\\bmen\\b", "boy", "\\bmale\\b", "garçon", "garcon", "homme", "masculin", "niño", "\\bnino\\b", "hombre")
-
-plan_caseloads[grepl(paste0(sex_f, collapse = "|"), category_id, ignore.case = T), sex := "F"]
-plan_caseloads[grepl(paste0(sex_m, collapse = "|"), category_id, ignore.case = T), sex := "M"]
-
-by_sex <- plan_caseloads[metric_id %in% c("inNeed", "target") & !is.na(sex) & sector == "Total" & !is.na(value), sum(value), by = .(year, iso, plan_name, metric_id, sex)]
