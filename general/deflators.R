@@ -106,9 +106,17 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021
   
   #Calculate Total DAC for missing data years
   weo_gdp_con_dac <- weo_gdp_con[ISO %in% dacdefl$ISO & !(variable %in% dacdefl[ISO == "DAC" & !is.na(gdp_defl)]$variable)]
-  weo_totaldac_defl <- weo_gdp_con_dac[, .(ISO = "DAC", gdp_defl = sum(gdp_cur, na.rm = T)/sum(gdp_con, na.rm = T), source = "WEO", ver = weo_ver), by = .(variable)]
+  weo_totaldac_defl <- weo_gdp_con_dac[, .(ISO = "DAC", gdp_defl = sum(gdp_cur, na.rm = T)/sum(gdp_con, na.rm = T), source = "DIest", ver = weo_ver), by = .(variable)]
   
   weo_deflators <- rbind(weo_deflators, weo_totaldac_defl)
+  
+  #Calculate Eurozone (EUI) deflator for missing data years
+  ez_isos <- c("AUT", "BEL", "CYP", "EST", "FIN", "FRA", "DEU", "GRC", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "NLD", "PRT", "SVK", "SLV", "ESP")
+  
+  weo_gdp_con_eui <- weo_gdp_con[ISO %in%  ez_isos & !(variable %in% dacdefl[ISO == "EUI" & !is.na(gdp_defl)]$variable)]
+  weo_eui_defl <- weo_gdp_con_eui[, .(ISO = "EUI", gdp_defl = sum(gdp_cur, na.rm = T)/sum(gdp_con, na.rm = T), source = "DIest", ver = weo_ver), by = .(variable)]
+  
+  weo_deflators <- rbind(weo_deflators, weo_eui_defl)
   
   #Replace WEO DAC data with OECD data
   dacdefl <- dacdefl[!is.na(gdp_defl), .(ISO, variable, gdp_defl, source = "OECD", ver = format(Sys.Date(), "%b%Y"))]

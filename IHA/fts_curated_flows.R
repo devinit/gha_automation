@@ -1,18 +1,18 @@
 ###Function to download and curate FTS flows from the FTS API
-#Queries are done by year, meaning the boundary column reflects this. We prioritise flows with incoming boundary classification where a flow is duplicated
+#Queries are done by year, meaning the boundary column reflects this. We prioritise flows with incoming boundary classification where a flow is duplicated.
 
 ##Data which is removed
-#Outgoing flows are removed
-#Duplicate flows which occur in multiple years are removed - the first occurrence is retained and then split equally between destination usage years
-#Pledges are removed
-#Flows with no specified destination location are removed (non-country allocable)
-#Flows which have the same source and destination location are removed (non-new to country flows)
+#Outgoing flows are removed.
+#Duplicate flows which occur in multiple years are removed - the first occurrence is retained and then split equally between destination usage years.
+#Pledges are removed.
 
 ##Transformations
-#Multi-year flows (destination) are split equally between destination years
+#Negative dummy flows are added to remove the effect of internal plan flows, ensuring the total inputs and outputs are correct when aggregated.
+#Multi-year flows (destination) are split equally between destination years.
 #Deflation is done according to source organisation and destination year. Non-government source organisations use the OECD DAC deflator.
-#Flows with multiple destinations are rendered 'Multi-recipient'
+#Flows with multiple destinations are rendered 'Multi-recipient'.
 #Organisation types (channels) are as given by FTS's API, except in a few limited cases where government agencies are manually reclassified as such.
+#European Commission Institutions are coded manually as donor country "European Commission" and use the OECD EU Institutions deflator.
 
 fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = "Oct2021"){
   suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
@@ -66,7 +66,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   
   #Set multi-country flows to 'multi-country' in recipient column
   isos <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/isos.csv", encoding = "UTF-8", showProgress = F)
-  fts <- merge(fts, isos[, .(countryname_fts, iso3)], by.x = "destinationObjects_Location.name", by.y = "countryname_fts", all.x = T)
+  fts <- merge(fts, isos[, .(countryname_fts, iso3)], by.x = "destinationObjects_Location.name", by.y = "countryname_fts", all.x = T, sort = F)
   fts[, recipient := destinationObjects_Location.name]
   fts[grepl(";", recipient), `:=` (recipient = "Multi-recipient", iso3 = "MULTI")]
   
@@ -74,7 +74,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   fts_orgs <- data.table(fromJSON("https://api.hpc.tools/v1/public/organization")$data)
   fts_locs <- data.table(fromJSON("https://api.hpc.tools/v1/public/location")$data)
   fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), donor_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name), donor_country_id = ifelse(is.null(locations[[1]]$id), NA, locations[[1]]$id)), by = id]
-  fts_orgs <- merge(fts_orgs, fts_locs[, .(id, iso3)], by.x = "donor_country_id", by.y = "id", all.x = T)
+  fts_orgs <- merge(fts_orgs, fts_locs[, .(id, iso3)], by.x = "donor_country_id", by.y = "id", all.x = T, sort = F)
   fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), donor_country, donor_country_iso3 = iso3, source_org_type)]
   
   #Manual government development agencies
@@ -84,6 +84,10 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
   fts <- merge(fts, fts_orgs, by = "sourceObjects_Organization.id", all.x = T, sort = F)
   fts[source_org_type != "Government" | is.na(source_org_type) | is.na(donor_country), `:=` (donor_country = "Total DAC", donor_country_iso3 = "DAC")]
+  
+  #Manual EU institution classifications
+  euc_id <- c("8523","2966","8524","6789","2176","8525","8556","8650","8541","8421")
+  fts[sourceObjects_Organization.id %in% euc_id, `:=` (donor_country = "European Commission", donor_country_iso3 = "EUI")]
   
   #Set NA channels to 'Uncategorized'
   fts[, channel := ifelse(is.na(destinationObjects_Organization.organizationTypes) | destinationObjects_Organization.organizationTypes == "", "Uncategorized", destinationObjects_Organization.organizationTypes)]
@@ -130,8 +134,8 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   deflators <- get_deflators(base_year = base_year, currency = "USD", weo_ver = weo_ver, approximate_missing = T)
   deflators <- deflators[, .(donor_country_iso3 = ISO, year = as.character(year), deflator = gdp_defl)]
   
-  fts <- merge(fts, deflators, by = c("donor_country_iso3", "year"), all.x = T)
-  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country_iso3 == "DAC"], by = "year", all.x = T)$deflator
+  fts <- merge(fts, deflators, by = c("donor_country_iso3", "year"), all.x = T, sort = F)
+  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country_iso3 == "DAC"], by = "year", all.x = T, sort = F)$deflator
   fts[, amountUSD_defl := amountUSD/deflator]
   
   #Remove partial multi-year flows outside of requested range and pledges 
