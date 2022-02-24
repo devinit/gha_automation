@@ -9,6 +9,5 @@ hiik_get <- function(){
   writeBin(hiik_data, tmp)
   
   hiik <- data.table(read.csv(unz(tmp, data.table(unzip(tmp, list = T))[grep("[.]csv", Name)]$Name), encoding = "UTF-8"))
-  close(tmp)
   return(hiik)
 }
