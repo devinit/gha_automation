@@ -1,5 +1,5 @@
 wup_get <- function(){
-  lapply(c("data.table", "jsonlite"), require, character.only = T)
+  lapply(c("data.table", "jsonlite", "httr"), require, character.only = T)
   
   wup_urb_q <- '{"IndicatorListID":2,"IndicatorIDs":[3],"SourceIDs":["4"],"VariantIDs":[],"LocationIDs":[],"TimeIDs":[],"GenderIDs":[],"AgeIDs":[],"XMLFilters":[],"PivotBy":"Time"}'
   wup_rur_q <- '{"IndicatorListID":2,"IndicatorIDs":[2],"SourceIDs":["4"],"VariantIDs":[],"LocationIDs":[],"TimeIDs":[],"GenderIDs":[],"AgeIDs":[],"XMLFilters":[],"PivotBy":"Time"}'
