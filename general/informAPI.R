@@ -1,4 +1,4 @@
-get_inform <- function(){
+inform_get <- function(){
   lapply(c("data.table", "jsonlite"), require, character.only = T)
   
   year <- year(Sys.Date())

@@ -1,4 +1,4 @@
-get_hiik <- function(){
+hiik_get <- function(){
   lapply(c("data.table", "jsonlite", "xml2", "httr"), require, character.only = T)
   
   hiik_datasets <- read_html("https://hiik.de/data-and-maps/datasets/?lang=en")
