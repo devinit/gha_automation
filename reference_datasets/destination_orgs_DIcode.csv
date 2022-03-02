@@ -1,4 +1,4 @@
-Recipient,DI_dest_orgtype,DI_dest_ngotype,DI_dest_deliverychannel,id
+Recipient,DI_dest_orgtype,DI_dest_ngotype,DI_dest_deliverychannel,destinationObjects_Organization.id
 11.11.11 - Koepel van de Vlaamse Noord-Zuidbeweging vzw,private individual/organisation,,NGOs and CSOs,418
 21 Century Unification Service Organization,other,,Other,2356
 A Call to Serve International,NGOs,National NGO,NGOs and CSOs,3421
