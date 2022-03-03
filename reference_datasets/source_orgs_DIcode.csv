@@ -1,4 +1,4 @@
-Donor,DI_source_orgtype,DI_source_privatemoney,sourceObjects_Organization.id
+Donor,source_orgtype,source_privatemoney,sourceObjects_Organization.id
 21 Century Unification Service Organization,Other,no,2356
 3Com,Private sector corporations,private,5597
 3M,Private sector corporations,private,NA

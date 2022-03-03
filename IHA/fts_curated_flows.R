@@ -78,9 +78,9 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   if(dummy_intra_flows){
     fts_intraplan <- fts[sourceObjects_Plan.id == destinationObjects_Plan.id]
     source_cols <- grep("sourceObjects", names(fts_intraplan))
-    dest_cols <- grep("destinationObjects", names(fts_intraplan))
+    destination_cols <- grep("destinationObjects", names(fts_intraplan))
     names(fts_intraplan)[source_cols] <- gsub("source", "destination", names(fts_intraplan)[source_cols])
-    names(fts_intraplan)[dest_cols] <- gsub("destination", "source", names(fts_intraplan)[dest_cols])
+    names(fts_intraplan)[destination_cols] <- gsub("destination", "source", names(fts_intraplan)[destination_cols])
     fts_intraplan[, `:=` (amountUSD = -amountUSD, dummy = T)]
     
     fts <- rbind(fts[sourceObjects_Plan.id != destinationObjects_Plan.id | is.na(sourceObjects_Plan.id)], fts_intraplan)
@@ -95,14 +95,14 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   
   #Merge DI coded org types
   source_org_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/source_orgs_DIcode.csv", encoding = "UTF-8", showProgress = F)
-  source_org_dicode <- merge(fts_orgs, source_org_dicode[, .(sourceObjects_Organization.id = as.character(sourceObjects_Organization.id), DI_source_orgtype, DI_source_privatemoney)], by = "sourceObjects_Organization.id", all.x = T)
+  source_org_dicode <- merge(fts_orgs, source_org_dicode[, .(sourceObjects_Organization.id = as.character(sourceObjects_Organization.id), source_orgtype, source_privatemoney)], by = "sourceObjects_Organization.id", all.x = T)
   
-  dest_org_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/destination_orgs_DIcode.csv", encoding = "UTF-8", showProgress = F)
+  destination_org_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/destination_orgs_DIcode.csv", encoding = "UTF-8", showProgress = F)
   
   #Merge source orgs
   fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
   fts <- merge(fts, source_org_dicode, by = "sourceObjects_Organization.id", all.x = T, sort = F)
-  fts[!(FTS_source_orgtype == "Government" | (DI_source_orgtype %in% c("DAC governments", "NDD"))) | is.na(FTS_source_orgtype) | is.na(source_country), `:=` (source_country = "Total DAC", source_iso3 = "DAC")]
+  fts[!(FTS_source_orgtype == "Government" | (source_orgtype %in% c("DAC governments", "NDD"))) | is.na(FTS_source_orgtype) | is.na(source_country), `:=` (source_country = "Total DAC", source_iso3 = "DAC")]
   fts[, FTS_source_orgtype := NULL]
   
   #Manual EU institution classifications
@@ -110,16 +110,16 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   fts[sourceObjects_Organization.id %in% euc_id, `:=` (source_country = "European Commission", source_iso3 = "EUI")]
   
   #Merge dest orgs
-  fts <- merge(fts, dest_org_dicode[, .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), DI_dest_orgtype, DI_dest_ngotype, DI_dest_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
+  fts <- merge(fts, destination_org_dicode[, .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), destination_orgtype, destination_ngotype, destination_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
   
   #Fill gaps in DI org coding with FTS
-  fts[is.na(DI_source_orgtype) | DI_source_orgtype == "", DI_source_orgtype := gsub("NGO", "NGOs", sourceObjects_Organization.organizationTypes)]
-  fts[is.na(DI_source_privatemoney) | DI_source_privatemoney == "", DI_source_privatemoney := ifelse(sourceObjects_Organization.organizationTypes == "Private organization/foundation", "private", "no")]
-  fts[is.na(DI_dest_orgtype) | DI_dest_orgtype == "", DI_dest_orgtype := gsub("NGO", "NGOs", destinationObjects_Organization.organizationTypes)]
+  fts[is.na(source_orgtype) | source_orgtype == "", source_orgtype := gsub("NGO", "NGOs", sourceObjects_Organization.organizationTypes)]
+  fts[is.na(source_privatemoney) | source_privatemoney == "", source_privatemoney := ifelse(sourceObjects_Organization.organizationTypes == "Private organization/foundation", "private", "no")]
+  fts[is.na(destination_orgtype) | destination_orgtype == "", destination_orgtype := gsub("NGO", "NGOs", destinationObjects_Organization.organizationTypes)]
   
-  fts[(is.na(DI_dest_ngotype) | DI_dest_ngotype == "") & destinationObjects_Organization.organizationTypes == "NGO", DI_dest_ngotype := paste0(gsub(" NGO| organization/foundation/individual", "", destinationObjects_Organization.organizationSubTypes), " NGO")]
-  fts[, DI_dest_ngotype := gsub("^Affiliated", "Internationally Affiliated", DI_dest_ngotype)]
-  fts[is.na(DI_dest_ngotype) & destinationObjects_Organization.organizationTypes == "NGO", DI_dest_ngotype := "Undefined NGO"]
+  fts[(is.na(destination_ngotype) | destination_ngotype == "") & destinationObjects_Organization.organizationTypes == "NGO", destination_ngotype := paste0(gsub(" NGO| organization/foundation/individual", "", destinationObjects_Organization.organizationSubTypes), " NGO")]
+  fts[, destination_ngotype := gsub("^Affiliated", "Internationally Affiliated", destination_ngotype)]
+  fts[is.na(destination_ngotype) & destinationObjects_Organization.organizationTypes == "NGO", destination_ngotype := "Undefined NGO"]
   
   #Merge GHA channels
   gha_channels <- setnames(
@@ -140,7 +140,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
     ), c("FTS_matched_gha_channel", "destinationObjects_Organization.organizationTypes"))
   fts <- merge(fts, gha_channels, by = "destinationObjects_Organization.organizationTypes", all.x = T, sort = F)
   
-  fts[is.na(DI_dest_deliverychannel) | DI_dest_deliverychannel == "", DI_dest_deliverychannel := FTS_matched_gha_channel]
+  fts[is.na(destination_deliverychannel) | destination_deliverychannel == "", destination_deliverychannel := FTS_matched_gha_channel]
   fts[, FTS_matched_gha_channel := NULL]
   
   #Domestic response
