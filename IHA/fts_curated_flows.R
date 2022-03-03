@@ -14,7 +14,7 @@
 #Organisation types (channels) are as given by FTS's API, except in a few limited cases where government agencies are manually reclassified as such.
 #European Commission Institutions are coded manually as donor country "European Commission" and use the OECD EU Institutions deflator.
 
-fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = "Oct2021"){
+fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = "Oct2021", dummy_intra_flows = F){
   suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
   
   #Load FTS utility functions and deflators
@@ -52,6 +52,9 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   #Begin transformation
   message("Curating data...")
   
+  #Retain column order
+  col_order <- names(fts)
+  
   #Remove flows which are outgoing on boundary
   fts <- fts[boundary != "outgoing"]
   
@@ -64,42 +67,61 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
   fts[, multiyear := grepl(";", destinationObjects_UsageYear.name)]
   fts <- fts_split_rows(fts, value.cols = "amountUSD", split.col = "year", split.pattern = "; ", remove.unsplit = T)
   
-  #Set multi-country flows to 'multi-country' in recipient column
+  #Set multi-country flows to 'multi-destination_country' in destination_country column
   isos <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/isos.csv", encoding = "UTF-8", showProgress = F)
-  fts <- merge(fts, isos[, .(countryname_fts, iso3)], by.x = "destinationObjects_Location.name", by.y = "countryname_fts", all.x = T, sort = F)
-  fts[, recipient := destinationObjects_Location.name]
-  fts[grepl(";", recipient), `:=` (recipient = "Multi-recipient", iso3 = "MULTI")]
+  fts <- merge(fts, isos[, .(countryname_fts, destination_iso3 = iso3)], by.x = "destinationObjects_Location.name", by.y = "countryname_fts", all.x = T, sort = F)
+  fts[, destination_country := destinationObjects_Location.name]
+  fts[grepl(";", destination_country), `:=` (destination_country = "Multi-destination_country", destination_iso3 = "MULTI")]
+  
+  #Add dummy reverse flows to cancel-out intra-plan flows
+  fts[, dummy := F]
+  if(dummy_intra_flows){
+    fts_intraplan <- fts[sourceObjects_Plan.id == destinationObjects_Plan.id]
+    source_cols <- grep("sourceObjects", names(fts_intraplan))
+    dest_cols <- grep("destinationObjects", names(fts_intraplan))
+    names(fts_intraplan)[source_cols] <- gsub("source", "destination", names(fts_intraplan)[source_cols])
+    names(fts_intraplan)[dest_cols] <- gsub("destination", "source", names(fts_intraplan)[dest_cols])
+    fts_intraplan[, `:=` (amountUSD = -amountUSD, dummy = T)]
+    
+    fts <- rbind(fts[sourceObjects_Plan.id != destinationObjects_Plan.id | is.na(sourceObjects_Plan.id)], fts_intraplan)
+  }
   
   #Deflate by source location and destination year
   fts_orgs <- data.table(fromJSON("https://api.hpc.tools/v1/public/organization")$data)
   fts_locs <- data.table(fromJSON("https://api.hpc.tools/v1/public/location")$data)
-  fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), donor_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name), donor_country_id = ifelse(is.null(locations[[1]]$id), NA, locations[[1]]$id)), by = id]
-  fts_orgs <- merge(fts_orgs, fts_locs[, .(id, iso3)], by.x = "donor_country_id", by.y = "id", all.x = T, sort = F)
-  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), donor_country, donor_country_iso3 = iso3, source_org_type)]
+  fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), source_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name), source_country_id = ifelse(is.null(locations[[1]]$id), NA, locations[[1]]$id)), by = id]
+  fts_orgs <- merge(fts_orgs, fts_locs[, .(id, iso3)], by.x = "source_country_id", by.y = "id", all.x = T, sort = F)
+  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), source_country, source_iso3 = iso3, FTS_source_orgtype = source_org_type)]
   
-  #Manual government development agencies
-  fts_orgs[sourceObjects_Organization.id %in% c("9946", "10399", "4058", "2987", "30", "6547"), source_org_type := "Government"]
+  #Merge DI coded org types
+  source_org_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/source_orgs_DIcode.csv", encoding = "UTF-8", showProgress = F)
+  source_org_dicode <- merge(fts_orgs, source_org_dicode[, .(sourceObjects_Organization.id = as.character(sourceObjects_Organization.id), DI_source_orgtype, DI_source_privatemoney)], by = "sourceObjects_Organization.id", all.x = T)
   
-  #Merge orgs types
+  dest_org_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/destination_orgs_DIcode.csv", encoding = "UTF-8", showProgress = F)
+  
+  #Merge source orgs
   fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
-  fts <- merge(fts, fts_orgs, by = "sourceObjects_Organization.id", all.x = T, sort = F)
-  fts[source_org_type != "Government" | is.na(source_org_type) | is.na(donor_country), `:=` (donor_country = "Total DAC", donor_country_iso3 = "DAC")]
+  fts <- merge(fts, source_org_dicode, by = "sourceObjects_Organization.id", all.x = T, sort = F)
+  fts[!(FTS_source_orgtype == "Government" | (DI_source_orgtype %in% c("DAC governments", "NDD"))) | is.na(FTS_source_orgtype) | is.na(source_country), `:=` (source_country = "Total DAC", source_iso3 = "DAC")]
   
   #Manual EU institution classifications
   euc_id <- c("8523","2966","8524","6789","2176","8525","8556","8650","8541","8421")
-  fts[sourceObjects_Organization.id %in% euc_id, `:=` (donor_country = "European Commission", donor_country_iso3 = "EUI")]
+  fts[sourceObjects_Organization.id %in% euc_id, `:=` (source_country = "European Commission", source_iso3 = "EUI")]
+  
+  #Merge dest orgs
+  fts <- merge(fts, dest_org_dicode[, .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), DI_dest_orgtype, DI_dest_ngotype, DI_dest_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
   
   #Set NA channels to 'Uncategorized'
-  fts[, channel := ifelse(is.na(destinationObjects_Organization.organizationTypes) | destinationObjects_Organization.organizationTypes == "", "Uncategorized", destinationObjects_Organization.organizationTypes)]
+  fts[, FTS_dest_deliverychannel := ifelse(is.na(destinationObjects_Organization.organizationTypes) | destinationObjects_Organization.organizationTypes == "", "Uncategorized", destinationObjects_Organization.organizationTypes)]
   
   #Set subchannels
-  fts[, subchannel := ifelse(destinationObjects_Organization.organizationSubTypes == "", "Uncategorized", destinationObjects_Organization.organizationSubTypes)]
+  fts[, FTS_dest_deliverysubchannel := ifelse(destinationObjects_Organization.organizationSubTypes == "", "Uncategorized", destinationObjects_Organization.organizationSubTypes)]
   
   #Set multiple channels to 'Multi-channel'
-  fts[grepl(";", channel), `:=` (channel = "Multi-channel", subchannel = "Multi-channel")]
+  fts[grepl(";", FTS_dest_deliverychannel), `:=` (FTS_dest_deliverychannel = "Multi-channel", FTS_dest_deliverysubchannel = "Multi-channel")]
   
   #Tidy up channel names
-  fts[, subchannel := gsub(" NGO", "", subchannel, ignore.case = T)]
+  fts[, FTS_dest_deliverysubchannel := gsub(" NGO", "", FTS_dest_deliverysubchannel, ignore.case = T)]
   
   #Merge GHA channels
   gha_channels <- setnames(
@@ -117,26 +139,16 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
       c("Multi-channel", "Multi-channel")
     )
     )
-    ), c("gha_channel", "channel"))
-  fts <- merge(fts, gha_channels, by = "channel", all.x = T, sort = F)
-  
-  #Add dummy reverse flows to cancel-out intra-plan flows
-  fts_intraplan <- fts[sourceObjects_Plan.id == destinationObjects_Plan.id]
-  source_cols <- grep("sourceObjects", names(fts_intraplan))
-  dest_cols <- grep("destinationObjects", names(fts_intraplan))
-  names(fts_intraplan)[source_cols] <- gsub("source", "destination", names(fts_intraplan)[source_cols])
-  names(fts_intraplan)[dest_cols] <- gsub("destination", "source", names(fts_intraplan)[dest_cols])
-  fts_intraplan[, `:=` (amountUSD = -amountUSD, dummy = T)]
-  
-  fts <- rbind(fts[sourceObjects_Plan.id != destinationObjects_Plan.id | is.na(sourceObjects_Plan.id), dummy := F], fts_intraplan)
+    ), c("FTS_matched_gha_channel", "FTS_dest_deliverychannel"))
+  fts <- merge(fts, gha_channels, by = "FTS_dest_deliverychannel", all.x = T, sort = F)
   
   #Deflate
   deflators <- get_deflators(base_year = base_year, currency = "USD", weo_ver = weo_ver, approximate_missing = T)
-  deflators <- deflators[, .(donor_country_iso3 = ISO, year = as.character(year), deflator = gdp_defl)]
+  deflators <- deflators[, .(source_iso3 = ISO, year = as.character(year), deflator = gdp_defl)]
   
-  fts <- merge(fts, deflators, by = c("donor_country_iso3", "year"), all.x = T, sort = F)
-  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[donor_country_iso3 == "DAC"], by = "year", all.x = T, sort = F)$deflator
-  fts[, amountUSD_defl := amountUSD/deflator]
+  fts <- merge(fts, deflators, by = c("source_iso3", "year"), all.x = T, sort = F)
+  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[source_iso3 == "DAC"], by = "year", all.x = T, sort = F)$deflator
+  fts[, `:=` (amountUSD_defl = amountUSD/deflator, amountUSD_defl_millions = (amountUSD/deflator)/1000000)]
   
   #Remove partial multi-year flows outside of requested range and pledges 
   fts_out <- fts[
@@ -144,5 +156,9 @@ fts_curated_flows <- function(years = 2016:2022, update_years = 2022:2022, datas
     & status %in% c("paid", "commitment")
     ]
   
+  #Reorder columns nicely
+  col_order <- union(col_order, names(fts)[order(names(fts_out))])
+  fts_out <- fts_out[, col_order, with = F]
+
   return(fts_out)
 }
