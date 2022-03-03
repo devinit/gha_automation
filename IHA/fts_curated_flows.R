@@ -117,8 +117,8 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   fts[is.na(DI_source_privatemoney) | DI_source_privatemoney == "", DI_source_privatemoney := ifelse(sourceObjects_Organization.organizationTypes == "Private organization/foundation", "private", "no")]
   fts[is.na(DI_dest_orgtype) | DI_dest_orgtype == "", DI_dest_orgtype := gsub("NGO", "NGOs", destinationObjects_Organization.organizationTypes)]
   
-  fts[is.na(DI_dest_ngotype) & destinationObjects_Organization.organizationTypes == "NGO", DI_dest_ngotype := paste0(gsub(" NGO| organization/foundation/individual", "",destinationObjects_Organization.organizationSubTypes), " NGO")]
-  fts[, DI_dest_ngotype := gsub("Affiliated", "Internationally affiliated", DI_dest_ngotype)]
+  fts[(is.na(DI_dest_ngotype) | DI_dest_ngotype == "") & destinationObjects_Organization.organizationTypes == "NGO", DI_dest_ngotype := paste0(gsub(" NGO| organization/foundation/individual", "", destinationObjects_Organization.organizationSubTypes), " NGO")]
+  fts[, DI_dest_ngotype := gsub("^Affiliated", "Internationally Affiliated", DI_dest_ngotype)]
   fts[is.na(DI_dest_ngotype) & destinationObjects_Organization.organizationTypes == "NGO", DI_dest_ngotype := "Undefined NGO"]
   
   #Merge GHA channels
@@ -155,6 +155,10 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   fts[, new_to_plan := T]
   fts[sourceObjects_Plan.id == destinationObjects_Plan.id & sourceObjects_Plan.id != "", new_to_plan := F]
   
+  #New to sector
+  fts[, new_to_sector := T]
+  fts[sourceObjects_GlobalCluster.id == destinationObjects_GlobalCluster.id & sourceObjects_GlobalCluster.id != "", new_to_plan := F]
+  
   #Deflate
   deflators <- get_deflators(base_year = base_year, currency = "USD", weo_ver = weo_ver, approximate_missing = T)
   deflators <- deflators[, .(source_iso3 = ISO, year = as.character(year), deflator = gdp_defl)]
@@ -173,5 +177,5 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   col_order <- union(col_order, names(fts)[order(names(fts))])
   fts <- fts[, col_order, with = F]
 
-  return(fts_out)
+  return(fts)
 }
