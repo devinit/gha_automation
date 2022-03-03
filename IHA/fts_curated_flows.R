@@ -114,8 +114,11 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   
   #Fill gaps in DI org coding with FTS
   fts[is.na(source_orgtype) | source_orgtype == "", source_orgtype := gsub("NGO", "NGOs", sourceObjects_Organization.organizationTypes)]
+  fts[, source_orgtype := gsub("UN agency", "UN Multi", source_orgtype)]
+  
   fts[is.na(source_privatemoney) | source_privatemoney == "", source_privatemoney := ifelse(sourceObjects_Organization.organizationTypes == "Private organization/foundation", "private", "no")]
   fts[is.na(destination_orgtype) | destination_orgtype == "", destination_orgtype := gsub("NGO", "NGOs", destinationObjects_Organization.organizationTypes)]
+  fts[, destination_orgtype := gsub("UN agency", "UN Multi", destination_orgtype)]
   
   fts[(is.na(destination_ngotype) | destination_ngotype == "") & destinationObjects_Organization.organizationTypes == "NGO", destination_ngotype := paste0(gsub(" NGO| organization/foundation/individual", "", destinationObjects_Organization.organizationSubTypes), " NGO")]
   fts[, destination_ngotype := gsub("^Affiliated", "Internationally Affiliated", destination_ngotype)]
@@ -142,6 +145,11 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   
   fts[is.na(destination_deliverychannel) | destination_deliverychannel == "", destination_deliverychannel := FTS_matched_gha_channel]
   fts[, FTS_matched_gha_channel := NULL]
+  
+  #Aggregate multiple matched columns
+  fts[grepl(";", source_orgtype), source_orgtype := ifelse(length(unique(strsplit(source_orgtype, "; ")[[1]])) == 1, unique(strsplit(source_orgtype, "; ")[[1]]), "Other")]
+  fts[grepl(";", destination_orgtype), destination_orgtype := ifelse(length(unique(strsplit(destination_orgtype, "; ")[[1]])) == 1, unique(strsplit(destination_orgtype, "; ")[[1]]), "Other") ]
+  fts[grepl(";", destination_ngotype), destination_ngotype := ifelse(length(unique(strsplit(destination_ngotype, "; ")[[1]])) == 1, unique(strsplit(destination_ngotype, "; ")[[1]]), "Other") ]
   
   #Domestic response
   fts[, domestic_response := F]

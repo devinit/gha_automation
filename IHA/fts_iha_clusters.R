@@ -7,7 +7,7 @@ setwd("..")
 source("IHA/fts_curated_flows.R")
 
 #Load in curated FTS (incoming and internal on year boundary, exclude non-destination allocable flows, exclude internal destination flows)
-fts_curated <- fts_curated_flows(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = "Oct2021")
+fts_curated <- fts_curated_flows(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = "Oct2021", dummy_intra_flows = T)
 
 #Create sector
 fts_curated[, sector := destinationObjects_GlobalCluster.name]
