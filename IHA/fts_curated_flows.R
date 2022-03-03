@@ -103,6 +103,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
   fts <- merge(fts, source_org_dicode, by = "sourceObjects_Organization.id", all.x = T, sort = F)
   fts[!(FTS_source_orgtype == "Government" | (DI_source_orgtype %in% c("DAC governments", "NDD"))) | is.na(FTS_source_orgtype) | is.na(source_country), `:=` (source_country = "Total DAC", source_iso3 = "DAC")]
+  fts[, FTS_source_orgtype := NULL]
   
   #Manual EU institution classifications
   euc_id <- c("8523","2966","8524","6789","2176","8525","8556","8650","8541","8421")
@@ -111,17 +112,14 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   #Merge dest orgs
   fts <- merge(fts, dest_org_dicode[, .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), DI_dest_orgtype, DI_dest_ngotype, DI_dest_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
   
-  #Set NA channels to 'Uncategorized'
-  fts[, FTS_dest_deliverychannel := ifelse(is.na(destinationObjects_Organization.organizationTypes) | destinationObjects_Organization.organizationTypes == "", "Uncategorized", destinationObjects_Organization.organizationTypes)]
+  #Fill gaps in DI org coding with FTS
+  fts[is.na(DI_source_orgtype) | DI_source_orgtype == "", DI_source_orgtype := gsub("NGO", "NGOs", sourceObjects_Organization.organizationTypes)]
+  fts[is.na(DI_source_privatemoney) | DI_source_privatemoney == "", DI_source_privatemoney := ifelse(sourceObjects_Organization.organizationTypes == "Private organization/foundation", "private", "no")]
+  fts[is.na(DI_dest_orgtype) | DI_dest_orgtype == "", DI_dest_orgtype := gsub("NGO", "NGOs", destinationObjects_Organization.organizationTypes)]
   
-  #Set subchannels
-  fts[, FTS_dest_deliverysubchannel := ifelse(destinationObjects_Organization.organizationSubTypes == "", "Uncategorized", destinationObjects_Organization.organizationSubTypes)]
-  
-  #Set multiple channels to 'Multi-channel'
-  fts[grepl(";", FTS_dest_deliverychannel), `:=` (FTS_dest_deliverychannel = "Multi-channel", FTS_dest_deliverysubchannel = "Multi-channel")]
-  
-  #Tidy up channel names
-  fts[, FTS_dest_deliverysubchannel := gsub(" NGO", "", FTS_dest_deliverysubchannel, ignore.case = T)]
+  fts[is.na(DI_dest_ngotype) & destinationObjects_Organization.organizationTypes == "NGO", DI_dest_ngotype := paste0(gsub(" NGO| organization/foundation/individual", "",destinationObjects_Organization.organizationSubTypes), " NGO")]
+  fts[, DI_dest_ngotype := gsub("Affiliated", "Internationally affiliated", DI_dest_ngotype)]
+  fts[is.na(DI_dest_ngotype) & destinationObjects_Organization.organizationTypes == "NGO", DI_dest_ngotype := "Undefined NGO"]
   
   #Merge GHA channels
   gha_channels <- setnames(
@@ -139,8 +137,23 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
       c("Multi-channel", "Multi-channel")
     )
     )
-    ), c("FTS_matched_gha_channel", "FTS_dest_deliverychannel"))
-  fts <- merge(fts, gha_channels, by = "FTS_dest_deliverychannel", all.x = T, sort = F)
+    ), c("FTS_matched_gha_channel", "destinationObjects_Organization.organizationTypes"))
+  fts <- merge(fts, gha_channels, by = "destinationObjects_Organization.organizationTypes", all.x = T, sort = F)
+  
+  fts[is.na(DI_dest_deliverychannel) | DI_dest_deliverychannel == "", DI_dest_deliverychannel := FTS_matched_gha_channel]
+  fts[, FTS_matched_gha_channel := NULL]
+  
+  #Domestic response
+  fts[, domestic_response := F]
+  fts[sourceObjects_Organization.organizationTypes == "Government" & source_iso3 == destination_iso3, domestic_response := T]
+  
+  #New to country
+  fts[, new_to_country := T]
+  fts[sourceObjects_Location.id == destinationObjects_Location.id & sourceObjects_Location.id != "", new_to_country := F]
+
+  #New to plan
+  fts[, new_to_plan := T]
+  fts[sourceObjects_Plan.id == destinationObjects_Plan.id & sourceObjects_Plan.id != "", new_to_plan := F]
   
   #Deflate
   deflators <- get_deflators(base_year = base_year, currency = "USD", weo_ver = weo_ver, approximate_missing = T)
@@ -151,14 +164,14 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   fts[, `:=` (amountUSD_defl = amountUSD/deflator, amountUSD_defl_millions = (amountUSD/deflator)/1000000)]
   
   #Remove partial multi-year flows outside of requested range and pledges 
-  fts_out <- fts[
+  fts <- fts[
     year %in% years 
     & status %in% c("paid", "commitment")
     ]
   
   #Reorder columns nicely
-  col_order <- union(col_order, names(fts)[order(names(fts_out))])
-  fts_out <- fts_out[, col_order, with = F]
+  col_order <- union(col_order, names(fts)[order(names(fts))])
+  fts <- fts[, col_order, with = F]
 
   return(fts_out)
 }
