@@ -157,15 +157,15 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   
   #New to country
   fts[, new_to_country := T]
-  fts[sourceObjects_Location.id == destinationObjects_Location.id & sourceObjects_Location.id != "", new_to_country := F]
+  fts[sourceObjects_Location.id == destinationObjects_Location.id & destinationObjects_Location.id != "", new_to_country := F]
 
   #New to plan
   fts[, new_to_plan := T]
-  fts[sourceObjects_Plan.id == destinationObjects_Plan.id & sourceObjects_Plan.id != "", new_to_plan := F]
+  fts[sourceObjects_Plan.id == destinationObjects_Plan.id & destinationObjects_Plan.id != "", new_to_plan := F]
   
   #New to sector
   fts[, new_to_sector := T]
-  fts[sourceObjects_GlobalCluster.id == destinationObjects_GlobalCluster.id & sourceObjects_GlobalCluster.id != "", new_to_sector := F]
+  fts[sourceObjects_GlobalCluster.id == destinationObjects_GlobalCluster.id & destinationObjects_GlobalCluster.id != "", new_to_sector := F]
   
   #Deflate
   deflators <- get_deflators(base_year = base_year, currency = "USD", weo_ver = weo_ver, approximate_missing = T)
