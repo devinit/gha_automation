@@ -13,4 +13,4 @@ fts_curated <- fts_curated_flows(years = 2016:2022, update_years = NA, dataset_p
 fts_curated[, sector := destinationObjects_GlobalCluster.name]
 fts_curated[grepl(";", destinationObjects_GlobalCluster.name), sector := "Multiple sectors specified"]
 
-fts_curated[, .(total_2020USD = sum(amountUSD_defl, na.rm = T)), by = .(sector, year)][order(year, sector)]
+fts_curated[destinationObjects_Plan.id != "", .(total_2020USD = sum(amountUSD_defl, na.rm = T)), by = .(sector, year)][order(year, sector)]
