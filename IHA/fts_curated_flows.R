@@ -83,7 +83,7 @@ fts_curated_flows <- function(years = 2000:2021, update_years = NA, dataset_path
     names(fts_intraplan)[destination_cols] <- gsub("destination", "source", names(fts_intraplan)[destination_cols])
     fts_intraplan[, `:=` (amountUSD = -amountUSD, dummy = T)]
     
-    fts <- rbind(fts[sourceObjects_Plan.id != destinationObjects_Plan.id | is.na(sourceObjects_Plan.id)], fts_intraplan)
+    fts <- rbind(fts, fts_intraplan)
   }
   
   #Deflate by source location and destination year
