@@ -4,31 +4,8 @@ suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), 
 setwd(dirname(getActiveDocumentContext()$path))
 setwd("..")
 
-tabulate_dac_api <- function(api){
-  api_out <- read_json(api, simplifyVector = T)
-  
-  series_names <- api_out$structure$dimensions$series$name
-  series_con <- api_out$structure$dimensions$series$values
-  series_con <- lapply(series_con, function(x) data.table(cbind(id = as.numeric(rownames(x))-1, name = x$name)))
-  
-  obs_names <- api_out$structure$dimensions$observation$values[[1]]$name
-  
-  row_ids <- strsplit(names(api_out$dataSets$series), ":")
-  row_names <- rbindlist(lapply(row_ids, function(x) sapply(1:length(x), function(i) series_con[[i]][id == x[[i]]][,2])))
-  names(row_names) <- series_names
-  
-  dac_tab <- rbindlist(lapply(api_out$dataSets$series, function(x) x$observations), fill = T)
-  dac_tab[dac_tab == "NULL"] <- 0
-  dac_tab <- sapply(dac_tab, function(x) sapply(x, function(y) as.numeric(y[[1]])))
-  if(is.null(dim(dac_tab)[1]))
-    dac_tab <- t(dac_tab)
-  dac_tab <- data.table(dac_tab)
-  names(dac_tab) <- obs_names
-  
-  dac_tab <- cbind(row_names, dac_tab)
-  
-  return(dac_tab)
-}
+invisible(lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/general/tabulate_dac_api.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/general/deflators.R"), source))
+isos <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/isos.csv")
 
 #Establish current DAC base year
 dac_base_year <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10200.20001.1.216.D/all?startTime=2000&endTime=2020"
@@ -41,8 +18,7 @@ dac_base_year <- data.table(read_json(dac_base_year, simplifyVector = T)$structu
 #Net disbursement flows (1140)
 #Constant prices (D)
 #2000-2020
-api_dac1 <- "https://stats.oecd.org/SDMX-JSON/data/TABLE1/..70+2102.1140.D/all?startTime=2000&endTime=2020"
-dac1 <- tabulate_dac_api(api_dac1)
+dac1 <- tabulate_dac_api("TABLE1", list( "", "", c(70,2102), 1140, "D"), 2000, dac_base_year)
 
 dac1 <- melt(dac1, id.vars = c("Donor", "Part", "Aid type", "Fund flows", "Amount type"))
 
@@ -56,8 +32,7 @@ dac1_ha <- dac1[`Aid type` == "hist: humanitarian aid grants"]
 #Gross ODA (240)
 #Constant prices (D)
 #2000-2020
-api_dac2a_cmo <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/913+914+916+915+905+909+912+959+974+967+963+964+966..1.240.D/all?startTime=2000&endTime=2020"
-dac2a_cmo <- tabulate_dac_api(api_dac2a_cmo)
+dac2a_cmo <- tabulate_dac_api("TABLE2A", list( c(905,909,912,913,914,915,916,959,963,964,966,967,974), "", 1, 240, "D"), 2000, dac_base_year)
 
 dac2a_cmo <- melt(dac2a_cmo, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
 
@@ -68,8 +43,7 @@ dac2a_cmo <- melt(dac2a_cmo, id.vars = c("Recipient", "Donor", "Part", "Aid type
 #All parts (Part I only available)
 #Constant prices (D)
 #2000-2020
-api_dac2a_moha <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10100.918+913+914+915+909+1013+976+932+940+923+959+807+974+967+963+964+966+928+905+1012+953+921+1020+1011+1016+104+951.1.216+240.D/all?startTime=2000&endTime=2020"
-dac2a_moha <- tabulate_dac_api(api_dac2a_moha)
+dac2a_moha <- tabulate_dac_api("TABLE2A", list(10100, c(918,913,914,915,909,1013,976,932,940,923,959,807,974,967,963,964,966,928,905,1012,953,921,1020,1011,1016,104,951), 1, c(216,240), "D"), 2000, dac_base_year)
 
 dac2a_moha <- melt(dac2a_moha, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
 dac2a_moha_share <- dac2a_moha[, .(ha_share = value[`Aid type` == "Humanitarian Aid"]/value[`Aid type` == "Memo: ODA Total, Gross disbursements"]), by = .(variable, Donor)]
@@ -99,7 +73,9 @@ dac2a_imha <- dac2a_cmo[, .(dac2a_imputed_multi_ha = sum(value*ha_share, na.rm =
 #Constant prices (D)
 #2011-2020
 api_mums <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/.10100.1000.41301+47066+41122+41114+41116+41127+41121+41141+41119+41130+41140+41307+41143+44002+46002+46003+46004+46005+46024+46013+46012+47111+47134+47129+47130+47044+47128+47142+47135.10.112.D/all?startTime=2011&endTime=2020"
-mums <- tabulate_dac_api(api_mums)
+mums <- tabulate_dac_api("MULTISYSTEM", list("", 10100, 1000, c(41301,47066,41122,41114,41116,41127,41121,41141,41119,41130,41140,41307,41143,44002,46002,46003,46004,46005,46024,46013,46012,47111,47134,47129,47130,47044,47128,47142,47135), 10, 112, "D"), 2000, dac_base_year)
+
+mums_base_year <- data.table(read_json(api_mums, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name
 
 mums <- melt(mums, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidToThru", "Flow type", "Amount type"))
 
@@ -139,6 +115,28 @@ mums_exc_dac2a[Channel == "United Nations Office of Co-ordination of Humanitaria
 
 mums_imha <- mums_exc_dac2a[, .(mums_imputed_multi_ha = sum(value*ha_share, na.rm = T)), by = .(variable, Donor)]
 
+if(as.numeric(mums_base_year) <= as.numeric(dac_base_year)){
+  message("Using previous years' MUMS data as latest year isn't available.")
+  mums_missing_guess <- as.data.table(rep(mums_imha[as.character(variable) == mums_base_year], as.numeric(dac_base_year) - as.numeric(mums_base_year)))
+  mums_missing_guess[, variable := as.character(rep((as.numeric(mums_base_year) +1 ):(as.numeric(dac_base_year)), each = nrow(mums_missing_guess)))]
+
+  mums_imha <- rbind(mums_imha[as.character(variable) <= mums_base_year], mums_missing_guess)
+  
+  dac_defl <- get_deflators(base_year = dac_base_year)
+  dac_defl <- merge(dac_defl, isos[, .(iso3, countryname_oecd)], by.x = "ISO", by.y = "iso3", all.x = T)
+  
+  dac_defl[, year := as.character(year)]
+  
+  dac_defl[countryname_oecd == "Russian Federation", countryname_oecd := "Russia"]
+  dac_defl[countryname_oecd == "Slovakia", countryname_oecd := "Slovak Republic"]
+  
+  mums_imha <- merge(mums_imha, dac_defl[, .(countryname_oecd, year, gdp_defl)], by.x = c("Donor", "variable"), by.y = c("countryname_oecd", "year"), all.x = T)
+  mums_imha[is.na(gdp_defl)]$gdp_defl <- merge(mums_imha[is.na(gdp_defl), .(Donor, variable)], dac_defl[ISO == "DAC"], by.x = "variable", by.y = "year")$gdp_defl
+  
+  mums_imha[, `:=` (mums_imputed_multi_ha = mums_imputed_multi_ha/gdp_defl, gdp_defl = NULL)]
+  
+}
+
 # ##CERF
 # cerf_years <- 2010:2020
 # cerf_list <- list()
@@ -161,7 +159,7 @@ mums_imha <- mums_exc_dac2a[, .(mums_imputed_multi_ha = sum(value*ha_share, na.r
 
 ####
 ##Total Imputed HA
-total_imha <- merge(dac2a_imha, mums_imha, all = T)
+total_imha <- merge(dac2a_imha, mums_imha, by = c("Donor", "variable"), all = T)
 #total_imha <- merge(total_ihma, cerf_ihma, all = T)
 total_imha[is.na(total_imha)] <- 0
 total_imha[, total_imha := (dac2a_imputed_multi_ha + mums_imputed_multi_ha)]
