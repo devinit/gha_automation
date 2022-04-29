@@ -7,7 +7,7 @@ setwd("..")
 source("https://raw.githubusercontent.com/devinit/di_script_repo/main/crs/crs_complete_download.R")
 
 years <- 2000:2020
-update_years <- 2020
+update_years <- 2000:2020
 dataset_path <- "IHA/datasets"
 
 if(!dir.exists(dataset_path)){

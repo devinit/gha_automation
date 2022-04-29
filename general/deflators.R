@@ -1,10 +1,11 @@
 get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021", approximate_missing = T){
-  suppressPackageStartupMessages(lapply(c("data.table"), require, character.only=T))
+  suppressPackageStartupMessages(lapply(c("data.table", "httr", "jsonlite"), require, character.only=T))
   
   ##WEO data
   weo_year <- year(as.Date(paste0("1", weo_ver), "%d%b%Y"))
   url <- paste0("https://www.imf.org/-/media/Files/Publications/WEO/WEO-Database/", weo_year, "/WEO", weo_ver ,"all.ashx")
-  weo <- fread(url, na.strings=c("n/a", "--"), showProgress = F)
+  content <- GET(url)$content
+  weo <- suppressWarnings(fread(rawToChar(content[content !='00']), na.strings=c("n/a", "--")))
   
   #Fix PSE ISO code
   weo[ISO == "WBG", ISO := "PSE"]
@@ -152,10 +153,10 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = "Oct2021
     missing_weo_gdp <- weo_gdp_con[ISO %in% missing$ISO]
     missing_weo_gdp[, variable := as.numeric(variable)]
     missing_weo_gr <- missing_weo_gdp[, .(gdp_avg_curg = (gdp_cur[!is.na(gdp_cur) & variable == max(variable[!is.na(gdp_cur)])]/gdp_cur[!is.na(gdp_cur) & variable == min(variable[!is.na(gdp_cur)])])^(1/(max(variable[!is.na(gdp_cur)])-min(variable[!is.na(gdp_cur)]))),
-                        gdp_avg_cong = (gdp_con[!is.na(gdp_con) & variable == max(variable[!is.na(gdp_con)])]/gdp_con[!is.na(gdp_con) & variable == min(variable[!is.na(gdp_con)])])^(1/(max(variable[!is.na(gdp_con)])-min(variable[!is.na(gdp_con)]))))
-                    , by = ISO]
+                                          gdp_avg_cong = (gdp_con[!is.na(gdp_con) & variable == max(variable[!is.na(gdp_con)])]/gdp_con[!is.na(gdp_con) & variable == min(variable[!is.na(gdp_con)])])^(1/(max(variable[!is.na(gdp_con)])-min(variable[!is.na(gdp_con)]))))
+                                      , by = ISO]
     missing_weo_gr <- missing_weo_gr[, .(defg = gdp_avg_curg/gdp_avg_cong), by = ISO]
-  
+    
     missing_defl <- merge(deflators[ISO %in% missing$ISO], missing_weo_gr, by = "ISO")
     
     missing_defl_f <- missing_defl[, .SD[is.na(gdp_defl) & variable > max(variable[!is.na(gdp_defl)])], by = ISO]
