@@ -45,18 +45,18 @@ dac2a_cmo <- melt(dac2a_cmo, id.vars = c("Recipient", "Donor", "Part", "Aid type
 
 ##DAC2a Multilateral ODA and HA
 #Humanitarian and Gross ODA (216, 240)
-#Selected multi donors
+#All multi donors
 #Developing countries, total
 #All parts (Part I only available)
 #Constant prices (D)
 #2000-2020
-dac2a_moha <- tabulate_dac_api("TABLE2A", list(10100, c(918,913,914,915,909,1013,976,932,940,923,959,807,974,967,963,964,966,928,905,1012,953,921,1020,1011,1016,104,951), 1, c(216,240), "D"), 2000, dac_base_year + 1)
+dac2a_moha <- tabulate_dac_api("TABLE2A", list(10100, "", 1, c(216,240), "D"), 2000, dac_base_year + 1)
 
 dac2a_moha <- melt(dac2a_moha, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
 dac2a_moha_share <- dac2a_moha[, .(ha_share = value[`Aid type` == "Humanitarian Aid"]/value[`Aid type` == "Memo: ODA Total, Gross disbursements"]), by = .(variable, Donor)]
 
-#Manually set UNHCR and UNRWA to 100%
-dac2a_moha_share[Donor %in% c("UNHCR", "UNRWA"), ha_share := 1]
+#Manually set UNHCR, UNRWA and CERF to 100%
+dac2a_moha_share[Donor %in% c("UNHCR", "UNRWA", "Central Emergency Response Fund [CERF]"), ha_share := 1]
 
 #Standardise dac2a names
 {dac2a_cmo[Recipient == "Af. D B", Recipient := "African Development Bank [AfDB]"]
@@ -79,8 +79,8 @@ dac2a_imha <- dac2a_cmo[, .(dac2a_imputed_multi_ha = sum(value*ha_share, na.rm =
 #Core contributions to
 #Constant prices (D)
 #2011-2020
-api_mums <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/.10100.1000.41301+47066+41122+41114+41116+41127+41121+41141+41119+41130+41140+41307+41143+44002+46002+46003+46004+46005+46024+46013+46012+47111+47134+47129+47130+47044+47128+47142+47135.10.112.D/all?startTime=2011&endTime=2020"
-mums <- tabulate_dac_api("MULTISYSTEM", list("", 10100, 1000, c(41301,47066,41122,41114,41116,41127,41121,41141,41119,41130,41140,41307,41143,44002,46002,46003,46004,46005,46024,46013,46012,47111,47134,47129,47130,47044,47128,47142,47135), 10, 112, "D"), 2000, dac_base_year + 1)
+api_mums <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/.10100.1000.41147+41301+47066+41122+41114+41116+41127+41121+41141+41119+41130+41140+41307+41143+44002+46002+46003+46004+46005+46024+46013+46012+47111+47134+47129+47130+47044+47128+47142+47135.10.112.D/all?startTime=2011&endTime=2020"
+mums <- tabulate_dac_api("MULTISYSTEM", list("", 10100, 1000, c(41147, 41301,47066,41122,41114,41116,41127,41121,41141,41119,41130,41140,41307,41143,44002,46002,46003,46004,46005,46024,46013,46012,47111,47134,47129,47130,47044,47128,47142,47135), 10, 112, "D"), 2000, dac_base_year + 1)
 
 mums_base_year <- data.table(read_json(api_mums, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name
 
@@ -109,7 +109,9 @@ mums <- melt(mums, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidTo
   mums[Channel == "Clean Technology Fund", Channel := "Climate Investment Funds [CIF]"]
   mums[Channel == "Nordic Development Fund", Channel := "Nordic Development Fund [NDF]"]
   mums[Channel == "Strategic Climate Fund", Channel := "Climate Investment Funds [CIF]"]
-  mums[Channel == "OPEC Fund for International Development", Channel := "OPEC Fund for International Development [OPEC Fund]"]}
+  mums[Channel == "Central Emergency Response Fund", Channel := "Central Emergency Response Fund [CERF]"]
+  mums[grepl("Global Environment Facility", Channel), Channel := "Global Environment Facility [GEF]"]
+}
 
 #Remove multilats which are already accounted for in DAC2A
 mums_exc_dac2a <- mums[!(Channel %in% dac2a_cmo$Recipient)]
@@ -217,26 +219,6 @@ if(as.numeric(mums_base_year) < as.numeric(dac_base_year)){
   }
   
 }
-
-# ##CERF
-# cerf_years <- 2010:2020
-# cerf_list <- list()
-# for(i in 1:length(cerf_years)){
-#   url <- paste0("https://cerf.un.org/contributionsByDonor/", cerf_years[i])
-#   cerf_list[[i]] <- read_json(url, simplifyVector = T)$data
-# }
-# cerf <- rbindlist(cerf_list)
-# 
-# #Standardise CERF names
-# {cerf[donor == "Slovakia", donor := "Slovak Republic"]
-# cerf[donor == "United States of America", donor := "United States"]
-# cerf[donor == "Russian Federation", donor := "Russia"]
-# cerf[donor == "Hyogo Prefecture (Japan)", donor := "Japan"]
-# cerf[donor == "Belgian Government of Flanders", donor := "Belgium"]
-# cerf[donor == "State of South Australia", donor := "Australia"]
-# cerf[donor == "Catalan Agency for Development Cooperation", donor := "Spain"]}
-# 
-# ##TODO INCLUDE CERF
 
 ####
 ##Total Imputed HA
