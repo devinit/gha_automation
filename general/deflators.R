@@ -1,5 +1,5 @@
 get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = NULL, approximate_missing = T){
-  suppressPackageStartupMessages(lapply(c("data.table"), require, character.only=T))
+  suppressPackageStartupMessages(lapply(c("data.table", "httr"), require, character.only=T))
   
   if(is.null(weo_ver)){
     
@@ -24,12 +24,12 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = NULL, ap
     
     if(weo_month <= 10 & weo_month > 4){
       weo_month <- 4
-    } else {
-      if(weo_month <= 4){
-        weo_year <- weo_year - 1
+      } else {
+        if(weo_month <= 4){
+          weo_year <- weo_year - 1
+        }
+        weo_month <- 10
       }
-      weo_month <- 10
-    }
     weo_ver <- format(as.Date(paste("1", weo_month, weo_year, sep = "-"), "%d-%m-%Y"), "%b%Y")
   }
   
@@ -165,10 +165,10 @@ get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = NULL, ap
     missing_weo_gdp <- weo_gdp_con[ISO %in% missing$ISO]
     missing_weo_gdp[, variable := as.numeric(variable)]
     missing_weo_gr <- suppressWarnings(missing_weo_gdp[, .(gdp_avg_curg = (gdp_cur[!is.na(gdp_cur) & variable == max(variable[!is.na(gdp_cur)])]/gdp_cur[!is.na(gdp_cur) & variable == min(variable[!is.na(gdp_cur)])])^(1/(max(variable[!is.na(gdp_cur)])-min(variable[!is.na(gdp_cur)]))),
-                                                           gdp_avg_cong = (gdp_con[!is.na(gdp_con) & variable == max(variable[!is.na(gdp_con)])]/gdp_con[!is.na(gdp_con) & variable == min(variable[!is.na(gdp_con)])])^(1/(max(variable[!is.na(gdp_con)])-min(variable[!is.na(gdp_con)]))))
-                                                       , by = ISO])
+                        gdp_avg_cong = (gdp_con[!is.na(gdp_con) & variable == max(variable[!is.na(gdp_con)])]/gdp_con[!is.na(gdp_con) & variable == min(variable[!is.na(gdp_con)])])^(1/(max(variable[!is.na(gdp_con)])-min(variable[!is.na(gdp_con)]))))
+                    , by = ISO])
     missing_weo_gr <- missing_weo_gr[, .(defg = gdp_avg_curg/gdp_avg_cong), by = ISO]
-    
+  
     missing_defl <- merge(deflators[ISO %in% missing$ISO], missing_weo_gr, by = "ISO")
     
     missing_defl_f <- suppressWarnings(missing_defl[, .SD[is.na(gdp_defl) & variable > max(variable[!is.na(gdp_defl)])], by = ISO])
