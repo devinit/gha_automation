@@ -43,7 +43,7 @@ fts_curated_flows <- function(years = 2000:2021, update_years = NA, dataset_path
       fwrite(fts, paste0(dataset_path, "/fts_", years[i], ".csv"))
     }
     message(paste0("Reading ", years[i]))
-    fts_list[[i]] <- fread(paste0(dataset_path, "/fts_", years[i], ".csv"), encoding = "UTF-8")
+    fts_list[[i]] <- fread(paste0(dataset_path, "/fts_", years[i], ".csv"))
   }
   
   fts <- rbindlist(fts_list, use.names = T, fill = T)
