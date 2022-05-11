@@ -161,7 +161,9 @@ fts_curated_flows <- function(years = 2000:2021, update_years = NA, dataset_path
 
   #New to plan
   fts[, new_to_plan := T]
-  fts[sourceObjects_Plan.id == destinationObjects_Plan.id | destinationObjects_Plan.id == "", new_to_plan := F]
+  if("sourceObjects_Plan.id" %in% names(fts)){
+    fts[sourceObjects_Plan.id == destinationObjects_Plan.id | destinationObjects_Plan.id == "", new_to_plan := F]
+  }
   
   #New to sector
   fts[, new_to_sector := T]
