@@ -79,8 +79,8 @@ dac2a_imha <- dac2a_cmo[, .(dac2a_imputed_multi_ha = sum(value*ha_share, na.rm =
 #Core contributions to
 #Constant prices (D)
 #2011-2020
-api_mums <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/.10100.1000.41147+41301+47066+41122+41114+41116+41127+41121+41141+41119+41130+41140+41307+41143+44002+46002+46003+46004+46005+46024+46013+46012+47111+47134+47129+47130+47044+47128+47142+47135.10.112.D/all?startTime=2011&endTime=2020"
-mums <- tabulate_dac_api("MULTISYSTEM", list("", 10100, 1000, c(41147, 41301,47066,41122,41114,41116,41127,41121,41141,41119,41130,41140,41307,41143,44002,46002,46003,46004,46005,46024,46013,46012,47111,47134,47129,47130,47044,47128,47142,47135), 10, 112, "D"), 2000, dac_base_year + 1)
+api_mums <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/.10100.1000.41147+41301+41302+47066+41122+41114+41116+41127+41121+41141+41144+41119+41130+41140+41307+41143+44002+46002+46003+46004+46005+46024+46013+46012+47111+47134+47129+47130+47044+47128+47142+47135.10.112.D/all?startTime=2011&endTime=2020"
+mums <- tabulate_dac_api("MULTISYSTEM", list("", 10100, 1000, c(41147, 41301,41302,47066,41122,41114,41116,41127,41121,41141,41144,41119,41130,41140,41307,41143,44002,46002,46003,46004,46005,46024,46013,46012,47111,47134,47129,47130,47044,47128,47142,47135), 10, 112, "D"), 2000, dac_base_year + 1)
 
 mums_base_year <- data.table(read_json(api_mums, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name
 
@@ -111,6 +111,7 @@ mums <- melt(mums, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidTo
   mums[Channel == "Strategic Climate Fund", Channel := "Climate Investment Funds [CIF]"]
   mums[Channel == "Central Emergency Response Fund", Channel := "Central Emergency Response Fund [CERF]"]
   mums[grepl("Global Environment Facility", Channel), Channel := "Global Environment Facility [GEF]"]
+  mums[grepl("International Labour Organisation", Channel), Channel := "International Labour Organisation [ILO]"]
 }
 
 #Remove multilats which are already accounted for in DAC2A
@@ -124,7 +125,7 @@ mums_exc_dac2a[Channel == "United Nations Office of Co-ordination of Humanitaria
 
 mums_imha <- mums_exc_dac2a[, .(mums_imputed_multi_ha = sum(value*ha_share, na.rm = T)), by = .(variable, Donor)]
 
-#Estimate DAC2a imputed for recent missing year(s)
+#Estimate DAC2a and MUMS imputed for recent missing year(s)
 if(max(as.character(dac2a_moha_share$variable)) < (dac_base_year + 1)){
   
   missing_years <- max(as.character(dac2a_moha_share$variable)):(dac_base_year + 1)
@@ -144,12 +145,17 @@ if(max(as.character(dac2a_moha_share$variable)) < (dac_base_year + 1)){
   dac1_un <- dac1_un[variable %in% missing_years][order(Donor, variable)]
   dac1_un_growth <- dac1_un[, growth := value/shift(value), by = .(Donor)][!is.na(growth)][, value := NULL][]
   
-  UN_agencies <- c("UNDP", "UNFPA", "UNHCR", "UNICEF", "UNRWA", "WFP")
-  dac2a_un <- dac2a_cmo[Recipient %in% UN_agencies]
+  UN_dac2a_agencies <- c("UNDP", "UNFPA", "UNHCR", "UNICEF", "UNRWA", "WFP")
+  dac2a_un <- dac2a_cmo[Recipient %in% UN_dac2a_agencies]
   dac2a_un_imputed <- dac2a_un[variable %in% missing_years, .(dac2a_imputed_un_ha = sum(value*ha_share, na.rm = T)), by = .(variable, Donor)][, variable := as.character(as.numeric(as.character(variable)) + 1)][]
   
+  UN_mums_agencies <- c("Food and Agriculture Organisation [FAO]", "International Labour Organisation [ILO]", "International Organisation for Migration", "UNEP", "United Nations Office of Co-ordination of Humanitarian Affairs", "UN Peacebuilding Fund [UNPBF]", "World Health Organisation [WHO]")
+  mums_un <- mums_exc_dac2a[Channel %in% UN_mums_agencies]
+  mums_un_imputed <- mums_un[variable %in% missing_years, .(mums_imputed_un_ha = sum(value*ha_share, na.rm = T)), by = .(variable, Donor)][, variable := as.character(as.numeric(as.character(variable)) + 1)][]
+  
   dac2a_missing_un <- merge(dac1_un_growth, dac2a_un_imputed, by = c("Donor", "variable"), all = T)
-  dac2a_missing_un <- dac2a_missing_un[, .(dac2a_missing_un = growth*dac2a_imputed_un_ha), by = .(Donor, variable)]
+  dac2a_missing_un <- merge(dac2a_missing_un, mums_un_imputed, by = c("Donor", "variable"), all = T)
+  dac2a_mums_missing_un <- dac2a_missing_un[, .(dac2a_mums_missing_un = growth*(dac2a_imputed_un_ha + mums_imputed_un_ha)), by = .(Donor, variable)]
   
   #IDA HA
   ##DAC1 Bilateral ODA to World Bank and IDA
@@ -194,16 +200,16 @@ if(max(as.character(dac2a_moha_share$variable)) < (dac_base_year + 1)){
   dac2a_missing_cerf <- missing_cerf[, .(dac2a_missing_cerf = sum(cerf_ha/gdp_defl, na.rm = T)), by = .(Donor, variable)][!is.na(dac2a_missing_cerf)]
   
   #Total recent missing year(s)
-  dac2a_total_missing <- merge(dac2a_missing_un, dac2a_missing_ida, all.x = T, by = c("Donor", "variable"))
+  dac2a_total_missing <- merge(dac2a_mums_missing_un, dac2a_missing_ida, all.x = T, by = c("Donor", "variable"))
   dac2a_total_missing <- merge(dac2a_total_missing, dac2a_missing_cerf, all.x = T, by = c("Donor", "variable"))
   dac2a_total_missing[is.na(dac2a_total_missing)] <- 0
   
-  dac2a_total_missing <- dac2a_total_missing[, .(dac2a_imputed_multi_ha = dac2a_missing_un + dac2a_missing_ida + dac2a_missing_cerf), by = .(Donor, variable)]
+  dac2a_total_missing <- dac2a_total_missing[, .(dac2a_imputed_multi_ha = dac2a_mums_missing_un + dac2a_missing_ida + dac2a_missing_cerf), by = .(Donor, variable)]
   
   dac2a_imha <- rbind(dac2a_imha, dac2a_total_missing)
 }
 
-#Estimate MUMS for recent missing year(s)
+#Estimate MUMS for completely missing year(s)
 if(as.numeric(mums_base_year) < as.numeric(dac_base_year)){
   message("Using previous years' MUMS data as latest year isn't available.")
   mums_missing_guess <- mums_imha[as.character(variable) == mums_base_year][rep(1:nrow(mums_imha[as.character(variable) == mums_base_year]), (dac_base_year + 1 - as.numeric(mums_base_year)))]
@@ -244,5 +250,13 @@ total_iha <- merge(dac1_ha, total_imha, by = c("variable", "Donor"), all = T)
 total_iha <- merge(total_iha, eu_imha, by = c("variable", "Donor"), all = T)
 total_iha[is.na(total_iha)] <- 0
 total_iha <- total_iha[, .(total_iha = value + total_imha + eu_imha), by = .(variable, Donor)]
-
+total_iha <- total_iha[!grepl(", Total", Donor)]
 fwrite(total_iha, "IHA/output/dac_aggregate_donors.csv")
+
+##Debug inputs
+# de_dac1_ha <- dac1_ha
+# de_dac2a_missing_un <- dac2a_mums_missing_un
+# de_dac2a_missing_ida <- dac2a_missing_ida
+# de_dac2a_missing_cerf <- dac2a_missing_cerf
+# de_eu_imha <- eu_imha
+# fwrite(merge(merge(merge(merge(de_dac1_ha[, .(variable, Donor, dac1 = value)], de_dac2a_missing_un, by = c("variable", "Donor")), de_dac2a_missing_ida), de_dac2a_missing_cerf), de_eu_imha), "debug_inputs.csv")
