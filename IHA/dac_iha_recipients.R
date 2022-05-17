@@ -4,35 +4,19 @@ suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), 
 setwd(dirname(getActiveDocumentContext()$path))
 setwd("..")
 
-tabulate_dac_api <- function(api){
-  api_out <- read_json(api, simplifyVector = T)
-  
-  series_names <- api_out$structure$dimensions$series$name
-  series_con <- api_out$structure$dimensions$series$values
-  series_con <- lapply(series_con, function(x) data.table(cbind(id = as.numeric(rownames(x))-1, name = x$name)))
-  
-  obs_names <- api_out$structure$dimensions$observation$values[[1]]$name
-  
-  row_ids <- strsplit(names(api_out$dataSets$series), ":")
-  row_names <- rbindlist(lapply(row_ids, function(x) sapply(1:length(x), function(i) series_con[[i]][id == x[[i]]][,2])))
-  names(row_names) <- series_names
-  
-  dac_tab <- rbindlist(lapply(api_out$dataSets$series, function(x) x$observations), fill = T)
-  dac_tab[dac_tab == "NULL"] <- 0
-  dac_tab <- sapply(dac_tab, function(x) sapply(x, function(y) as.numeric(y[[1]])))
-  if(is.null(dim(dac_tab)[1]))
-    dac_tab <- t(dac_tab)
-  dac_tab <- data.table(dac_tab)
-  names(dac_tab) <- obs_names
-  
-  dac_tab <- cbind(row_names, dac_tab)
-  
-  return(dac_tab)
-}
+invisible(lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/general/tabulate_dac_api.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/general/deflators.R"), source))
+isos <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/isos.csv")
 
 #Establish current DAC base year
-dac_base_year <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10200.20001.1.216.D/all?startTime=2000&endTime=2020"
-dac_base_year <- data.table(read_json(dac_base_year, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name
+dac_base_year <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10200.20001.1.216.D/all?startTime=2000&endTime=2021"
+dac_base_year <- as.numeric(data.table(read_json(dac_base_year, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name)
+
+#Load deflators
+defl <- get_deflators(base_year = dac_base_year)
+defl <- merge(defl, isos[, .(iso3, countryname_oecd)], by.x = "ISO", by.y = "iso3", all.x = T)
+defl[, year := as.character(year)]
+defl[countryname_oecd == "Russian Federation", countryname_oecd := "Russia"]
+defl[countryname_oecd == "Slovakia", countryname_oecd := "Slovak Republic"]
 
 ##DAC2a HA
 #All recipients
@@ -41,8 +25,7 @@ dac_base_year <- data.table(read_json(dac_base_year, simplifyVector = T)$structu
 #HA (216)
 #Constant prices (D)
 #2000-2020
-api_dac2a_all <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/.20001+20002+20006+21600.1.216.D/all?startTime=2000&endTime=2020"
-dac2a_all <- tabulate_dac_api(api_dac2a_all)
+dac2a_all <- tabulate_dac_api("TABLE2A", list("", c(20001, 20002, 20006, 21600), 1, 216, "D"), 2000, dac_base_year + 1)
 
 dac2a_all <- melt(dac2a_all, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
 
@@ -53,8 +36,7 @@ dac2a_all <- melt(dac2a_all, id.vars = c("Recipient", "Donor", "Part", "Aid type
 #Gross ODA and HA (240, 216)
 #Constant prices (D)
 #2000-2020
-api_dac2a_un <- "https://stats.oecd.org/SDMX-JSON/data/TABLE2A/.967+964.1.240+216.D/all?startTime=2000&endTime=2020"
-dac2a_un <- tabulate_dac_api(api_dac2a_un)
+dac2a_un <- tabulate_dac_api("TABLE2A", list("", c(967, 964), 1, c(240, 216), "D"), 2000, dac_base_year + 1)
 
 dac2a_un <- melt(dac2a_un, id.vars = c("Recipient", "Donor", "Part", "Aid type", "Amount type"))
 dac2a_un <- dac2a_un[, .(un_value = sum(value[`Aid type` == "Memo: ODA Total, Gross disbursements"] - value[`Aid type` == "Humanitarian Aid"])), by = .(variable, Recipient)]
@@ -93,15 +75,9 @@ cerf <- rbindlist(cerf_list)
 cerf_ha <- cerf[, .(variable = as.factor(year), Recipient = name, cerf_value = amount/1000000)]
 
 #Deflate using Total DAC Resource Deflator
-api_dacdefl <- paste0("https://stats.oecd.org/SDMX-JSON/data/DACDEFL/19./all?startTime=2010&endTime=", dac_base_year)
-dacdefl <- tabulate_dac_api(api_dacdefl)
+dacdefl <- defl[ISO == "DAC"]
 
-dacdefl <- dacdefl[dacdefl[, .I[which.max(`Deflator base year`)], by = Donor]$V1]
-dacdefl <- melt(dacdefl[, -"Deflator base year"], id.vars = "Donor")
-
-dacdefl[, value := value/value[variable == dac_base_year]]
-
-cerf_ha <- merge(cerf_ha, dacdefl[, .(deflator = value, variable)])
+cerf_ha <- merge(cerf_ha, dacdefl[, .(deflator = gdp_defl, variable = year)])
 cerf_ha <- cerf_ha[, .(cerf_value = cerf_value/deflator), by = .(Recipient, variable)]
 
 ###Add OCHA data 2011-onwards (MUMS)
@@ -115,8 +91,7 @@ cerf_ha <- cerf_ha[, .(cerf_value = cerf_value/deflator), by = .(Recipient, vari
 #Contributions through (20)
 #Constant prices (D)
 #2011-2020
-api_mums_rec <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/20001..700.41127.20.112.D/all?startTime=2011&endTime=2020"
-mums_rec <- tabulate_dac_api(api_mums_rec)
+mums_rec <- tabulate_dac_api("MULTISYSTEM", list(20001, "", 700, 41127, 20, 112, "D"), 2000, dac_base_year + 1)
 
 mums_rec <- melt(mums_rec, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidToThru", "Flow type", "Amount type"))
 mums_rec[, value_share := value/value[Recipient == "Developing Countries, Total"], by = .(variable)]
@@ -130,8 +105,7 @@ mums_rec[, value_share := value/value[Recipient == "Developing Countries, Total"
 #Core contributions to (10)
 #Constant prices (D)
 #2011-2020
-api_mums_don <- "https://stats.oecd.org/SDMX-JSON/data/MULTISYSTEM/20001.10100.1000.41127.10.112.D/all?startTime=2011&endTime=2020"
-mums_don <- tabulate_dac_api(api_mums_don)
+mums_don <- tabulate_dac_api("MULTISYSTEM", list(20001, 10100, 1000, 41127, 10, 112, "D"), 2000, dac_base_year + 1)
 
 mums_don <- melt(mums_don, id.vars = c("Donor", "Recipient", "Sector", "Channel", "AidToThru", "Flow type", "Amount type"))
 mums_rec <- merge(mums_rec, mums_don[, .(variable, ocha_total = value)], by = "variable")

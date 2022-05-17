@@ -43,14 +43,14 @@ dac_donors <- unlist(donors[.attrs.1 == 20001 | .attrs.1 == 20002]$description)
 
 #####
 ##DAC donors
-fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_iso3 == "EUI" ) & new_to_country == T & oda_eligible == F]
+fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_iso3 == "EUI" ) & domestic_response == F & newMoney == T & oda_eligible == F]
 fts_dac_donors[source_country == "European Commission", source_country := "EU Institutions"]
 
 #DAC donors directly to non-ODA eligible recipients (FTS)
 fts_dac_donors_nonoda <- fts_dac_donors[, .(fts_nonoda_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_country, year)]
 
 #DAC donors imputed EU to non-ODA eligible recipients (FTS)
-fts_eu <- fts[source_country == "European Commission" & new_to_country == T & oda_eligible == F]
+fts_eu <- fts[source_country == "European Commission" & domestic_response == F & newMoney == T & oda_eligible == F]
 fts_eu_nonoda <- fts_eu[, .(fts_nonoda_eu_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = year]
 
 dac1_eu <- tabulate_dac_api("TABLE1", list( "", "", 2102, 1140, "D"), dac_years[1], dac_years[length(dac_years)])
@@ -67,7 +67,7 @@ total_dac_donor_ha <- total_dac_donor_ha[, .(total_donor_ha = total_iha + fts_no
 
 #####
 ##NDD
-fts_ndd <- fts[source_orgtype == "NDD" & new_to_country == T]
+fts_ndd <- fts[source_orgtype == "NDD" & domestic_response == F & newMoney == T]
 
 #NDD directly to all recipients (FTS)
 fts_ndd <- fts_ndd[, .(fts_ndd_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_country, year)]
