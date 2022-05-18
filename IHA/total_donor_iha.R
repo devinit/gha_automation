@@ -15,9 +15,21 @@ dac_years <- unique(dac_iha[, min(variable):max(variable)]$variable)
 dac_base_year <- max(dac_years) - 1
 
 #Load FTS
-fts <- fts_curated_flows(years = dac_years, update_years = NA, base_year = dac_base_year)
+fts_read_master <- function(years = years){
+  fts_curated_all <- list()
+  for(i in 1:length(years)){
+    year <- years[i]
+    gh_url <- paste0("https://raw.githubusercontent.com/devinit/gha_automation/main/IHA/datasets/fts_curated_master/fts_curated_", year, ".csv")
+    fts_curated_all[[i]] <- fread(gh_url, showProgress = F)
+  }
+  fts_curated_all <- rbindlist(fts_curated_all)
+  return(fts_curated_all)
+}
+#fts <- fts_curated_flows(years = dac_years, update_years = NA, base_year = dac_base_year)
+fts <- fts_read_master(years = dac_years)
 fts[source_country == "Slovakia", source_country := "Slovak Republic"]
 fts[source_country == "Korea, Republic of", source_country := "Korea"]
+fts[, year := as.character(year)]
 
 #Establish ODA-eligible recipients by year
 for(i in 1:(length(dac_years)-1)){
@@ -56,6 +68,7 @@ fts_eu_nonoda <- fts_eu[, .(fts_nonoda_eu_ha = sum(amountUSD_defl, na.rm = T)/10
 dac1_eu <- tabulate_dac_api("TABLE1", list( "", "", 2102, 1140, "D"), dac_years[1], dac_years[length(dac_years)])
 dac1_eu <- melt(dac1_eu, id.vars = c("Donor", "Part", "Aid type", "Fund flows", "Amount type"))
 dac1_eu[, eu_value_share := value/(as.numeric(value[Donor == "DAC Countries, Total"]) + (value[Donor == "Non-DAC Countries, Total"])), by = variable]
+dac1_eu[, variable := as.character(variable)]
 
 dac1_dac_donors_eu <- merge(dac1_eu[Donor %in% dac_donors], fts_eu_nonoda, by.x = "variable", by.y = "year", all.x = T)
 fts_dac_donors_nonoda_imeu <- dac1_dac_donors_eu[, .(fts_nonoda_imeu_ha = eu_value_share*fts_nonoda_eu_ha), by = .(variable, Donor)]
@@ -98,5 +111,14 @@ total_ndd_ha <- total_ndd_ha[, .(total_donor_ha = fts_nonoda_imeu_ha + fts_ndd_h
 
 #Total donor IHA
 total_donor_ha <- rbind(total_dac_donor_ha, total_ndd_ha)[order(variable, Donor)]
-total_donor_ha <- total_donor_ha[!grepl(", Total", Donor)]
+total_donor_ha <- total_donor_ha[!grepl(", Total|Total DAC", Donor)]
+
+total_donor_ha <- merge(total_donor_ha, isos[, .(iso3, countryname_fts)], by.x = "Donor", by.y = "countryname_fts", all.x = T)
+total_donor_ha[Donor == "EU Institutions", iso3 := "EUI"]
+total_donor_ha[Donor == "Korea", iso3 := "KOR"]
+total_donor_ha[Donor == "Slovak Republic", iso3 := "SVK"]
+total_donor_ha[Donor == "Hong Kong", iso3 := "HKG"]
+total_donor_ha[Donor == "Virgin Islands, British", iso3 := "VGB"]
+total_donor_ha[Donor == "Serbia and Montenegro (until 2006-2009)", iso3 := "SCG"]
+
 fwrite(total_donor_ha, "IHA/output/total_donor_ha.csv")
