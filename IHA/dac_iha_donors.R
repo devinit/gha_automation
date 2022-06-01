@@ -249,10 +249,11 @@ eu_imha <- dac1_eu[, .(eu_imha = eu_value_share*total_eu), by = .(variable, Dono
 total_iha <- merge(dac1_ha, total_imha, by = c("variable", "Donor"), all = T)
 total_iha <- merge(total_iha, eu_imha, by = c("variable", "Donor"), all = T)
 total_iha[is.na(total_iha)] <- 0
+total_iha_sep <- total_iha[, .(total_bilat = value, total_imha, eu_imha), by = .(variable, Donor)]
 total_iha <- total_iha[, .(total_iha = value + total_imha + eu_imha), by = .(variable, Donor)]
 total_iha <- total_iha[!grepl(", Total", Donor)]
 fwrite(total_iha, "IHA/output/dac_aggregate_donors.csv")
-
+fwrite(total_iha_sep, "IHA/output/dac_aggregate_donors_bimulti.csv")
 ##Debug inputs
 # de_dac1_ha <- dac1_ha
 # de_dac2a_missing_un <- dac2a_mums_missing_un
