@@ -55,11 +55,12 @@ dac_donors <- unlist(donors[.attrs.1 == 20001 | .attrs.1 == 20002]$description)
 
 #####
 ##DAC donors
-fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_iso3 == "EUI" ) & domestic_response == F & newMoney == T & oda_eligible == F]
+fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_iso3 == "EUI" ) & domestic_response == F & newMoney == T]
 fts_dac_donors[source_country == "European Commission", source_country := "EU Institutions"]
 
 #DAC donors directly to non-ODA eligible recipients (FTS)
-fts_dac_donors_nonoda <- fts_dac_donors[, .(fts_nonoda_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_country, year)]
+fts_dac_donors_oda <- fts_dac_donors[oda_eligible == T, .(fts_oda_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_country, year)]
+fts_dac_donors_nonoda <- fts_dac_donors[oda_eligible == F, .(fts_nonoda_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_country, year)]
 
 #DAC donors imputed EU to non-ODA eligible recipients (FTS)
 fts_eu <- fts[source_country == "European Commission" & domestic_response == F & newMoney == T & oda_eligible == F]
