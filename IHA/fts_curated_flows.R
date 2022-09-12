@@ -14,7 +14,7 @@
 #Organisation types (channels) are as given by FTS's API, except in a few limited cases where government agencies are manually reclassified as such.
 #European Commission Institutions are coded manually as donor country "European Commission" and use the OECD EU Institutions deflator.
 
-fts_curated_flows <- function(years = 2000:2021, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = NULL, dummy_intra_flows = F){
+fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = NULL, dummy_intra_country_flows = T){
   suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
   
   #Load FTS utility functions and deflators
@@ -75,15 +75,15 @@ fts_curated_flows <- function(years = 2000:2021, update_years = NA, dataset_path
   
   #Add dummy reverse flows to cancel-out intra-plan flows
   fts[, dummy := F]
-  if(dummy_intra_flows){
-    fts_intraplan <- fts[sourceObjects_Plan.id == destinationObjects_Plan.id]
-    source_cols <- grep("sourceObjects", names(fts_intraplan))
-    destination_cols <- grep("destinationObjects", names(fts_intraplan))
-    names(fts_intraplan)[source_cols] <- gsub("source", "destination", names(fts_intraplan)[source_cols])
-    names(fts_intraplan)[destination_cols] <- gsub("destination", "source", names(fts_intraplan)[destination_cols])
-    fts_intraplan[, `:=` (amountUSD = -amountUSD, dummy = T)]
+  if(dummy_intra_country_flows){
+    fts_intracountry <- fts[sourceObjects_Location.id == destinationObjects_Location.id]
+    source_cols <- grep("sourceObjects", names(fts_intracountry))
+    destination_cols <- grep("destinationObjects", names(fts_intracountry))
+    names(fts_intracountry)[source_cols] <- gsub("source", "destination", names(fts_intracountry)[source_cols])
+    names(fts_intracountry)[destination_cols] <- gsub("destination", "source", names(fts_intracountry)[destination_cols])
+    fts_intracountry[, `:=` (amountUSD = -amountUSD, dummy = T)]
     
-    fts <- rbind(fts, fts_intraplan)
+    fts <- rbind(fts, fts_intracountry)
   }
   
   #Deflate by source location and destination year
@@ -110,7 +110,7 @@ fts_curated_flows <- function(years = 2000:2021, update_years = NA, dataset_path
   fts[sourceObjects_Organization.id %in% euc_id, `:=` (source_country = "European Commission", source_iso3 = "EUI")]
   
   #Merge dest orgs
-  fts <- merge(fts, destination_org_dicode[, .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), destination_orgtype, destination_ngotype, destination_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
+  fts <- merge(fts, destination_org_dicode[!is.na(destinationObjects_Organization.id), .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), destination_orgtype, destination_ngotype, destination_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
   
   #Fill gaps in DI org coding with FTS
   fts[is.na(source_orgtype) | source_orgtype == "", source_orgtype := gsub("NGO", "NGOs", sourceObjects_Organization.organizationTypes)]
@@ -150,6 +150,29 @@ fts_curated_flows <- function(years = 2000:2021, update_years = NA, dataset_path
   fts[grepl(";", source_orgtype), source_orgtype := ifelse(length(unique(strsplit(source_orgtype, "; ")[[1]])) == 1, unique(strsplit(source_orgtype, "; ")[[1]]), "Other")]
   fts[grepl(";", destination_orgtype), destination_orgtype := ifelse(length(unique(strsplit(destination_orgtype, "; ")[[1]])) == 1, unique(strsplit(destination_orgtype, "; ")[[1]]), "Other") ]
   fts[grepl(";", destination_ngotype), destination_ngotype := ifelse(length(unique(strsplit(destination_ngotype, "; ")[[1]])) == 1, unique(strsplit(destination_ngotype, "; ")[[1]]), "Other") ]
+  
+  #Merge DI coded clusters
+  cluster_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/cluster_mapping_DIcode.csv", encoding = "UTF-8", showProgress = F)
+  
+  fts[, upper_cluster := toupper(sourceObjects_Cluster.name)]
+  fts <- merge(fts, unique(cluster_dicode[, .(upper_cluster, source_globalcluster = destination_globalcluster)]), by = "upper_cluster", all.x = T, sort = F)
+  fts[, upper_cluster := NULL]
+  
+  fts[, upper_cluster := toupper(destinationObjects_Cluster.name)]
+  fts <- merge(fts, unique(cluster_dicode[, .(upper_cluster, destination_globalcluster)]), by = "upper_cluster", all.x = T, sort = F)
+  fts[, upper_cluster := NULL]
+  
+  #Overwrite DI coding with FTS global cluster where exists
+  fts[!is.na(destinationObjects_GlobalCluster.name) & destinationObjects_GlobalCluster.name != "", destination_globalcluster := destinationObjects_GlobalCluster.name]
+  fts[!is.na(sourceObjects_GlobalCluster.name) & sourceObjects_GlobalCluster.name != "", source_globalcluster := sourceObjects_GlobalCluster.name]
+  
+  #Identify multi-cluster flows
+  fts[grepl(";", destination_globalcluster) | (is.na(destination_globalcluster) & grepl(";", destinationObjects_Cluster.name)), destination_globalcluster := "Multiple clusters specified"]
+  fts[grepl(";", source_globalcluster) | (is.na(source_globalcluster) & grepl(";", sourceObjects_Cluster.name)), source_globalcluster := "Multiple clusters specified"]
+  
+  #Identify unspecified cluster flows
+  fts[is.na(destination_globalcluster) | destination_globalcluster == "", destination_globalcluster := "Unspecified"]
+  fts[is.na(source_globalcluster) | source_globalcluster == "", source_globalcluster := "Unspecified"]
   
   #Domestic response
   fts[, domestic_response := F]
