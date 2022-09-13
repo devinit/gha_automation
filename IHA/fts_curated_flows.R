@@ -73,7 +73,7 @@ fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path
   fts[, destination_country := destinationObjects_Location.name]
   fts[grepl(";", destination_country), `:=` (destination_country = "Multi-destination_country", destination_iso3 = "MULTI")]
   
-  #Add dummy reverse flows to cancel-out intra-plan flows
+  #Add dummy reverse flows to cancel-out intra-country flows
   fts[, dummy := F]
   if(dummy_intra_country_flows){
     fts_intracountry <- fts[sourceObjects_Location.id == destinationObjects_Location.id]
@@ -152,19 +152,19 @@ fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path
   fts[grepl(";", destination_ngotype), destination_ngotype := ifelse(length(unique(strsplit(destination_ngotype, "; ")[[1]])) == 1, unique(strsplit(destination_ngotype, "; ")[[1]]), "Other") ]
   
   #Merge DI coded clusters
-  cluster_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/cluster_mapping_DIcode.csv", encoding = "UTF-8", showProgress = F)
+  cluster_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/cluster_mapping_DIcode.csv", showProgress = F)
   
-  fts[, upper_cluster := toupper(sourceObjects_Cluster.name)]
+  fts[, upper_cluster := toupper((sourceObjects_Cluster.name))]
   fts <- merge(fts, unique(cluster_dicode[, .(upper_cluster, source_globalcluster = destination_globalcluster)]), by = "upper_cluster", all.x = T, sort = F)
   fts[, upper_cluster := NULL]
   
-  fts[, upper_cluster := toupper(destinationObjects_Cluster.name)]
+  fts[, upper_cluster := toupper((destinationObjects_Cluster.name))]
   fts <- merge(fts, unique(cluster_dicode[, .(upper_cluster, destination_globalcluster)]), by = "upper_cluster", all.x = T, sort = F)
   fts[, upper_cluster := NULL]
   
   #Overwrite DI coding with FTS global cluster where exists
-  fts[!is.na(destinationObjects_GlobalCluster.name) & destinationObjects_GlobalCluster.name != "", destination_globalcluster := destinationObjects_GlobalCluster.name]
-  fts[!is.na(sourceObjects_GlobalCluster.name) & sourceObjects_GlobalCluster.name != "", source_globalcluster := sourceObjects_GlobalCluster.name]
+  fts[!is.na(destinationObjects_GlobalCluster.name) & destinationObjects_GlobalCluster.name != "" & is.na(destination_globalcluster), destination_globalcluster := destinationObjects_GlobalCluster.name]
+  fts[!is.na(sourceObjects_GlobalCluster.name) & sourceObjects_GlobalCluster.name != "" & is.na(source_globalcluster), source_globalcluster := sourceObjects_GlobalCluster.name]
   
   #Identify multi-cluster flows
   fts[grepl(";", destination_globalcluster) | (is.na(destination_globalcluster) & grepl(";", destinationObjects_Cluster.name)), destination_globalcluster := "Multiple clusters specified"]
