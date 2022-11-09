@@ -14,7 +14,7 @@
 #Organisation types (channels) are as given by FTS's API, except in a few limited cases where government agencies are manually reclassified as such.
 #European Commission Institutions are coded manually as donor country "European Commission" and use the OECD EU Institutions deflator.
 
-fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = NULL, dummy_intra_country_flows = T){
+fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = NULL, dummy_intra_country_flows = T){
   suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
   
   #Load FTS utility functions and deflators
@@ -67,31 +67,18 @@ fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path
   fts[, multiyear := grepl(";", destinationObjects_UsageYear.name)]
   fts <- fts_split_rows(fts, value.cols = "amountUSD", split.col = "year", split.pattern = "; ", remove.unsplit = T)
   
-  #Set multi-country flows to 'multi-destination_country' in destination_country column
+  #Set multi-country flows to 'multi-destination_org_country' in destination_org_country column
   isos <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/isos.csv", encoding = "UTF-8", showProgress = F)
-  fts <- merge(fts, isos[, .(countryname_fts, destination_iso3 = iso3)], by.x = "destinationObjects_Location.name", by.y = "countryname_fts", all.x = T, sort = F)
-  fts[, destination_country := destinationObjects_Location.name]
-  fts[grepl(";", destination_country), `:=` (destination_country = "Multi-destination_country", destination_iso3 = "MULTI")]
-  
-  #Add dummy reverse flows to cancel-out intra-country flows
-  fts[, dummy := F]
-  if(dummy_intra_country_flows){
-    fts_intracountry <- fts[sourceObjects_Location.id == destinationObjects_Location.id]
-    source_cols <- grep("sourceObjects", names(fts_intracountry))
-    destination_cols <- grep("destinationObjects", names(fts_intracountry))
-    names(fts_intracountry)[source_cols] <- gsub("source", "destination", names(fts_intracountry)[source_cols])
-    names(fts_intracountry)[destination_cols] <- gsub("destination", "source", names(fts_intracountry)[destination_cols])
-    fts_intracountry[, `:=` (amountUSD = -amountUSD, dummy = T)]
-    
-    fts <- rbind(fts, fts_intracountry)
-  }
+  fts <- merge(fts, isos[, .(countryname_fts, destination_org_iso3 = iso3)], by.x = "destinationObjects_Location.name", by.y = "countryname_fts", all.x = T, sort = F)
+  fts[, destination_org_country := destinationObjects_Location.name]
+  fts[grepl(";", destination_org_country), `:=` (destination_org_country = "Multi-destination_org_country", destination_org_iso3 = "MULTI")]
   
   #Deflate by source location and destination year
   fts_orgs <- data.table(fromJSON("https://api.hpc.tools/v1/public/organization")$data)
   fts_locs <- data.table(fromJSON("https://api.hpc.tools/v1/public/location")$data)
-  fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), source_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name), source_country_id = ifelse(is.null(locations[[1]]$id), NA, locations[[1]]$id)), by = id]
-  fts_orgs <- merge(fts_orgs, fts_locs[, .(id, iso3)], by.x = "source_country_id", by.y = "id", all.x = T, sort = F)
-  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), source_country, source_iso3 = iso3, FTS_source_orgtype = source_org_type)]
+  fts_orgs[, `:=` (source_org_type = ifelse(is.null(categories[[1]]$name), NA, categories[[1]]$name), source_org_country = ifelse(is.null(locations[[1]]$name), NA, locations[[1]]$name), source_org_country_id = ifelse(is.null(locations[[1]]$id), NA, locations[[1]]$id)), by = id]
+  fts_orgs <- merge(fts_orgs, fts_locs[, .(id, iso3)], by.x = "source_org_country_id", by.y = "id", all.x = T, sort = F)
+  fts_orgs <- fts_orgs[, .(sourceObjects_Organization.id = as.character(id), source_org_country, source_org_iso3 = iso3, FTS_source_orgtype = source_org_type)]
   
   #Merge DI coded org types
   source_org_dicode <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/source_orgs_DIcode.csv", encoding = "UTF-8", showProgress = F)
@@ -102,12 +89,12 @@ fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path
   #Merge source orgs
   fts[, sourceObjects_Organization.id := as.character(sourceObjects_Organization.id)]
   fts <- merge(fts, source_org_dicode, by = "sourceObjects_Organization.id", all.x = T, sort = F)
-  fts[!(FTS_source_orgtype == "Government" | (source_orgtype %in% c("DAC governments", "NDD"))) | is.na(FTS_source_orgtype) | is.na(source_country), `:=` (source_country = "Total DAC", source_iso3 = "DAC")]
+  fts[!(FTS_source_orgtype == "Government" | (source_orgtype %in% c("DAC governments", "NDD"))) | is.na(FTS_source_orgtype) | is.na(source_org_country), `:=` (source_org_country = "Total DAC", source_org_iso3 = "DAC")]
   fts[, FTS_source_orgtype := NULL]
   
   #Manual EU institution classifications
   euc_id <- c("8523","2966","8524","6789","2176","8525","8556","8650","8541","8421")
-  fts[sourceObjects_Organization.id %in% euc_id, `:=` (source_country = "European Commission", source_iso3 = "EUI")]
+  fts[sourceObjects_Organization.id %in% euc_id, `:=` (source_org_country = "European Commission", source_org_iso3 = "EUI")]
   
   #Merge dest orgs
   fts <- merge(fts, destination_org_dicode[!is.na(destinationObjects_Organization.id), .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), destination_orgtype, destination_ngotype, destination_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
@@ -176,7 +163,7 @@ fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path
   
   #Domestic response
   fts[, domestic_response := F]
-  fts[sourceObjects_Organization.organizationTypes == "Government" & source_iso3 == destination_iso3, domestic_response := T]
+  fts[sourceObjects_Organization.organizationTypes == "Government" & source_org_iso3 == destination_org_iso3, domestic_response := T]
   
   #New to country
   fts[, new_to_country := T]
@@ -198,11 +185,26 @@ fts_curated_flows <- function(years = 2000:2022, update_years = NA, dataset_path
   
   #Deflate
   deflators <- get_deflators(base_year = base_year, currency = "USD", weo_ver = weo_ver, approximate_missing = T)
-  deflators <- deflators[, .(source_iso3 = ISO, year = as.character(year), deflator = gdp_defl)]
+  deflators <- deflators[, .(source_org_iso3 = ISO, year = as.character(year), deflator = gdp_defl)]
   
-  fts <- merge(fts, deflators, by = c("source_iso3", "year"), all.x = T, sort = F)
-  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[source_iso3 == "DAC"], by = "year", all.x = T, sort = F)$deflator
+  fts <- merge(fts, deflators, by = c("source_org_iso3", "year"), all.x = T, sort = F)
+  fts[is.na(deflator)]$deflator <- merge(fts[is.na(deflator)][, -"deflator"], deflators[source_org_iso3 == "DAC"], by = "year", all.x = T, sort = F)$deflator
   fts[, `:=` (amountUSD_defl = amountUSD/deflator, amountUSD_defl_millions = (amountUSD/deflator)/1000000)]
+  
+  #Add dummy reverse flows to cancel-out intra-country flows
+  fts[, newMoney_dest := newMoney]
+  fts[, dummy := F]
+  if(dummy_intra_country_flows){
+    fts[sourceObjects_Location.id == destinationObjects_Location.id, newMoney_dest := TRUE]
+    fts_intracountry <- fts[sourceObjects_Location.id == destinationObjects_Location.id]
+    source_cols <- grep("source", names(fts_intracountry))
+    destination_cols <- grep("destination", names(fts_intracountry))
+    names(fts_intracountry)[source_cols] <- gsub("source", "destination", names(fts_intracountry)[source_cols])
+    names(fts_intracountry)[destination_cols] <- gsub("destination", "source", names(fts_intracountry)[destination_cols])
+    fts_intracountry[, `:=` (amountUSD = -amountUSD, amountUSD_defl = -amountUSD_defl, amountUSD_defl_millions = -amountUSD_defl_millions, dummy = T, destination_privatemoney = NULL, source_deliverychannel = NULL, source_ngotype = NULL)]
+    
+    fts <- rbind(fts, fts_intracountry, fill = T)
+  }
   
   #Remove partial multi-year flows outside of requested range and pledges 
   fts <- fts[
