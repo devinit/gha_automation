@@ -1,4 +1,4 @@
-fts_save_master <- function(years, update_years = update_years, path = "IHA/datasets/fts_curated_master/"){
+fts_save_master <- function(years, update_years = years, path = "IHA/datasets/fts_curated_master/"){
   source("https://raw.githubusercontent.com/devinit/gha_automation/main/IHA/fts_curated_flows.R")
   fts_all <- fts_curated_flows(years = years, update_years = update_years)
   for(i in 1:length(years)){
