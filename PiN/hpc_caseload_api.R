@@ -29,13 +29,18 @@ hpc_api_all <- function(plan_id, data_type = "caseLoad", by_sector = T, disaggre
           #Metrics by categories (columns of dataMatrix)
           categories <- attachments$attachmentVersion$value$metrics$values$disaggregated$categories[[index[j]]]
           metrics <- categories$metrics
-          if(length(categories) == 0) return(NULL)
-          categories_metrics <- rbindlist(lapply(1:length(metrics), function(i) data.table(category_type = categories[i,"name"], category_name = categories[i,"label"], setnames(as.data.table(metrics[[i]]), c("metric_label", "metric_id")))))
           
-          #Total metrics
-          total_metrics <- data.table(category_type = "Total", category_name = "Total", setnames(unique(rbindlist(lapply(metrics, as.data.table))), c("metric_label", "metric_id")))
-          categories_metrics <- rbind(categories_metrics, total_metrics)
-          
+          if(length(categories) != 0){
+            categories_metrics <- rbindlist(lapply(1:length(metrics), function(i) data.table(category_type = categories[i,"name"], category_name = categories[i,"label"], setnames(as.data.table(metrics[[i]]), c("metric_label", "metric_id")))))
+            
+            #Total metrics
+            total_metrics <- data.table(category_type = "Total", category_name = "Total", setnames(unique(rbindlist(lapply(metrics, as.data.table))), c("metric_label", "metric_id")))
+            categories_metrics <- rbind(categories_metrics, total_metrics)
+          } else {
+            
+            categories_metrics <- data.table(category_type = "Total", category_name = "Total", setnames(as.data.table(attachments$attachmentVersion$value$metrics$values$totals[[index[j]]])[, c(1,2)], c("metric_label", "metric_id")))
+          }
+            
           #Locations
           locations <- as.data.table(attachments$attachmentVersion$value$metrics$values$disaggregated$locations[[index[j]]])
           names(locations) <- paste0("location_", names(locations))
@@ -59,7 +64,7 @@ hpc_api_all <- function(plan_id, data_type = "caseLoad", by_sector = T, disaggre
         
         names(data_melt) <- gsub("_type", "_id", names(data_melt))
         names(data_melt) <- gsub("_label|_en", "_name", names(data_melt))
-        suppressWarnings(data_melt[, value := as.numeric(value)])
+        suppressWarnings(data_melt[, value := as.numeric(trimws(gsub(",", "", value)))])
         
         description <- attachments$attachmentVersion$value$description[[index[j]]]
         source <- attachments$attachmentVersion$value$source[[index[j]]]
