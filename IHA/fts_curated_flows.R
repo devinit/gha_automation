@@ -100,11 +100,11 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   fts <- merge(fts, destination_org_dicode[!is.na(destinationObjects_Organization.id), .(destinationObjects_Organization.id = as.character(destinationObjects_Organization.id), destination_orgtype, destination_ngotype, destination_deliverychannel)], by = "destinationObjects_Organization.id", all.x = T, sort = F)
   
   #Fill gaps in DI org coding with FTS
-  fts[is.na(source_orgtype) | source_orgtype == "", source_orgtype := gsub("NGO", "NGOs", sourceObjects_Organization.organizationTypes)]
-  fts[, source_orgtype := gsub("UN agency", "UN Multi", source_orgtype)]
+  fts[is.na(source_orgtype) | source_orgtype == "", source_orgtype := gsub("\\bNGO\\b", "NGOs", sourceObjects_Organization.organizationTypes)]
+  fts[, source_orgtype := gsub("\\bUN agency\\b", "UN Multi", source_orgtype)]
   
   fts[is.na(source_privatemoney) | source_privatemoney == "", source_privatemoney := ifelse(sourceObjects_Organization.organizationTypes == "Private organization/foundation", "private", "no")]
-  fts[is.na(destination_orgtype) | destination_orgtype == "", destination_orgtype := gsub("NGO", "NGOs", destinationObjects_Organization.organizationTypes)]
+  fts[is.na(destination_orgtype) | destination_orgtype == "", destination_orgtype := gsub("\\bNGO\\b", "NGOs", destinationObjects_Organization.organizationTypes)]
   fts[, destination_orgtype := gsub("UN agency", "UN Multi", destination_orgtype)]
   
   fts[(is.na(destination_ngotype) | destination_ngotype == "") & destinationObjects_Organization.organizationTypes == "NGO", destination_ngotype := paste0(gsub(" NGO| organization/foundation/individual", "", destinationObjects_Organization.organizationSubTypes), " NGO")]

@@ -1,5 +1,5 @@
 get_deflators <- function(base_year = 2020, currency = "USD", weo_ver = NULL, approximate_missing = T){
-  suppressPackageStartupMessages(lapply(c("data.table", "httr"), require, character.only=T))
+  suppressPackageStartupMessages(lapply(c("data.table", "httr", "jsonlite"), require, character.only=T))
   
   if(is.null(weo_ver)){
     
