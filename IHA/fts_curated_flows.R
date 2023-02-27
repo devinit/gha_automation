@@ -163,7 +163,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   
   #Domestic response
   fts[, domestic_response := F]
-  fts[sourceObjects_Organization.organizationTypes == "Government" & source_org_iso3 == destination_org_iso3, domestic_response := T]
+  fts[grepl("Government", sourceObjects_Organization.organizationTypes) & source_org_iso3 == destination_org_iso3, domestic_response := T]
   
   #New to country
   fts[, new_to_country := T]

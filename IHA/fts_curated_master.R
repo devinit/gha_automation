@@ -13,7 +13,7 @@ fts_read_master <- function(years = years){
     gh_url <- paste0("https://raw.githubusercontent.com/devinit/gha_automation/main/IHA/datasets/fts_curated_master/fts_curated_", year, ".csv")
     fts_curated_all[[i]] <- fread(gh_url, showProgress = F, encoding = "UTF-8")
   }
-  fts_curated_all <- rbindlist(fts_curated_all)
-  fts_curated_all <- fts_curated_all[, ..columns]
+  fts_curated_all <- rbindlist(fts_curated_all, fill = T)
+  #fts_curated_all <- fts_curated_all[, ..columns]
   return(fts_curated_all)
 }
