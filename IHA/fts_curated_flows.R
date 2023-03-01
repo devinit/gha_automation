@@ -14,7 +14,7 @@
 #Organisation types (channels) are as given by FTS's API, except in a few limited cases where government agencies are manually reclassified as such.
 #European Commission Institutions are coded manually as donor country "European Commission" and use the OECD EU Institutions deflator.
 
-fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2020, weo_ver = NULL, dummy_intra_country_flows = T){
+fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path = "IHA/datasets", base_year = 2021, weo_ver = NULL, dummy_intra_country_flows = T){
   suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), require, character.only=T))
   
   #Load FTS utility functions and deflators
