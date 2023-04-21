@@ -4,14 +4,15 @@ suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi", "
 setwd(dirname(getActiveDocumentContext()$path))
 setwd("..")
 
-invisible(lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/general/tabulate_dac_api.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/general/deflators.R", "https://raw.githubusercontent.com/devinit/gha_automation/main/IHA/fts_curated_flows.R"), source))
+invisible(lapply(c("https://raw.githubusercontent.com/devinit/di_script_repo/main/general/tabulate_dac_api.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/general/deflators.R", "https://raw.githubusercontent.com/devinit/gha_automation/main/IHA/fts_curated_flows.R", "https://raw.githubusercontent.com/devinit/di_script_repo/main/gha/FTS/fts_split_rows.R"), source))
 isos <- fread("https://raw.githubusercontent.com/devinit/gha_automation/main/reference_datasets/isos.csv", encoding = "UTF-8")
 
 #Load DAC IHA
-dac_iha <- fread("IHA/output/dac_aggregate_donors.csv", encoding = "UTF-8")
+#dac_iha <- fread("IHA/output/dac_aggregate_donors.csv", encoding = "UTF-8")
+dac_iha_bimulti <- fread("IHA/output/dac_aggregate_donors_bimulti.csv", encoding = "UTF-8")[!(grepl(", Total", Donor))]
 
 #Working years
-dac_years <- unique(dac_iha[, min(variable):max(variable)]$variable)
+dac_years <- unique(dac_iha_bimulti[, min(variable):max(variable)]$variable)
 dac_base_year <- max(dac_years) - 1
 
 #Load FTS
@@ -30,7 +31,10 @@ fts_read_master <- function(years = years){
 fts <- fts_read_master(years = dac_years)
 fts[source_org_country == "Slovakia", source_org_country := "Slovak Republic"]
 fts[source_org_country == "Korea, Republic of", source_org_country := "Korea"]
-fts[, year := as.character(year)]
+fts[, year := as.character(ifelse(sourceObjects_UsageYear.name == "", budgetYear, sourceObjects_UsageYear.name))]
+
+fts <- rbind(fts[!grepl(";", year)], fts_split_rows(fts[grepl(";", year)], c("amountUSD_defl"), "year", remove.unsplit = T)[])
+fts <- fts[year %in% dac_years]
 
 #Establish ODA-eligible recipients by year
 for(i in 1:(length(dac_years)-1)){
@@ -56,7 +60,7 @@ dac_donors <- unlist(donors[.attrs.1 == 20001 | .attrs.1 == 20002]$description)
 
 #####
 ##DAC donors
-fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_org_iso3 == "EUI" ) & domestic_response == F & newMoney == T]
+fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_org_iso3 == "EUI" ) & domestic_response == F & newMoney == T & dummy == F]
 fts_dac_donors[source_org_country == "European Commission", source_org_country := "EU Institutions"]
 
 #DAC donors directly to non-ODA eligible recipients (FTS)
@@ -64,21 +68,51 @@ fts_dac_donors_oda <- fts_dac_donors[oda_eligible == T, .(fts_oda_ha = sum(amoun
 fts_dac_donors_nonoda <- fts_dac_donors[oda_eligible == F, .(fts_nonoda_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_org_country, year)]
 
 #DAC donors imputed EU to non-ODA eligible recipients (FTS)
-fts_eu <- fts[source_org_country == "European Commission" & domestic_response == F & newMoney == T & oda_eligible == F]
-fts_eu_nonoda <- fts_eu[, .(fts_nonoda_eu_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = year]
+fts_eu <- fts[source_org_country == "European Commission" & domestic_response == F & newMoney == T & dummy == F]
+fts_eu_oda <- fts_eu[oda_eligible == T, .(fts_oda_eu_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = year]
+fts_eu_nonoda <- fts_eu[oda_eligible == F, .(fts_nonoda_eu_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = year]
 
 dac1_eu <- tabulate_dac_api("TABLE1", list( "", "", 2102, 1140, "D"), dac_years[1], dac_years[length(dac_years)])
 dac1_eu <- melt(dac1_eu, id.vars = c("Donor", "Part", "Aid type", "Fund flows", "Amount type"))
 dac1_eu[, eu_value_share := value/(as.numeric(value[Donor == "DAC Countries, Total"]) + (value[Donor == "Non-DAC Countries, Total"])), by = variable]
 dac1_eu[, variable := as.character(variable)]
 
-dac1_dac_donors_eu <- merge(dac1_eu[Donor %in% dac_donors], fts_eu_nonoda, by.x = "variable", by.y = "year", all.x = T)
-fts_dac_donors_nonoda_imeu <- dac1_dac_donors_eu[, .(fts_nonoda_imeu_ha = eu_value_share*fts_nonoda_eu_ha), by = .(variable, Donor)]
+dac1_dac_donors_oda_eu <- merge(dac1_eu[Donor %in% dac_donors], fts_eu_oda, by.x = "variable", by.y = "year", all.x = T)
+fts_dac_donors_oda_imeu <- dac1_dac_donors_oda_eu[, .(fts_oda_imeu_ha = eu_value_share*fts_oda_eu_ha), by = .(variable, Donor)]
+
+dac1_dac_donors_nonoda_eu <- merge(dac1_eu[Donor %in% dac_donors], fts_eu_nonoda, by.x = "variable", by.y = "year", all.x = T)
+fts_dac_donors_nonoda_imeu <- dac1_dac_donors_nonoda_eu[, .(fts_nonoda_imeu_ha = eu_value_share*fts_nonoda_eu_ha), by = .(variable, Donor)]
+
+##For most recent year, decide to use DAC or FTS for ODA-eligible recipients (because preliminary DAC data is... preliminary)
+fts_dac_donors_prelim <- merge(fts_dac_donors_oda[year == max(dac_years), .(variable = as.numeric(year), Donor = source_org_country, fts_oda_ha)], fts_dac_donors_oda_imeu[variable == max(dac_years), .(variable = as.numeric(variable), Donor, fts_oda_imeu_ha)], all = T)
+dac1_dac_donors_prelim <- dac_iha_bimulti[Donor %in% dac_donors & variable == max(dac_years)]
+
+dac_donors_prelim <- merge(fts_dac_donors_prelim, dac1_dac_donors_prelim, all = T)
+dac_donors_prelim[is.na(dac_donors_prelim)] <- 0
+
+#Where FTS bilat is greater than DAC bilat + DAC imputed, use FTS bilat only
+dac_donors_prelim[fts_oda_ha > total_bilat + total_imha, `:=` (total_bilat = 0, total_imha = 0)]
+
+#Where FTS bilat is greater than DAC bilat , use FTS bilat and keep DAC imputed 
+dac_donors_prelim[fts_oda_ha > total_bilat, `:=` (total_bilat = 0)]
+
+#Otherwise, use DAC bilat and DAC imputed
+dac_donors_prelim[fts_oda_ha <= total_bilat, `:=` (fts_oda_ha = 0)]
+
+#Use DAC or FTS for EU imputed for each country based on choice value for EU
+dac_eu <- dac_donors_prelim[Donor == "EU Institutions", total_bilat > fts_oda_ha]
+dac_donors_prelim[, `:=` (eu_imha = eu_imha*dac_eu, fts_oda_imeu_ha = fts_oda_imeu_ha*(1-dac_eu))]
+
+dac_donors_prelim <- dac_donors_prelim[, .(total_bilat = total_bilat + fts_oda_ha, total_imha, eu_imha = eu_imha + fts_oda_imeu_ha), by = .(Donor, variable)]
+
+dac_iha_bimulti <- rbind(dac_iha_bimulti[variable != max(dac_years)], dac_donors_prelim)
 
 #Total DAC donor HA
-total_dac_donor_ha <- merge(dac_iha[Donor %in% dac_donors, .(variable, Donor, total_iha)], fts_dac_donors_nonoda[, .(variable = as.numeric(year), Donor = source_org_country, fts_nonoda_ha)], by = c("variable", "Donor"), all = T)
+total_dac_donor_ha <- merge(dac_iha_bimulti[Donor %in% dac_donors], fts_dac_donors_nonoda[, .(variable = as.numeric(year), Donor = source_org_country, fts_nonoda_ha)], by = c("variable", "Donor"), all = T)
+total_dac_donor_ha <- merge(total_dac_donor_ha, fts_dac_donors_nonoda_imeu[, .(variable = as.numeric(variable), Donor, fts_nonoda_imeu_ha)], by = c("variable", "Donor"), all = T)
 total_dac_donor_ha[is.na(total_dac_donor_ha)] <- 0
-total_dac_donor_ha <- total_dac_donor_ha[, .(total_donor_ha = total_iha + fts_nonoda_ha), by = .(Donor, variable)]
+
+total_dac_donor_ha <- total_dac_donor_ha[, .(total_donor_ha = total_bilat + total_imha + eu_imha + fts_nonoda_ha + fts_nonoda_imeu_ha), by = .(Donor, variable)]
 
 #####
 ##NDD
@@ -88,7 +122,7 @@ fts_ndd <- fts[source_orgtype == "NDD" & domestic_response == F & newMoney == T]
 fts_ndd <- fts_ndd[, .(fts_ndd_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_org_country, year)]
 
 #NDD imputed EU to non-ODA-eligible recipients (FTS)
-dac1_ndd_eu <- merge(dac1_eu[!(Donor %in% dac_donors)], fts_eu_nonoda, by.x = "variable", by.y = "year", all.x = T)
+dac1_ndd_eu <- merge(dac1_eu[!(Donor %in% dac_donors) & !(grepl(", Total", Donor))], fts_eu_nonoda, by.x = "variable", by.y = "year", all.x = T)
 fts_ndd_nonoda_imeu <- dac1_ndd_eu[, .(fts_nonoda_imeu_ha = eu_value_share*fts_nonoda_eu_ha), by = .(variable, Donor)]
 
 #NDD imputed EU to ODA-eligible recipients (DAC + FTS)
@@ -98,7 +132,7 @@ ndd_eu_share <- dac1_eu[, .(ndd_eu_share = value[Donor == "Non-DAC Countries, To
 ndd_eu_share <- merge(ndd_eu_share[, .(variable = as.numeric(as.character(variable)), ndd_eu_share)], total_eu_ha[, .(variable, total_donor_ha)])
 ndd_eu_ha <- ndd_eu_share[, .(ndd_eu_ha = ndd_eu_share*total_donor_ha), by = variable]
 
-dac1_ndd_eu <- merge(dac1_eu[!(Donor %in% dac_donors), .(Donor, variable = as.numeric(as.character(variable)), eu_value_share)], ndd_eu_ha, by = "variable", all.x = T)
+dac1_ndd_eu <- merge(dac1_eu[!(Donor %in% dac_donors) & !(grepl(", Total", Donor)), .(Donor, variable = as.numeric(as.character(variable)), eu_value_share)], ndd_eu_ha, by = "variable", all.x = T)
 dac1_ndd_imeu <- dac1_ndd_eu[, .(dac1_ndd_imeu_ha = eu_value_share*ndd_eu_ha), by = .(Donor, variable)]
 
 #Total NDD HA
