@@ -31,7 +31,7 @@ fts_read_master <- function(years = years){
 fts <- fts_read_master(years = dac_years)
 fts[source_org_country == "Slovakia", source_org_country := "Slovak Republic"]
 fts[source_org_country == "Korea, Republic of", source_org_country := "Korea"]
-fts[, year := as.character(ifelse(sourceObjects_UsageYear.name == "", budgetYear, sourceObjects_UsageYear.name))]
+fts[, year := as.character(year(date))]
 
 fts <- rbind(fts[!grepl(";", year)], fts_split_rows(fts[grepl(";", year)], c("amountUSD_defl"), "year", remove.unsplit = T)[])
 fts <- fts[year %in% dac_years]
@@ -158,3 +158,9 @@ total_donor_ha[Donor == "Virgin Islands, British", iso3 := "VGB"]
 total_donor_ha[Donor == "Serbia and Montenegro (until 2006-2009)", iso3 := "SCG"]
 
 fwrite(total_donor_ha, "IHA/output/total_donor_ha.csv")
+
+####
+##Annual total
+
+total_public_iha <- total_donor_ha[Donor != "EU Institutions", .(total_public_iha = sum(total_donor_ha)), by = (year = variable)][order(year)]
+fwrite(total_public_iha, "IHA/output/total_government_iha_by_year.csv")
