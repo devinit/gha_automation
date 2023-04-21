@@ -20,7 +20,7 @@ dac2a_max_year <- max(as.numeric(names(tl_dac2a)), na.rm = T)
 
 #If preliminary HA ODA data is available, load it
 if(dac1_max_year > dac2a_max_year){
-  oda_prelim <- GET(paste0("https://www.oecd.org/dac/financing-sustainable-development/development-finance-data/ODA-preliminary-data-", dac1_max_year, ".xlsx"))
+  oda_prelim <- GET(paste0("https://www.oecd.org/dac/financing-sustainable-development/development-finance-data/ADV", dac1_max_year, ".xlsx"))
   if(status_code(oda_prelim) == 404){
     
     errorCondition(paste("No preliminary ODA data exists for", dac1_max_year, "yet."))
@@ -72,7 +72,7 @@ if(exists("ha_oda_prelim")) dac2a_ha <- rbind(dac2a_ha, ha_oda_prelim)
 #Net disbursement flows (1140)
 #Constant prices (D)
 #2000-2020
-dac1_eu <- tabulate_dac_api("TABLE1", list( "", "", c(2102), 1140, "D"), 2000, dac2a_max_year)
+dac1_eu <- tabulate_dac_api("TABLE1", list( "", "", c(2102), 1140, "D"), 2000, dac1_max_year)
 dac1_eu <- melt(dac1_eu, id.vars = c("Donor", "Part", "Aid type", "Fund flows", "Amount type"))
 
 ##DAC2a Core multilateral ODA
@@ -211,7 +211,7 @@ if(max(as.character(dac2a_moha_share$variable)) < (dac1_max_year)){
   
   ##CERF
   cerf_list <- list()
-  for(i in 1:length(missing_years[missing_years != dac2_max_year])){
+  for(i in 1:length(missing_years[missing_years != dac2a_max_year])){
     url <- paste0("https://cerf.un.org/contributionsByDonor/", missing_years[missing_years != dac_base_year][i])
     cerf_list[[i]] <- cbind(read_json(url, simplifyVector = T)$data, variable = missing_years[missing_years != dac_base_year][i])
   }
