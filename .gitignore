@@ -35,3 +35,4 @@ vignettes/*.pdf
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 fts_curated_2022-09-08_intracountrydummies.csv
+fts_curated_2000_2023.csv
