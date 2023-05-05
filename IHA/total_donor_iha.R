@@ -169,10 +169,11 @@ total_donor_ha[Donor == "Hong Kong", iso3 := "HKG"]
 total_donor_ha[Donor == "Virgin Islands, British", iso3 := "VGB"]
 total_donor_ha[Donor == "Serbia and Montenegro (until 2006-2009)", iso3 := "SCG"]
 
+fwrite(total_donor_ha, "IHA/output/total_bimulti_donor_ha.csv")
 fwrite(total_donor_ha[, .(Donor, variable, total_donor_ha, iso3)], "IHA/output/total_donor_ha.csv")
 
 ####
 ##Annual total
 
-total_public_iha <- total_donor_ha[Donor != "EU Institutions", .(total_public_iha = sum(total_donor_ha)), by = (year = variable)][order(year)]
+total_public_iha <- total_donor_ha[, .(total_public_iha = sum(total_donor_ha, na.rm = T) - sum(eu_imha, na.rm = T) - sum(fts_nonoda_imeu_ha, na.rm = T) - sum(dac1_ndd_imeu_ha, na.rm = T)), by = (year = variable)][order(year)]
 fwrite(total_public_iha, "IHA/output/total_government_iha_by_year.csv")
