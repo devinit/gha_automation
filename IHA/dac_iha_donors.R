@@ -18,6 +18,17 @@ dac1_max_year <- max(as.numeric(names(tl_dac1)), na.rm = T)
 tl_dac2a <- tabulate_dac_api("TABLE2A", list(10200, 20001, 1, 216, "D"), 2000, current_year)
 dac2a_max_year <- max(as.numeric(names(tl_dac2a)), na.rm = T)
 
+#Establish current DAC base year
+dac_base_year <- paste0("https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10200.20001.1.216.D/all?startTime=2000&endTime=", current_year)
+dac_base_year <- as.numeric(data.table(read_json(dac_base_year, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name)
+
+#Load deflators
+defl <- get_deflators(base_year = dac_base_year)
+defl <- merge(defl, isos[, .(iso3, countryname_oecd)], by.x = "ISO", by.y = "iso3", all.x = T)
+defl[, year := as.character(year)]
+defl[countryname_oecd == "Russian Federation", countryname_oecd := "Russia"]
+defl[countryname_oecd == "Slovakia", countryname_oecd := "Slovak Republic"]
+
 #If preliminary HA ODA data is available, load it
 if(dac1_max_year > dac2a_max_year){
   oda_prelim <- GET(paste0("https://www.oecd.org/dac/financing-sustainable-development/development-finance-data/ADV", dac1_max_year, ".xlsx"))
@@ -34,19 +45,11 @@ if(dac1_max_year > dac2a_max_year){
     ha_oda_prelim <- suppressWarnings(melt(ha_oda_prelim[, -c("...1", "...2"), with = F], id.vars = NULL))
     
     ha_oda_prelim <- ha_oda_prelim[variable != "Total DAC", .(Donor = variable, Recipient = "Developing Countries, Total", Part = "1 : Part I - Developing Countries", `Aid type` = "Humanitarian Aid", `Amount type` = "Constant Prices", variable = dac1_max_year, value)]
+    ha_oda_prelim <- merge(ha_oda_prelim, defl[, .(Donor = countryname_oecd, variable = as.double(year), gdp_defl)], by = c("Donor", "variable"), all.x = T)
+    ha_oda_prelim[is.na(gdp_defl), gdp_defl := merge(ha_oda_prelim[is.na(gdp_defl), .(variable)], defl[ISO == "DAC", .(variable = as.double(year), gdp_defl)], by = "variable")$gdp_defl]
+    ha_oda_prelim[, `:=` (value = value/gdp_defl, gdp_defl = NULL)]
   }
 }
-  
-#Establish current DAC base year
-dac_base_year <- paste0("https://stats.oecd.org/SDMX-JSON/data/TABLE2A/10200.20001.1.216.D/all?startTime=2000&endTime=", current_year)
-dac_base_year <- as.numeric(data.table(read_json(dac_base_year, simplifyVector = T)$structure$attributes$series)[name == "Reference period"]$values[[1]]$name)
-
-#Load deflators
-defl <- get_deflators(base_year = dac_base_year)
-defl <- merge(defl, isos[, .(iso3, countryname_oecd)], by.x = "ISO", by.y = "iso3", all.x = T)
-defl[, year := as.character(year)]
-defl[countryname_oecd == "Russian Federation", countryname_oecd := "Russia"]
-defl[countryname_oecd == "Slovakia", countryname_oecd := "Slovak Republic"]
 
 #Establish country donors
 donors <- rbindlist(lapply(xmlToList(htmlParse(GET("https://stats.oecd.org/restsdmx/sdmx.ashx/GetDataStructure/TABLE2A")))$body$structure$codelists[[2]], function(x) data.frame(cbind(as.data.table(x)[1, ], as.data.table(x)[2, ]))), fill = T)
