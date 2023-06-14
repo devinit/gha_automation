@@ -13,6 +13,10 @@ dac_base_year <- as.numeric(data.table(read_json(dac_base_year, simplifyVector =
 
 #Load deflators
 defl <- get_deflators(dac_base_year)
+defl <- merge(defl, isos[, .(iso3, countryname_oecd)], by.x = "ISO", by.y = "iso3", all.x = T)
+defl[, year := as.character(year)]
+defl[countryname_oecd == "Russian Federation", countryname_oecd := "Russia"]
+defl[countryname_oecd == "Slovakia", countryname_oecd := "Slovak Republic"]
 
 #Load DAC IHA
 #dac_iha <- fread("IHA/output/dac_aggregate_donors.csv", encoding = "UTF-8")
@@ -72,7 +76,7 @@ dac_donors <- unlist(donors[.attrs.1 == 20001 | .attrs.1 == 20002]$description)
 
 #####
 ##DAC donors
-fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_org_iso3 == "EUI" ) & domestic_response == F & newMoney == T & dummy == F]
+fts_dac_donors <- fts[(source_orgtype == "DAC governments" | source_org_iso3 == "EUI" ) & domestic_response == F & newMoney == T & dummy == F & destinationObjects_Organization.name != "Central Emergency Response Fund"]
 fts_dac_donors[source_org_country == "European Commission", source_org_country := "EU Institutions"]
 
 #DAC donors directly to non-ODA eligible recipients (FTS)
@@ -80,7 +84,7 @@ fts_dac_donors_oda <- fts_dac_donors[oda_eligible == T, .(fts_oda_ha = sum(amoun
 fts_dac_donors_nonoda <- fts_dac_donors[oda_eligible == F, .(fts_nonoda_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_org_country, year)]
 
 #DAC donors imputed EU to non-ODA eligible recipients (FTS)
-fts_eu <- fts[source_org_country == "European Commission" & domestic_response == F & newMoney == T & dummy == F]
+fts_eu <- fts[source_org_country == "European Commission" & domestic_response == F & newMoney == T & dummy == F & destinationObjects_Organization.name != "Central Emergency Response Fund"]
 fts_eu_oda <- fts_eu[oda_eligible == T, .(fts_oda_eu_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = year]
 fts_eu_nonoda <- fts_eu[oda_eligible == F, .(fts_nonoda_eu_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = year]
 
@@ -117,6 +121,33 @@ dac_donors_prelim[, `:=` (eu_imha = eu_imha*dac_eu, fts_oda_imeu_ha = fts_oda_im
 
 dac_donors_prelim <- dac_donors_prelim[, .(total_bilat = total_bilat + fts_oda_ha, total_imha, eu_imha = eu_imha + fts_oda_imeu_ha), by = .(Donor, variable)]
 
+##CERF
+cerf_list <- list()
+for(i in 1:length(max(dac_years))){
+  url <- paste0("https://cerf.un.org/contributionsByDonor/",  max(dac_years)[i])
+  cerf_list[[i]] <- cbind(read_json(url, simplifyVector = T)$data, variable =  max(dac_years)[i])
+}
+cerf <- rbindlist(cerf_list)
+
+#Standardise CERF names
+{cerf[donor == "Slovakia", donor := "Slovak Republic"]
+  cerf[donor == "United States of America", donor := "United States"]
+  cerf[donor == "Russian Federation", donor := "Russia"]
+  cerf[donor == "Hyogo Prefecture (Japan)", donor := "Japan"]
+  cerf[donor == "Belgian Government of Flanders", donor := "Belgium"]
+  cerf[donor == "State of South Australia", donor := "Australia"]
+  cerf[donor == "Catalan Agency for Development Cooperation", donor := "Spain"]}
+
+missing_cerf <- cerf[, .(Donor = donor, variable = as.character(variable), cerf_ha = paid/1000000)]
+missing_cerf <- merge(missing_cerf, defl[, .(countryname_oecd, year, gdp_defl)], by.x = c("Donor", "variable"), by.y = c("countryname_oecd", "year"), all.x = T)
+
+missing_cerf <- missing_cerf[, .(missing_cerf = sum(cerf_ha/gdp_defl, na.rm = T)), by = .(Donor, variable = as.integer(variable))]
+
+dac_donors_prelim <- merge(dac_donors_prelim, missing_cerf, by = c("Donor", "variable"), all.x = T)
+dac_donors_prelim[is.na(dac_donors_prelim)] <- 0
+
+dac_donors_prelim <- dac_donors_prelim[, .(total_bilat, total_imha = total_imha + missing_cerf, eu_imha), by = .(Donor, variable)]
+
 dac_iha_bimulti <- rbind(dac_iha_bimulti[variable != max(dac_years)], dac_donors_prelim)
 
 #Total DAC donor HA
@@ -128,7 +159,7 @@ total_dac_donor_ha <- total_dac_donor_ha[, total_donor_ha := total_bilat + total
 
 #####
 ##NDD
-fts_ndd <- fts[source_orgtype == "NDD" & domestic_response == F & newMoney == T]
+fts_ndd <- fts[source_orgtype == "NDD" & domestic_response == F & newMoney == T & destinationObjects_Organization.name != "Central Emergency Response Fund"]
 
 #NDD directly to all recipients (FTS)
 fts_ndd <- fts_ndd[, .(fts_ndd_ha = sum(amountUSD_defl, na.rm = T)/1000000), by = .(source_org_country, year)]

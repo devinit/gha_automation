@@ -115,6 +115,7 @@ dac2a_imha <- dac2a_cmo[, .(dac2a_imputed_multi_ha = sum(value*ha_share, na.rm =
 #Core contributions to
 #Constant prices (D)
 #2011-2020
+#CERF = 41147 not used
 mums <- tabulate_dac_api("MULTISYSTEM", list("", 10100, 1000, c(41147, 41301,41302,47066,41122,41114,41116,41127,41121,41141,41144,41119,41130,41140,41307,41143,44002,46002,46003,46004,46005,46024,46013,46012,47111,47134,47129,47130,47044,47128,47142,47135), 10, 112, "D"), 2000, dac2a_max_year)
 
 mums_max_year <-  max(as.numeric(names(mums)), na.rm = T)
@@ -213,33 +214,14 @@ if(max(as.character(dac2a_moha_share$variable)) < (dac1_max_year)){
   dac2a_missing_ida <- dac2a_missing_ida[, .(dac2a_missing_ida = dac1_imputed_ida_oda*as.numeric(ha_share)), by = .(Donor, variable)]
   
   ##CERF
-  cerf_list <- list()
-  for(i in 1:length(missing_years[missing_years != dac2a_max_year])){
-    url <- paste0("https://cerf.un.org/contributionsByDonor/", missing_years[missing_years != dac_base_year][i])
-    cerf_list[[i]] <- cbind(read_json(url, simplifyVector = T)$data, variable = missing_years[missing_years != dac_base_year][i])
-  }
-  cerf <- rbindlist(cerf_list)
   
-  #Standardise CERF names
-  {cerf[donor == "Slovakia", donor := "Slovak Republic"]
-    cerf[donor == "United States of America", donor := "United States"]
-    cerf[donor == "Russian Federation", donor := "Russia"]
-    cerf[donor == "Hyogo Prefecture (Japan)", donor := "Japan"]
-    cerf[donor == "Belgian Government of Flanders", donor := "Belgium"]
-    cerf[donor == "State of South Australia", donor := "Australia"]
-    cerf[donor == "Catalan Agency for Development Cooperation", donor := "Spain"]}
-  
-  missing_cerf <- cerf[, .(Donor = donor, variable = as.character(variable), cerf_ha = paid/1000000)]
-  missing_cerf <- merge(missing_cerf, defl[, .(countryname_oecd, year, gdp_defl)], by.x = c("Donor", "variable"), by.y = c("countryname_oecd", "year"), all.x = T)
-  
-  dac2a_missing_cerf <- missing_cerf[, .(dac2a_missing_cerf = sum(cerf_ha/gdp_defl, na.rm = T)), by = .(Donor, variable)][!is.na(dac2a_missing_cerf)]
   
   #Total recent missing year(s)
   dac2a_total_missing <- merge(dac2a_mums_missing_un, dac2a_missing_ida, all.x = T, by = c("Donor", "variable"))
-  dac2a_total_missing <- merge(dac2a_total_missing, dac2a_missing_cerf, all.x = T, by = c("Donor", "variable"))
+  #dac2a_total_missing <- merge(dac2a_total_missing, dac2a_missing_cerf, all.x = T, by = c("Donor", "variable"))
   dac2a_total_missing[is.na(dac2a_total_missing)] <- 0
   
-  dac2a_total_missing <- dac2a_total_missing[, .(dac2a_imputed_multi_ha = dac2a_mums_missing_un + dac2a_missing_ida + dac2a_missing_cerf), by = .(Donor, variable)]
+  dac2a_total_missing <- dac2a_total_missing[, .(dac2a_imputed_multi_ha = dac2a_mums_missing_un + dac2a_missing_ida), by = .(Donor, variable)]
   
   dac2a_imha <- rbind(dac2a_imha, dac2a_total_missing)
 }
@@ -293,6 +275,6 @@ fwrite(total_iha_sep, "IHA/output/dac_aggregate_donors_bimulti.csv")
 de_dac2a_ha <- dac2a_ha
 de_dac2a_missing_un <- dac2a_mums_missing_un
 de_dac2a_missing_ida <- dac2a_missing_ida
-de_dac2a_missing_cerf <- dac2a_missing_cerf
+#de_dac2a_missing_cerf <- dac2a_missing_cerf
 de_eu_imha <- eu_imha
-debug <- merge(merge(merge(merge(de_dac2a_ha[, .(variable, Donor, dac2a = value)], de_dac2a_missing_un, by = c("variable", "Donor")), de_dac2a_missing_ida), de_dac2a_missing_cerf), de_eu_imha)
+#debug <- merge(merge(merge(merge(de_dac2a_ha[, .(variable, Donor, dac2a = value)], de_dac2a_missing_un, by = c("variable", "Donor")), de_dac2a_missing_ida), de_dac2a_missing_cerf), de_eu_imha)

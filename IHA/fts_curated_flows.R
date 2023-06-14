@@ -38,6 +38,9 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
         )
         break
       }
+      reportDetails <- rbindlist(lapply(fts$reportDetails, function(x) lapply(x, function(y) paste0(y, collapse = "; "))))
+      names(reportDetails) <- paste0("reportDetails_", names(reportDetails))
+      fts <- cbind(fts, reportDetails)
       fts[, reportDetails := NULL]
       fts[is.null(fts) | fts == "NULL"] <- NA
       fwrite(fts, paste0(dataset_path, "/fts_", years[i], ".csv"))
@@ -93,7 +96,7 @@ fts_curated_flows <- function(years = 2016:2022, update_years = NA, dataset_path
   fts[, FTS_source_orgtype := NULL]
   
   #Manual EU institution classifications
-  euc_id <- c("8523","2966","8524","6789","2176","8525","8556","8650","8541","8421")
+  euc_id <- c("8523","2966","8524","6789","2176","8525","8556","8650","8541","8421", "12078", "6936", "12609", "13154")
   fts[sourceObjects_Organization.id %in% euc_id, `:=` (source_org_country = "European Commission", source_org_iso3 = "EUI")]
   
   #Merge dest orgs
