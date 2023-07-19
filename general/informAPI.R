@@ -8,5 +8,5 @@ inform_get <- function(year, indicator){
   inform_out <- data.table(fromJSON(paste0("https://drmkc.jrc.ec.europa.eu/inform-index/API/InformAPI/countries/Scores/?WorkflowId=", wf_id, "&IndicatorId=",indicator)))
   inform_out[, year := year]
   
-  return(inform_out)
+  return(inform_out[])
 }

@@ -155,7 +155,7 @@ total_dac_donor_ha <- merge(dac_iha_bimulti[Donor %in% dac_donors], fts_dac_dono
 total_dac_donor_ha <- merge(total_dac_donor_ha, fts_dac_donors_nonoda_imeu[, .(variable = as.numeric(variable), Donor, fts_nonoda_imeu_ha)], by = c("variable", "Donor"), all = T)
 total_dac_donor_ha[is.na(total_dac_donor_ha)] <- 0
 
-total_dac_donor_ha <- total_dac_donor_ha[, total_donor_ha := total_bilat + total_imha + eu_imha + fts_nonoda_ha + fts_nonoda_imeu_ha, by = .(Donor, variable)]
+total_dac_donor_ha <- total_dac_donor_ha[, `:=` (total_donor_ha = total_bilat + total_imha + fts_nonoda_ha, total_donor_imeu = eu_imha + fts_nonoda_imeu_ha), by = .(Donor, variable)]
 
 #####
 ##NDD
@@ -206,5 +206,5 @@ fwrite(total_donor_ha[, .(Donor, variable, total_donor_ha, iso3)], "IHA/output/t
 ####
 ##Annual total
 
-total_public_iha <- total_donor_ha[, .(total_public_iha = sum(total_donor_ha, na.rm = T) - sum(eu_imha, na.rm = T) - sum(fts_nonoda_imeu_ha, na.rm = T) - sum(dac1_ndd_imeu_ha, na.rm = T)), by = (year = variable)][order(year)]
+total_public_iha <- total_donor_ha[, .(total_public_iha = sum(total_donor_ha, na.rm = T)), by = (year = variable)][order(year)]
 fwrite(total_public_iha, "IHA/output/total_government_iha_by_year.csv")
