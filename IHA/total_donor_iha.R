@@ -106,20 +106,22 @@ dac1_dac_donors_prelim <- dac_iha_bimulti[Donor %in% dac_donors & variable == ma
 dac_donors_prelim <- merge(fts_dac_donors_prelim, dac1_dac_donors_prelim, all = T)
 dac_donors_prelim[is.na(dac_donors_prelim)] <- 0
 
+dac_donors_prelim[, prelim_source := "FTS bilat + DAC imputed"]
+
 #Where FTS bilat is greater than DAC bilat + DAC imputed, use FTS bilat only
-dac_donors_prelim[fts_oda_ha > total_bilat + total_imha, `:=` (total_bilat = 0, total_imha = 0)]
+dac_donors_prelim[fts_oda_ha > total_bilat + total_imha, `:=` (total_bilat = 0, total_imha = 0, prelim_source = "FTS only")]
 
 #Where FTS bilat is greater than DAC bilat , use FTS bilat and keep DAC imputed 
 dac_donors_prelim[fts_oda_ha > total_bilat, `:=` (total_bilat = 0)]
 
 #Otherwise, use DAC bilat and DAC imputed
-dac_donors_prelim[fts_oda_ha <= total_bilat, `:=` (fts_oda_ha = 0)]
+dac_donors_prelim[fts_oda_ha <= total_bilat, `:=` (fts_oda_ha = 0, prelim_source = "DAC only")]
 
 #Use DAC or FTS for EU imputed for each country based on choice value for EU
 dac_eu <- dac_donors_prelim[Donor == "EU Institutions", total_bilat > fts_oda_ha]
 dac_donors_prelim[, `:=` (eu_imha = eu_imha*dac_eu, fts_oda_imeu_ha = fts_oda_imeu_ha*(1-dac_eu))]
 
-dac_donors_prelim <- dac_donors_prelim[, .(total_bilat = total_bilat + fts_oda_ha, total_imha, eu_imha = eu_imha + fts_oda_imeu_ha), by = .(Donor, variable)]
+dac_donors_prelim <- dac_donors_prelim[, .(total_bilat = total_bilat + fts_oda_ha, total_imha, eu_imha = eu_imha + fts_oda_imeu_ha, prelim_source), by = .(Donor, variable)]
 
 ##CERF
 cerf_list <- list()
@@ -146,7 +148,7 @@ missing_cerf <- missing_cerf[, .(missing_cerf = sum(cerf_ha/gdp_defl, na.rm = T)
 dac_donors_prelim <- merge(dac_donors_prelim, missing_cerf, by = c("Donor", "variable"), all.x = T)
 dac_donors_prelim[is.na(dac_donors_prelim)] <- 0
 
-dac_donors_prelim <- dac_donors_prelim[, .(total_bilat, total_imha = total_imha + missing_cerf, eu_imha), by = .(Donor, variable)]
+dac_donors_prelim <- dac_donors_prelim[, .(total_bilat, total_imha = total_imha + missing_cerf, eu_imha, prelim_source), by = .(Donor, variable)]
 
 dac_iha_bimulti <- rbind(dac_iha_bimulti[variable != max(dac_years)], dac_donors_prelim)
 
